@@ -1,8 +1,8 @@
 import { useState } from "react"
+import VoextInput from '../../components/VoextInput'
 
 const Room = (props) => {
 	const { roomId, username, userteam } = props
-	const [talking, setTalking] = useState("")
 
 	const debugInfo = () => (
 		<div>
@@ -11,22 +11,13 @@ const Room = (props) => {
 			<div>userteam:{userteam}</div>
 		</div>
 	)
-	const handleChange = e => {
-		setTalking(e.target.value)
+	const onVoextSubmit = (text) => {
 	}
-	const handleSubmit = e => {
-		e.preventDefault()
-	}
-	const textInput = () => (
-		<form onSubmit={handleSubmit}>
-			<input type="text" value={talking} onChange={handleChange} />
-		</form>
-	)
 
 	return (
 		<div>
 			{debugInfo()}
-			{textInput()}
+			{<VoextInput onSubmit={onVoextSubmit} />}
 		</div>
 	)
 }
