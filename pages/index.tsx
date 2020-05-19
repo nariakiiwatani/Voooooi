@@ -3,6 +3,20 @@ import { useState } from "react"
 const Index = () => {
 
 	const [roomCreation, setRoomCreation] = useState(false)
+	const [formInput, setFormInput] = useState({
+		roomId: "",
+		password: "",
+		username: "",
+		userteam: ""
+	})
+
+	const handleChange = name => e => {
+		setFormInput({
+			...formInput,
+			[name]: e.target.value
+		})
+		console.info(formInput)
+	}
 
 	const handleCreateSubmit = e => {
 		e.preventDefault()
@@ -12,21 +26,26 @@ const Index = () => {
 		e.preventDefault()
 
 	}
+	const createInput = ([label, type, name, value]) => (
+		<div>
+			<span>{label}</span><input type={type} name={name} value={value} onChange={handleChange(name)} />
+		</div>
+	)
 	const createForm = () => (
 		<form onSubmit={handleCreateSubmit}>
-			<span>部屋ID</span><input type="text" name="roomId" /><br />
-			<span>パスワード</span><input type="password" name="password" /><br />
+			{createInput(["部屋ID", "text", "roomId", formInput.roomId])}
+			{createInput(["パスワード", "password", "password", formInput.password])}
 			<button onClick={handleCreateSubmit}>作成</button>
 		</form>
 	)
 	const enterForm = () => (
 		<form onSubmit={handleEnterSubmit}>
-			<span>部屋ID</span><input type="text" name="roomId" /><br />
-			<span>パスワード</span><input type="password" name="password" /><br />
-			<span>名前</span><input type="text" name="name" /><br />
-			<span>チーム</span><input type="text" name="team" /><br />
-			<button onClick={handleEnterSubmit}>入室</button>
-		</form>
+			{createInput(["部屋ID", "text", "roomId", formInput.roomId])}
+			{createInput(["パスワード", "password", "password", formInput.password])}
+			{createInput(["名前", "text", "username", formInput.username])}
+			{createInput(["チーム", "text", "userteam", formInput.userteam])}
+			< button onClick={handleEnterSubmit} > 入室</button>
+		</form >
 	)
 	const showSwitch = () => (
 		<div>
