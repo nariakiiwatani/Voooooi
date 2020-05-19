@@ -15,6 +15,7 @@ const Index = () => {
 			...formInput,
 			[name]: e.target.value
 		})
+		console.info(formInput)
 	}
 
 	const handleCreateSubmit = e => {
