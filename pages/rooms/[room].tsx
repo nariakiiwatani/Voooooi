@@ -1,11 +1,32 @@
+import { useState } from "react"
+
 const Room = (props) => {
 	const { roomId, username, userteam } = props
+	const [talking, setTalking] = useState("")
+
+	const debugInfo = () => (
+		<div>
+			<div>Room:{roomId}</div>
+			<div>username:{username}</div>
+			<div>userteam:{userteam}</div>
+		</div>
+	)
+	const handleChange = e => {
+		setTalking(e.target.value)
+	}
+	const handleSubmit = e => {
+		e.preventDefault()
+	}
+	const textInput = () => (
+		<form onSubmit={handleSubmit}>
+			<input type="text" value={talking} onChange={handleChange} />
+		</form>
+	)
 
 	return (
 		<div>
-			<h1>Room:{roomId}</h1>
-			<p>username:{username}</p>
-			<p>userteam:{userteam}</p>
+			{debugInfo()}
+			{textInput()}
 		</div>
 	)
 }
