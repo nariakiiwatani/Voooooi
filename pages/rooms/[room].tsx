@@ -13,6 +13,9 @@ const Room = (props) => {
 
 	useEffect(() => {
 		socket.on("message", onReceiveMessage)
+		return () => {
+			socket.off("message")
+		}
 	}, [])
 
 	const debugInfo = () => (
