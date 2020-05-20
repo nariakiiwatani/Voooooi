@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import VoextInput from '../../components/VoextInput'
 import History from '../../components/History'
+import io from "socket.io-client"
 
 const Room = (props) => {
 	const { roomId, username, userteam } = props
@@ -8,6 +9,10 @@ const Room = (props) => {
 		lastId: 0,
 		messages: []
 	})
+	const [socket, setSocket] = useState(null)
+	useEffect(() => {
+		setSocket(io())
+	}, [])
 
 	const debugInfo = () => (
 		<div>
@@ -23,6 +28,7 @@ const Room = (props) => {
 			lastId: history.lastId + 1,
 			messages
 		})
+		socket.emit("message", text)
 	}
 
 	return (

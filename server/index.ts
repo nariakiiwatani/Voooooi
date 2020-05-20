@@ -30,6 +30,9 @@ app.prepare().then(() => {
 		client.on('disconnect', () => {
 			console.log(client.id, 'disconnected')
 		})
+		client.on("message", (message) => {
+			console.log("received:", message)
+		})
 	})
 
 	server.listen(port, () => {
