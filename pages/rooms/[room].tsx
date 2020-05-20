@@ -11,6 +11,10 @@ const Room = (props) => {
 	})
 	const [socket, setSocket] = useState(() => io())
 
+	useEffect(() => {
+		socket.on("message", onReceiveMessage)
+	}, [])
+
 	const debugInfo = () => (
 		<div>
 			<div>Room:{roomId}</div>
@@ -18,13 +22,14 @@ const Room = (props) => {
 			<div>userteam:{userteam}</div>
 		</div>
 	)
+	const onReceiveMessage = message => {
+		setCommentList(({ lastId, messages }) => ({
+			lastId: lastId + 1,
+			messages: [...messages, { id: lastId, text: message }]
+		}))
+	}
 	const onVoextSubmit = (text) => {
-		const messages = commentList.messages.slice()
-		messages.push({ id: commentList.lastId, text })
-		setCommentList({
-			lastId: commentList.lastId + 1,
-			messages
-		})
+		//		onReceiveMessage(text)
 		socket.emit("message", text)
 	}
 

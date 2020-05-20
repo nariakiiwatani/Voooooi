@@ -8,12 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "immer": "^6.0.5",
     "next": "9.4.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
-    "ts-node": "^8.10.1"
+    "ts-node": "^8.10.1",
+    "use-immer": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.1",

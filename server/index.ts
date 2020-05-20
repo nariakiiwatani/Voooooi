@@ -32,6 +32,7 @@ app.prepare().then(() => {
 		})
 		client.on("message", (message) => {
 			console.log("received:", message)
+			client.emit("message", message)
 		})
 	})
 
