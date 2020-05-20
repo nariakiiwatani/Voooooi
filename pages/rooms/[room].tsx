@@ -9,10 +9,7 @@ const Room = (props) => {
 		lastId: 0,
 		messages: []
 	})
-	const [socket, setSocket] = useState(null)
-	useEffect(() => {
-		setSocket(io())
-	}, [])
+	const [socket, setSocket] = useState(() => io())
 
 	const debugInfo = () => (
 		<div>
