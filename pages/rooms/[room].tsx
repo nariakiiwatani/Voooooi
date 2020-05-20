@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
 import VoextInput from '../../components/VoextInput'
-import History from '../../components/History'
+import CommentList from '../../components/CommentList'
 import io from "socket.io-client"
 
 const Room = (props) => {
 	const { roomId, username, userteam } = props
-	const [history, setHistory] = useState({
+	const [commentList, setCommentList] = useState({
 		lastId: 0,
 		messages: []
 	})
@@ -22,10 +22,10 @@ const Room = (props) => {
 		</div>
 	)
 	const onVoextSubmit = (text) => {
-		const messages = history.messages.slice()
-		messages.push({ id: history.lastId, text })
-		setHistory({
-			lastId: history.lastId + 1,
+		const messages = commentList.messages.slice()
+		messages.push({ id: commentList.lastId, text })
+		setCommentList({
+			lastId: commentList.lastId + 1,
 			messages
 		})
 		socket.emit("message", text)
@@ -35,7 +35,7 @@ const Room = (props) => {
 		<div>
 			{debugInfo()}
 			{<VoextInput onSubmit={onVoextSubmit} />}
-			{<History messages={history.messages} />}
+			{<CommentList messages={commentList.messages} />}
 		</div>
 	)
 }

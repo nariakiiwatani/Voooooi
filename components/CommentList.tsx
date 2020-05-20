@@ -1,4 +1,4 @@
-const History = (props) => {
+const CommentList = (props) => {
 	const messages = props.messages.slice()
 	messages.sort((a, b) => a.id - b.id)
 
@@ -11,4 +11,4 @@ const History = (props) => {
 	)
 }
 
-export default History
+export default CommentList
