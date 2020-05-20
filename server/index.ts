@@ -4,7 +4,8 @@ import socketIO from 'socket.io'
 import { createServer } from 'http'
 
 const context = {
-	io: null
+	io: null,
+	room: []
 }
 
 const dev = process.env.NODE_ENV !== 'production'

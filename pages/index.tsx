@@ -9,6 +9,7 @@ const Index = () => {
 		username: "",
 		userteam: ""
 	})
+	const { roomId, password, username, userteam } = formInput
 
 	const handleChange = name => e => {
 		setFormInput({
@@ -18,9 +19,16 @@ const Index = () => {
 		console.info(formInput)
 	}
 
-	const handleCreateSubmit = e => {
+	const handleCreateSubmit = async e => {
 		e.preventDefault()
-
+		const result = await fetch(`/api/rooms/${roomId}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+			},
+			body: JSON.stringify({ password })
+		})
+		console.info("fetch result", await result.json())
 	}
 	const handleEnterSubmit = e => {
 		e.preventDefault()
@@ -33,17 +41,17 @@ const Index = () => {
 	)
 	const createForm = () => (
 		<form onSubmit={handleCreateSubmit}>
-			{createInput(["部屋ID", "text", "roomId", formInput.roomId])}
-			{createInput(["パスワード", "password", "password", formInput.password])}
+			{createInput(["部屋ID", "text", "roomId", roomId])}
+			{createInput(["パスワード", "password", "password", password])}
 			<button onClick={handleCreateSubmit}>作成</button>
 		</form>
 	)
 	const enterForm = () => (
 		<form onSubmit={handleEnterSubmit}>
-			{createInput(["部屋ID", "text", "roomId", formInput.roomId])}
-			{createInput(["パスワード", "password", "password", formInput.password])}
-			{createInput(["名前", "text", "username", formInput.username])}
-			{createInput(["チーム", "text", "userteam", formInput.userteam])}
+			{createInput(["部屋ID", "text", "roomId", roomId])}
+			{createInput(["パスワード", "password", "password", password])}
+			{createInput(["名前", "text", "username", username])}
+			{createInput(["チーム", "text", "userteam", userteam])}
 			< button onClick={handleEnterSubmit} > 入室</button>
 		</form >
 	)
