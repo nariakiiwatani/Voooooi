@@ -13,6 +13,7 @@ const Room = (props) => {
 
 	useEffect(() => {
 		socket.on("message", onReceiveMessage)
+		socket.emit("join", roomId)
 		return () => {
 			socket.off("message")
 		}
@@ -25,15 +26,17 @@ const Room = (props) => {
 			<div>userteam:{userteam}</div>
 		</div>
 	)
+	const makeMessage = text => ({
+		roomId, username, userteam, text
+	})
 	const onReceiveMessage = message => {
 		setCommentList(({ lastId, messages }) => ({
 			lastId: lastId + 1,
-			messages: [...messages, { id: lastId, text: message }]
+			messages: [...messages, { id: lastId, ...message }]
 		}))
 	}
 	const onVoextSubmit = (text) => {
-		//		onReceiveMessage(text)
-		socket.emit("message", text)
+		socket.emit("message", makeMessage(text))
 	}
 
 	return (

@@ -25,14 +25,19 @@ app.prepare().then(() => {
 	const server = createServer(requestListener)
 
 	context.io = socketIO(server)
-	context.io.on('connection', client => {
+	const io = context.io
+	io.on('connection', client => {
 		console.log(client.id, 'connected')
 		client.on('disconnect', () => {
 			console.log(client.id, 'disconnected')
 		})
 		client.on("message", (message) => {
 			console.log("received:", message)
-			client.emit("message", message)
+			io.to(message.roomId).emit("message", message)
+		})
+		client.on("join", (roomId) => {
+			console.info("join to :", roomId)
+			client.join(roomId)
 		})
 	})
 
