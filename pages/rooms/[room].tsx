@@ -5,11 +5,8 @@ import io from "socket.io-client"
 
 const Room = (props) => {
 	const { roomId, userName, teamName } = props
-	const [commentList, setCommentList] = useState({
-		lastId: 0,
-		messages: []
-	})
 	const [myComments, setMyComments] = useState([])
+	const [teamComments, setTeamComments] = useState([])
 	const [socket, setSocket] = useState(() => io())
 
 	useEffect(() => {
@@ -28,7 +25,18 @@ const Room = (props) => {
 				console.log("チーム一覧の取得に失敗", await result.json())
 				return;
 			}
-			console.log("teams:", await result.json())
+			const { teams } = (await result.json()).data
+			let id = 0
+			const incrementId = (id) => {
+				id += 1
+				return id
+			}
+			setTeamComments(Object.keys(teams).map(name => ({
+				name: name,
+				messages: [
+					{ id: incrementId(id), text: "dummy" }
+				]
+			})))
 		}
 		asyncFunc();
 	}, [])
@@ -44,10 +52,6 @@ const Room = (props) => {
 		roomId, userName, teamName, text
 	})
 	const onReceiveMessage = message => {
-		setCommentList(({ lastId, messages }) => ({
-			lastId: lastId + 1,
-			messages: [...messages, { id: lastId, ...message }]
-		}))
 	}
 	const onVoextSubmit = (text) => {
 		setMyComments([...myComments, makeMessage(text)])
@@ -60,8 +64,12 @@ const Room = (props) => {
 			{<VoextInput onSubmit={onVoextSubmit} />}
 			<p>自分の</p>
 			{<CommentList messages={myComments} />}
-			<p>部屋の</p>
-			{<CommentList messages={commentList.messages} />}
+			{teamComments.map(({ name, messages }) => (
+				<>
+					<div>{name}の</div>
+					<CommentList key={name} messages={messages} />
+				</>
+			))}
 		</div>
 	)
 }
