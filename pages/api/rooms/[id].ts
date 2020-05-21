@@ -24,7 +24,7 @@ const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) =>
 	}
 
 	res.statusCode = 201
-	res.json({ result: `room:${id} successfully created.` })
+	res.json({ result: "ok", data: rooms[id] })
 }
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { rooms } = req.context
@@ -33,7 +33,7 @@ const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 		return error({ status: 400, message: `room:${id} not exists` })(res)
 	}
 	res.statusCode = 200
-	res.json({ result: "ok", ...rooms[id] })
+	res.json({ result: "ok", data: rooms[id] })
 }
 const updateRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	error({ status: 501, message: "update room is not implemented yet" })(res)

@@ -8,23 +8,23 @@
     "start": "next start"
   },
   "dependencies": {
-    "@types/color": "^3.0.1",
-    "@types/color-convert": "^1.9.0",
-    "color-name": "^1.1.4",
-    "immer": "^6.0.5",
+    "color": "^3.1.2",
+    "color-convert": "^1.9.1",
+    "color-string": "^1.5.2",
     "next": "9.4.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
-    "ts-node": "^8.10.1",
-    "use-immer": "^0.4.0"
+    "ts-node": "^8.10.1"
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
     "@types/react": "^16.9.35",
     "@types/socket.io": "^2.1.6",
     "@types/socket.io-client": "^1.4.33",
+    "@types/color": "^3.0.1",
+    "@types/color-convert": "^1.9.0",
     "typescript": "^3.9.2"
   }
 }

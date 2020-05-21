@@ -1,17 +1,17 @@
 import socketIO from 'socket.io'
 import Color from "color"
 
-export type ServerContext = {
+export interface ServerContext {
 	io: socketIO.Server,
 	rooms: { [id: string]: Room }
 }
 
-export type Room = {
+export interface Room {
 	name: string,
 	teams: { [id: string]: Team }
 }
 
-export type Team = {
+export interface Team {
 	name: string,
 	color: Color
 }
@@ -19,19 +19,19 @@ export type Team = {
 export const defaultTeams: { [id: string]: Team } = {
 	"red": {
 		name: "red",
-		color: Color("red")
+		color: new Color("red")
 	},
 	"blue": {
-		name: "red",
-		color: Color("red")
+		name: "blue",
+		color: new Color("blue")
 	},
 	"yellow": {
-		name: "red",
-		color: Color("red")
+		name: "yellow",
+		color: new Color("yellow")
 	},
 	"white": {
 		name: "white",
-		color: Color("gray")
+		color: new Color("gray")
 	},
 }
 

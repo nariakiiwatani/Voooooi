@@ -2,7 +2,7 @@ import { parse } from 'url'
 import next from 'next'
 import socketIO from 'socket.io'
 import { createServer } from 'http'
-import { ServerContext, Room } from "../libs/Models"
+import { ServerContext } from "../libs/Models"
 
 const context: ServerContext = {
 	io: null,

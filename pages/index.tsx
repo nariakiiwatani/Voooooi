@@ -1,5 +1,8 @@
 import { useState } from "react"
 import Router from 'next/router'
+import TeamSelectionModal from "../components/TeamSelectionModal"
+import { Room } from "../libs/Models"
+import { stringify } from 'querystring';
 
 const Index = () => {
 
@@ -7,10 +10,13 @@ const Index = () => {
 	const [formInput, setFormInput] = useState({
 		roomId: "",
 		password: "",
-		username: "",
-		userteam: ""
+		userName: ""
 	})
-	const { roomId, password, username, userteam } = formInput
+	const { roomId, password, userName } = formInput
+
+	const [teamSelectionVisible, setTeamSelectionVisible] = useState(false)
+	const [room, setRoom] = useState({})
+	const [team, setTeam] = useState({})
 
 	const handleChange = name => e => {
 		setFormInput({
@@ -39,16 +45,30 @@ const Index = () => {
 			}
 		})
 		if (result.status === 200) {
-			Router.push({
-				pathname: `/rooms/${roomId}`,
-				query: { username, userteam }
-			})
+			const response = await result.json()
+			setRoom(response.data)
+			setTeamSelectionVisible(true)
 		}
 		else {
 			const response = await result.json()
 			console.info(response);
 		}
 	}
+
+	const handleTeamSelect = (team) => {
+		setTeamSelectionVisible(false)
+		setTeam(team)
+		Router.push({
+			pathname: `/rooms/${roomId}`,
+			query: { userName, teamName: team.name }
+		})
+		console.info("decided")
+	}
+	const handleTeamSelectCancel = () => {
+		setTeamSelectionVisible(false)
+		console.info("cancel")
+	}
+
 	const createInput = ([label, type, name, value]) => (
 		<div>
 			<span>{label}</span><input type={type} name={name} value={value} onChange={handleChange(name)} />
@@ -65,9 +85,8 @@ const Index = () => {
 		<form onSubmit={handleEnterSubmit}>
 			{createInput(["部屋ID", "text", "roomId", roomId])}
 			{createInput(["パスワード", "password", "password", password])}
-			{createInput(["名前", "text", "username", username])}
-			{createInput(["チーム", "text", "userteam", userteam])}
-			< button onClick={handleEnterSubmit} > 入室</button>
+			{createInput(["名前", "text", "userName", userName])}
+			< button onClick={handleEnterSubmit}>入室</button>
 		</form >
 	)
 	const showSwitch = () => (
@@ -81,6 +100,12 @@ const Index = () => {
 			<h1>Voext</h1>
 			{showSwitch()}
 			{roomCreation ? createForm() : enterForm()}
+			{teamSelectionVisible ?
+				<TeamSelectionModal
+					teams={room.teams}
+					onDecide={(t) => { handleTeamSelect(t) }}
+					onCancel={() => { handleTeamSelectCancel() }}
+				/> : <div>Hi</div>}
 		</div>
 	);
 };

@@ -4,7 +4,7 @@ import CommentList from '../../components/CommentList'
 import io from "socket.io-client"
 
 const Room = (props) => {
-	const { roomId, username, userteam } = props
+	const { roomId, userName, teamName } = props
 	const [commentList, setCommentList] = useState({
 		lastId: 0,
 		messages: []
@@ -22,12 +22,12 @@ const Room = (props) => {
 	const debugInfo = () => (
 		<div>
 			<div>Room:{roomId}</div>
-			<div>username:{username}</div>
-			<div>userteam:{userteam}</div>
+			<div>username:{userName}</div>
+			<div>userteam:{teamName}</div>
 		</div>
 	)
 	const makeMessage = text => ({
-		roomId, username, userteam, text
+		roomId, userName, teamName, text
 	})
 	const onReceiveMessage = message => {
 		setCommentList(({ lastId, messages }) => ({
@@ -52,8 +52,8 @@ export const getServerSideProps = async ({ params, query }) => {
 	return {
 		props: {
 			roomId: params.room,
-			username: query.username,
-			userteam: query.userteam,
+			userName: query.userName,
+			teamName: query.teamName,
 		},
 	}
 }
