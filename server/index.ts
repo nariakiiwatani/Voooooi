@@ -2,12 +2,12 @@ import { parse } from 'url'
 import next from 'next'
 import socketIO from 'socket.io'
 import { createServer } from 'http'
+import { ServerContext, Room } from "../libs/Models"
 
-const context = {
+const context: ServerContext = {
 	io: null,
-	room: []
+	rooms: []
 }
-
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
