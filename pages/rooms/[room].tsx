@@ -9,6 +9,7 @@ const Room = (props) => {
 		lastId: 0,
 		messages: []
 	})
+	const [myComments, setMyComments] = useState([])
 	const [socket, setSocket] = useState(() => io())
 
 	useEffect(() => {
@@ -36,6 +37,7 @@ const Room = (props) => {
 		}))
 	}
 	const onVoextSubmit = (text) => {
+		setMyComments([...myComments, makeMessage(text)])
 		socket.emit("message", makeMessage(text))
 	}
 
@@ -43,6 +45,9 @@ const Room = (props) => {
 		<div>
 			{debugInfo()}
 			{<VoextInput onSubmit={onVoextSubmit} />}
+			<p>自分の</p>
+			{<CommentList messages={myComments} />}
+			<p>部屋の</p>
 			{<CommentList messages={commentList.messages} />}
 		</div>
 	)
