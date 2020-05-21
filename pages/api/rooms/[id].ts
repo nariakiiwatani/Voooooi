@@ -32,8 +32,15 @@ const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	if (!(id in rooms)) {
 		return error({ status: 400, message: `room:${id} not exists` })(res)
 	}
+	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
+	console.log("params", params)
+	const data = params.length === 0 ? rooms[id] : (
+		params.reduce((acc, key) => ({ ...acc, [key]: rooms[id][key] }), {})
+	)
+	console.log("data", data)
+
 	res.statusCode = 200
-	res.json({ result: "ok", data: rooms[id] })
+	res.json({ result: "ok", data })
 }
 const updateRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	error({ status: 501, message: "update room is not implemented yet" })(res)

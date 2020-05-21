@@ -20,6 +20,19 @@ const Room = (props) => {
 		}
 	}, [])
 
+	useEffect(() => {
+		const asyncFunc = async () => {
+			const query = "params=teams"
+			const result = await fetch(`/api/rooms/${roomId}?${query}`)
+			if (result.status !== 200) {
+				console.log("チーム一覧の取得に失敗", await result.json())
+				return;
+			}
+			console.log("teams:", await result.json())
+		}
+		asyncFunc();
+	}, [])
+
 	const debugInfo = () => (
 		<div>
 			<div>Room:{roomId}</div>
