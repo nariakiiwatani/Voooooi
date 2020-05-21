@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@types/color": "^3.0.1",
+    "@types/color-convert": "^1.9.0",
+    "color-name": "^1.1.4",
     "immer": "^6.0.5",
     "next": "9.4.1",
     "react": "16.13.1",

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServerContext } from '../../../libs/Models'
+import { ServerContext, defaultTeams } from '../../../libs/Models'
 import { firstOf } from "../../../libs/Utils"
 
 type NextApiRequestWithContext = NextApiRequest & {
@@ -18,7 +18,11 @@ const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) =>
 	if (id in rooms) {
 		return error({ status: 400, message: `room:${id} already exists` })(res)
 	}
-	rooms[id] = { id }
+	rooms[id] = {
+		name: id,
+		teams: defaultTeams
+	}
+
 	res.statusCode = 201
 	res.json({ result: `room:${id} successfully created.` })
 }
