@@ -6,7 +6,7 @@ import { ServerContext, Room } from "../libs/Models"
 
 const context: ServerContext = {
 	io: null,
-	rooms: []
+	rooms: {}
 }
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })

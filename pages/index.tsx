@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Router from 'next/router'
 
 const Index = () => {
 
@@ -29,9 +30,24 @@ const Index = () => {
 		})
 		console.info("fetch result", await result.json())
 	}
-	const handleEnterSubmit = e => {
+	const handleEnterSubmit = async e => {
 		e.preventDefault()
-
+		const result = await fetch(`/api/rooms/${roomId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+			}
+		})
+		if (result.status === 200) {
+			Router.push({
+				pathname: `/rooms/${roomId}`,
+				query: { username, userteam }
+			})
+		}
+		else {
+			const response = await result.json()
+			console.info(response);
+		}
 	}
 	const createInput = ([label, type, name, value]) => (
 		<div>
