@@ -52,6 +52,7 @@ const Room = (props) => {
 		roomId, userName, teamName, text
 	})
 	const onReceiveMessage = message => {
+		console.info(message);
 	}
 	const onVoextSubmit = (text) => {
 		setMyComments([...myComments, makeMessage(text)])

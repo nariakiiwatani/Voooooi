@@ -34,7 +34,10 @@ app.prepare().then(() => {
 		})
 		client.on("message", (message) => {
 			console.log("received:", message)
-			io.to(message.roomId).emit("message", message)
+			io.to(message.roomId).emit("message", {
+				...message,
+				timestamp: new Date().getTime()
+			})
 		})
 		client.on("join", (roomId) => {
 			console.info("join to :", roomId)
