@@ -19,24 +19,18 @@ const Room = (props) => {
 
 	useEffect(() => {
 		const asyncFunc = async () => {
-			const query = "params=teams"
+			const query = "params=teams,messages"
 			const result = await fetch(`/api/rooms/${roomId}?${query}`)
 			if (result.status !== 200) {
 				console.log("チーム一覧の取得に失敗", await result.json())
 				return;
 			}
-			const { teams } = (await result.json()).data
-			let id = 0
-			const incrementId = (id) => {
-				id += 1
-				return id
-			}
-			setTeamComments(Object.keys(teams).map(name => ({
-				name: name,
-				messages: [
-					{ id: incrementId(id), text: "dummy" }
-				]
-			})))
+			const { teams, messages } = (await result.json()).data
+			const comments = Object.keys(teams).reduce((acc, name) => { acc[name] = []; return acc }, {})
+			messages.forEach(m => {
+				comments[m.teamName].push(m)
+			})
+			setTeamComments(Object.keys(comments).map(key => ({ name: key, messages: comments[key] })))
 		}
 		asyncFunc();
 	}, [])
