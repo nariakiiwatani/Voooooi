@@ -1,7 +1,6 @@
-import { Room, Team } from "./Models"
+import { Room, Team, Message } from "./Models"
 import Color from "color"
 import crypto from "crypto"
-import { stringify } from 'querystring'
 
 let prevId = ""
 
@@ -9,6 +8,10 @@ const newId = (() => seed => {
 	let id = ""
 	return (() => id = crypto.createHash('sha1').update(id + seed).digest('hex'))()
 })()
+
+export function newMessage(message: Message): [string, Message] {
+	return [newId(message.timestamp), message]
+}
 
 export function newTeam(name: string, color: Color): [string, Team] {
 	return [newId(name), { name, color }]
@@ -18,7 +21,7 @@ const defaultRoom = (name): Room => {
 	const ret: Room = {
 		name,
 		teams: new Map<string, Team>(),
-		messages: []
+		messages: new Map<string, Message>()
 	};
 	["red", "blue", "yellow", "white"].forEach(name => {
 		const [id, team] = newTeam(name, new Color(name))

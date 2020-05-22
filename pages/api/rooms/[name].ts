@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServerContext, defaultRoom } from '../../../libs/Models'
-import { firstOf, filterProp } from "../../../libs/Utils"
+import { ServerContext } from '../../../libs/Models'
+import { firstOf, firstOfMap, filterProp, mapToArray } from "../../../libs/Utils"
 import { newDefaultRoom } from "../../../libs/Factory"
 
 type NextApiRequestWithContext = NextApiRequest & {
@@ -15,26 +15,24 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 
 const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { rooms } = req.context
-	const name = firstOf(req.query.id)
-	if (filterProp(rooms, "name", name).length !== 0) {
+	const name = firstOf(req.query.name)
+	if (filterProp(rooms, "name", name).size !== 0) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const [newId, room] = newDefaultRoom(name)
-	console.log(newId, room)
-	rooms[newId] = room
+	const [id, room] = newDefaultRoom(name)
+	rooms[id] = room
 
 	res.statusCode = 201
-	res.json({ result: "ok", data: room })
+	res.json({ result: "ok", data: { id, ...room } })
 }
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { rooms } = req.context
-	const name = firstOf(req.query.id)
-	const found = filterProp(rooms, "name", name)
+	const name = firstOf(req.query.name)
+	const room = firstOf(mapToArray(filterProp(rooms, "name", name)))
 
-	if (found.length === 0) {
+	if (room === null) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}
-	const room = found[0]
 	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
 	const data = params.length === 0 ? room : (
 		params.reduce((acc, key) => ({ ...acc, [key]: room[key] }), {})

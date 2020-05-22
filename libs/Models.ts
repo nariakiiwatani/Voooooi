@@ -9,7 +9,7 @@ export interface ServerContext {
 export interface Room {
 	name: string,
 	teams: Map<string, Team>
-	messages: Message[]
+	messages: Map<string, Message>
 }
 
 export interface Team {
@@ -25,7 +25,7 @@ export interface Message {
 	timestamp: number // Unix Epoch Time
 	text: string,
 	roomId: string,
-	teamName: string
+	teamId: string
 	userName: string,
 }
 

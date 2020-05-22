@@ -3,9 +3,10 @@ import VoextInput from '../../components/VoextInput'
 import CommentList from '../../components/CommentList'
 import io from "socket.io-client"
 import { Message } from '../../libs/Models'
+import { objectToArray } from '../../libs/Utils'
 
 const Room = (props) => {
-	const { roomId, userName, teamName } = props
+	const { roomId, roomName, userName, teamName } = props
 	const [myComments, setMyComments] = useState([])
 	const [teamComments, setTeamComments] = useState(new Map<string, Message[]>())
 	const [socket, setSocket] = useState(() => io())
@@ -21,15 +22,20 @@ const Room = (props) => {
 	useEffect(() => {
 		const asyncFunc = async () => {
 			const query = "params=teams,messages"
-			const result = await fetch(`/api/rooms/${roomId}?${query}`)
-			if (result.status !== 200) {
-				console.log("チーム一覧の取得に失敗", await result.json())
+			const response = await fetch(`/api/rooms/${roomName}?${query}`)
+			if (response.status !== 200) {
+				console.log("チーム一覧の取得に失敗", await response.json())
 				return;
 			}
-			const { teams, messages } = (await result.json()).data
-			const comments: Map<string, Message[]> = Object.values(teams).reduce((acc, { name }) => { acc[name] = []; return acc }, new Map<string, Message[]>())
-			messages.forEach(m => {
-				comments[m.teamName].push(m)
+			const result = (await response.json()).data
+			console.log("result", result)
+			const { teams, messages } = result
+			const comments = objectToArray(teams).reduce((acc, { name }) => { acc[name] = []; return acc }, {})
+			objectToArray(messages).forEach(m => {
+				console.info(m)
+				if (Array.isArray(comments[m.teamName])) {
+					comments[m.teamName].push(m)
+				}
 			})
 			setTeamComments(comments)
 		}
@@ -38,15 +44,16 @@ const Room = (props) => {
 
 	const debugInfo = () => (
 		<div>
-			<div>Room:{roomId}</div>
+			<div>Room:{roomName}</div>
 			<div>username:{userName}</div>
 			<div>userteam:{teamName}</div>
 		</div>
 	)
 	const makeMessage = text => ({
-		roomId, userName, teamName, text
+		roomId, roomName, userName, teamName, text
 	})
 	const onReceiveMessage = message => {
+		console.log(message)
 		setTeamComments(prev => {
 			return ({
 				...prev,
@@ -78,9 +85,8 @@ const Room = (props) => {
 export const getServerSideProps = async ({ params, query }) => {
 	return {
 		props: {
-			roomId: params.room,
-			userName: query.userName,
-			teamName: query.teamName,
+			roomName: params.room,
+			...query
 		},
 	}
 }

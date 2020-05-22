@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServerContext, defaultRoom } from '../../../libs/Models'
-import { firstOf } from "../../../libs/Utils"
+import { ServerContext } from '../../../libs/Models'
 import { IncomingMessage, ServerResponse } from 'http'
-import { UrlWithParsedQuery, parse } from 'url'
+import { UrlWithParsedQuery } from 'url'
+import { newMessage } from '../../../libs/Factory'
 
 type NextApiRequestWithContext = NextApiRequest & {
 	context: ServerContext
@@ -18,12 +18,14 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 const createMessage = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { rooms } = req.context
 	const message = req.body
-	console.log(message)
 	const { roomId } = message
-	if (!(roomId in rooms)) {
-		return error({ status: 400, message: `room:${roomId} not exists` })(res)
+	const room = rooms[roomId]
+
+	if (room === undefined) {
+		return error({ status: 400, message: `roomId:${roomId} not exists` })(res)
 	}
-	rooms[roomId].messages.push({ ...message })
+	const [id, m] = newMessage(message)
+	room.messages[id] = m
 
 	res.statusCode = 201
 	res.json({ result: "ok", data: message })

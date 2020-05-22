@@ -32,11 +32,11 @@ export default function Modal(props) {
 					>
 						<p>チームを選んでください</p>
 						<ul>
-							{Object.entries(teams).map(([id, team]) => (
+							{teams.map((team) => (
 								<div
-									key={id}
+									key={team.id}
 									style={{ backgroundColor: makeColor(team.color).hex() }}
-									onClick={() => onDecide(id)}
+									onClick={() => onDecide(team)}
 								>{team.name}</div>
 							))}
 						</ul>

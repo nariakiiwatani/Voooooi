@@ -1,22 +1,21 @@
 import { useState } from "react"
 import Router from 'next/router'
 import TeamSelectionModal from "../components/TeamSelectionModal"
-import { Room } from "../libs/Models"
-import { stringify } from 'querystring';
+import { mapToArray, objectToArray } from '../libs/Utils';
+import { Room } from '../libs/Models';
 
 const Index = () => {
 
 	const [roomCreation, setRoomCreation] = useState(false)
 	const [formInput, setFormInput] = useState({
-		roomId: "",
+		roomName: "",
 		password: "",
 		userName: ""
 	})
-	const { roomId, password, userName } = formInput
+	const { roomName, password, userName } = formInput
 
 	const [teamSelectionVisible, setTeamSelectionVisible] = useState(false)
 	const [room, setRoom] = useState({})
-	const [team, setTeam] = useState({})
 
 	const handleChange = name => e => {
 		setFormInput({
@@ -27,7 +26,7 @@ const Index = () => {
 
 	const handleCreateSubmit = async e => {
 		e.preventDefault()
-		const result = await fetch(`/api/rooms/${roomId}`, {
+		const result = await fetch(`/api/rooms/${roomName}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
@@ -38,35 +37,33 @@ const Index = () => {
 	}
 	const handleEnterSubmit = async e => {
 		e.preventDefault()
-		const result = await fetch(`/api/rooms/${roomId}`, {
+		const result = await fetch(`/api/rooms/${roomName}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
 			}
 		})
 		if (result.status === 200) {
-			const response = await result.json()
-			setRoom(response.data)
+			const response = (await result.json()).data
+			setRoom(response)
 			setTeamSelectionVisible(true)
 		}
 		else {
 			const response = await result.json()
-			console.info(response);
+			console.info("response(error)", response);
 		}
 	}
 
 	const handleTeamSelect = (team) => {
 		setTeamSelectionVisible(false)
-		setTeam(team)
+		console.info(team)
 		Router.push({
-			pathname: `/rooms/${roomId}`,
-			query: { userName, teamName: team.name }
+			pathname: `/rooms/${roomName}`,
+			query: { roomId: room.id, roomName, userName, teamName: team.name }
 		})
-		console.info("decided")
 	}
 	const handleTeamSelectCancel = () => {
 		setTeamSelectionVisible(false)
-		console.info("cancel")
 	}
 
 	const createInput = ([label, type, name, value]) => (
@@ -76,14 +73,14 @@ const Index = () => {
 	)
 	const createForm = () => (
 		<form onSubmit={handleCreateSubmit}>
-			{createInput(["部屋ID", "text", "roomId", roomId])}
+			{createInput(["部屋ID", "text", "roomName", roomName])}
 			{createInput(["パスワード", "password", "password", password])}
 			<button onClick={handleCreateSubmit}>作成</button>
 		</form>
 	)
 	const enterForm = () => (
 		<form onSubmit={handleEnterSubmit}>
-			{createInput(["部屋ID", "text", "roomId", roomId])}
+			{createInput(["部屋ID", "text", "roomName", roomName])}
 			{createInput(["パスワード", "password", "password", password])}
 			{createInput(["名前", "text", "userName", userName])}
 			< button onClick={handleEnterSubmit}>入室</button>
@@ -102,7 +99,7 @@ const Index = () => {
 			{roomCreation ? createForm() : enterForm()}
 			{teamSelectionVisible ?
 				<TeamSelectionModal
-					teams={room.teams}
+					teams={objectToArray(room.teams)}
 					onDecide={(t) => { handleTeamSelect(t) }}
 					onCancel={() => { handleTeamSelectCancel() }}
 				/> : <div>Hi</div>}
