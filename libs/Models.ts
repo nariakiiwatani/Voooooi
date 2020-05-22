@@ -9,11 +9,31 @@ export interface ServerContext {
 export interface Room {
 	name: string,
 	teams: { [id: string]: Team }
+	messages: Message[]
+}
+export const defaultRoom = name => {
+	return {
+		name,
+		teams: defaultTeams,
+		messages: []
+	}
 }
 
 export interface Team {
 	name: string,
 	color: Color
+}
+
+export interface User {
+	name: string
+}
+
+export interface Message {
+	timestamp: number // Unix Epoch Time
+	text: string,
+	roomId: string,
+	teamName: string
+	userName: string,
 }
 
 export const defaultTeams: { [id: string]: Team } = {

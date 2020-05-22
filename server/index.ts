@@ -3,12 +3,18 @@ import next from 'next'
 import socketIO from 'socket.io'
 import { createServer } from 'http'
 import { ServerContext } from "../libs/Models"
+import fetch from "node-fetch"
 
 const context: ServerContext = {
 	io: null,
 	rooms: {}
 }
 const dev = process.env.NODE_ENV !== 'production'
+
+const port = parseInt(process.env.PORT || '3000', 10)
+const origin = dev ? "http://localhost" : ""
+const apiUrl = `${origin}:${port}/api`
+
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
@@ -17,12 +23,11 @@ const requestListener = (req: any, res: any) => {
 	// This tells it to parse the query portion of the URL.
 	const parsedUrl = parse(req.url, true)
 	req.context = context
+	req.handle = handle
 	handle(req, res, parsedUrl)
 }
 
 app.prepare().then(() => {
-	const port = parseInt(process.env.PORT || '3000', 10)
-
 	const server = createServer(requestListener)
 
 	context.io = socketIO(server)
@@ -33,11 +38,20 @@ app.prepare().then(() => {
 			console.log(client.id, 'disconnected')
 		})
 		client.on("message", (message) => {
-			console.log("received:", message)
-			io.to(message.roomId).emit("message", {
+			const m = {
 				...message,
 				timestamp: new Date().getTime()
+			}
+			io.to(message.roomId).emit("message", m)
+			fetch(`${apiUrl}/messages`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json; charset=utf-8",
+				},
+				body: JSON.stringify(m)
 			})
+				.then(result => result.json())
+				.then(response => console.log("posted", response))
 		})
 		client.on("join", (roomId) => {
 			console.info("join to :", roomId)
@@ -46,6 +60,6 @@ app.prepare().then(() => {
 	})
 
 	server.listen(port, () => {
-		console.log(`> Ready on http://localhost:${port}`)
+		console.log(`> Ready on ${origin}:${port}`)
 	})
 })

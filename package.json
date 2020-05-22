@@ -12,6 +12,7 @@
     "color-convert": "^1.9.1",
     "color-string": "^1.5.2",
     "next": "9.4.1",
+    "node-fetch": "^2.6.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "socket.io": "^2.3.0",
