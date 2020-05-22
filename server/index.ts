@@ -2,12 +2,12 @@ import { parse } from 'url'
 import next from 'next'
 import socketIO from 'socket.io'
 import { createServer } from 'http'
-import { ServerContext } from "../libs/Models"
+import { ServerContext, Room } from "../libs/Models"
 import fetch from "node-fetch"
 
 const context: ServerContext = {
 	io: null,
-	rooms: {}
+	rooms: new Map<string, Room>()
 }
 const dev = process.env.NODE_ENV !== 'production'
 
