@@ -6,7 +6,7 @@ import io from "socket.io-client"
 const Room = (props) => {
 	const { roomId, userName, teamName } = props
 	const [myComments, setMyComments] = useState([])
-	const [teamComments, setTeamComments] = useState([])
+	const [teamComments, setTeamComments] = useState({})
 	const [socket, setSocket] = useState(() => io())
 
 	useEffect(() => {
@@ -30,7 +30,7 @@ const Room = (props) => {
 			messages.forEach(m => {
 				comments[m.teamName].push(m)
 			})
-			setTeamComments(Object.keys(comments).map(key => ({ name: key, messages: comments[key] })))
+			setTeamComments(comments)
 		}
 		asyncFunc();
 	}, [])
@@ -59,10 +59,10 @@ const Room = (props) => {
 			{<VoextInput onSubmit={onVoextSubmit} />}
 			<p>自分の</p>
 			{<CommentList messages={myComments} />}
-			{teamComments.map(({ name, messages }) => (
+			{Object.keys(teamComments).map(name => (
 				<>
 					<div>{name}の</div>
-					<CommentList key={name} messages={messages} />
+					<CommentList key={name} messages={teamComments[name]} />
 				</>
 			))}
 		</div>
