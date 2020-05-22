@@ -46,7 +46,12 @@ const Room = (props) => {
 		roomId, userName, teamName, text
 	})
 	const onReceiveMessage = message => {
-		console.info(message);
+		setTeamComments(prev => {
+			return ({
+				...prev,
+				[message.teamName]: [...prev[message.teamName], message]
+			})
+		})
 	}
 	const onVoextSubmit = (text) => {
 		setMyComments([...myComments, makeMessage(text)])
