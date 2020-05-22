@@ -2,11 +2,12 @@ import { useState, useEffect } from "react"
 import VoextInput from '../../components/VoextInput'
 import CommentList from '../../components/CommentList'
 import io from "socket.io-client"
+import { Message } from '../../libs/Models'
 
 const Room = (props) => {
 	const { roomId, userName, teamName } = props
 	const [myComments, setMyComments] = useState([])
-	const [teamComments, setTeamComments] = useState({})
+	const [teamComments, setTeamComments] = useState(new Map<string, Message[]>())
 	const [socket, setSocket] = useState(() => io())
 
 	useEffect(() => {
@@ -26,7 +27,7 @@ const Room = (props) => {
 				return;
 			}
 			const { teams, messages } = (await result.json()).data
-			const comments = Object.keys(teams).reduce((acc, name) => { acc[name] = []; return acc }, {})
+			const comments: Map<string, Message[]> = Object.values(teams).reduce((acc, { name }) => { acc[name] = []; return acc }, new Map<string, Message[]>())
 			messages.forEach(m => {
 				comments[m.teamName].push(m)
 			})
@@ -64,11 +65,11 @@ const Room = (props) => {
 			{<VoextInput onSubmit={onVoextSubmit} />}
 			<p>自分の</p>
 			{<CommentList messages={myComments} />}
-			{Object.keys(teamComments).map(name => (
-				<>
-					<div>{name}の</div>
-					<CommentList key={name} messages={teamComments[name]} />
-				</>
+			{Object.entries(teamComments).map(([k, v]) => (
+				<div key={k}>
+					<div>{k}の</div>
+					<CommentList messages={v} />
+				</div>
 			))}
 		</div>
 	)

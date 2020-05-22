@@ -1,6 +1,5 @@
 const CommentList = (props) => {
 	const messages = props.messages.slice()
-	messages.sort((a, b) => a.id - b.id)
 
 	return (
 		<div>
