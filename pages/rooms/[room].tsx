@@ -71,12 +71,12 @@ const Room = (props) => {
 			<div className="self">
 				{debugInfo()}
 				{<VoextInput onSubmit={onVoextSubmit} />}
-				{<CommentList title="self" messages={myComments} />}
+				{<CommentList title="self" messages={myComments} color={teamName} />}
 			</div>
 			<div className="inRoom">
 				{Object.entries(teamComments).map(([k, v]) => (
 					<div className={k} key={k}>
-						<CommentList title={k} messages={v} />
+						<CommentList title={k} messages={v} color={k} />
 					</div>
 				))}
 			</div>

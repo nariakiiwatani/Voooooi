@@ -1,5 +1,5 @@
 const CommentList = (props) => {
-	const { title, messages } = props
+	const { title, messages, color } = props
 
 	return (
 		<div className="wrapper">
@@ -16,15 +16,18 @@ const CommentList = (props) => {
 				display: flex;
 				flex-direction: column;
 				height: calc(50vh - 20px);
+				overflow: hidden;
+				background-color: ${color};
+				border: black 1px solid;
+				border-radius: 12px;
 			}
 			.header {
 				background-color: gray;
 			}
 			.comments {
-				background-color: red;
 				flex: 1 1 100%;
 				overflow-y: scroll;
-				}
+			}
 			`}</style>
 		</div>
 	)
