@@ -2,8 +2,6 @@ import { Room, Team, Message } from "./Models"
 import Color from "color"
 import crypto from "crypto"
 
-let prevId = ""
-
 const newId = (() => seed => {
 	let id = ""
 	return (() => id = crypto.createHash('sha1').update(id + seed).digest('hex'))()

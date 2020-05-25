@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ServerContext } from '../../../libs/Models'
-import { firstOf, firstOfMap, filterProp, mapToArray } from "../../../libs/Utils"
+import { firstOf, filterProp, mapToArray } from "../../../libs/Utils"
 import { newDefaultRoom } from "../../../libs/Factory"
 
 type NextApiRequestWithContext = NextApiRequest & {

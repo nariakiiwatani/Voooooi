@@ -1,8 +1,7 @@
 import { useState } from "react"
 import Router from 'next/router'
 import TeamSelectionModal from "../components/TeamSelectionModal"
-import { mapToArray, objectToArray } from '../libs/Utils';
-import { Room } from '../libs/Models';
+import { objectToArray } from '../libs/Utils';
 
 const Index = () => {
 

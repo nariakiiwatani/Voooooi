@@ -10,12 +10,6 @@ export function firstOfObject(t: Object, keys: string[]): any {
 		{})
 }
 
-export function values(t: object, keys: string[]): object {
-	return keys.reduce(
-		(acc, key) => ({ ...acc, [key]: t[key] }),
-		{})
-}
-
 export function pairToMap<K, V>(pair: [K, V]): Map<K, V> {
 	return new Map<K, V>([pair])
 }
@@ -31,16 +25,6 @@ export function mapToArray<K, V>(t: Map<K, V>, keyOfKey: string = "id"): {}[] {
 }
 export function objectToArray(t: object, keyOfKey: string = "id"): {}[] {
 	return Object.entries(t).map(([k, v]) => ({ [keyOfKey]: k, ...v }))
-}
-export function filter<T>(dict: Map<string | number, T>, key: string | number): Map<string | number, T> {
-	return Object.entries(dict).reduce(
-		(acc, [k, v]) => {
-			if (k === key) {
-				acc.set(k, v)
-			}
-			return acc
-		}
-		, new Map<string | number, T>())
 }
 
 export function filterProp<T>(dict: Map<string | number, T>, key: string, value: any): Map<string | number, T> {
