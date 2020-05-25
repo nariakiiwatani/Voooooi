@@ -1,5 +1,8 @@
+import { useEffect, useState, useRef } from 'react';
+
 const CommentList = (props) => {
 	const { title, messages, color } = props
+	const commentsElement = useRef()
 
 	const bgcolor = (color => {
 		const alpha = 0.5;
@@ -11,14 +14,23 @@ const CommentList = (props) => {
 		}
 	})(color)
 
+	useEffect(() => {
+		const element = commentsElement.current;
+		const fromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+		if (fromBottom < 30) {
+			element.scrollTop = element.scrollHeight - element.clientHeight;
+		}
+		return () => {
+		}
+	}, [messages]);
+
 	return (
 		<div className="wrapper">
 			<div className="header">{title}</div>
-			<div className="comments">
+			<div className="comments" ref={commentsElement}>
 				{messages.map((m, i) => (
 					<div key={i}>{m.userName}:{m.text}</div>
 				))}
-				<div className="dummy"></div>
 			</div>
 			<style jsx>{`
 			.wrapper {
