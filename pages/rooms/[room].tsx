@@ -67,17 +67,34 @@ const Room = (props) => {
 	}
 
 	return (
-		<div>
-			{debugInfo()}
-			{<VoextInput onSubmit={onVoextSubmit} />}
-			<p>自分の</p>
-			{<CommentList messages={myComments} />}
-			{Object.entries(teamComments).map(([k, v]) => (
-				<div key={k}>
-					<div>{k}の</div>
-					<CommentList messages={v} />
-				</div>
-			))}
+		<div className="wrapper">
+			<div className="self">
+				{debugInfo()}
+				{<VoextInput onSubmit={onVoextSubmit} />}
+				{<CommentList title="self" messages={myComments} />}
+			</div>
+			<div className="inRoom">
+				{Object.entries(teamComments).map(([k, v]) => (
+					<div className={k} key={k}>
+						<CommentList title={k} messages={v} />
+					</div>
+				))}
+			</div>
+			<style jsx>{`
+			.wrapper {
+				display: grid;
+				grid-template-columns: 320px 1fr;
+				column-gap: 10px;
+				row-gap: 10px;
+			}
+			.inRoom {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				grid-template-rows: 1fr 1fr;
+				column-gap: 10px;
+				row-gap: 10px;
+			}
+			`}</style>
 		</div>
 	)
 }
