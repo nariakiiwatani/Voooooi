@@ -1,7 +1,6 @@
-import { User, Room, Team, Message, IdType } from "./Models"
+import { User, Room, Team, Message, IdType, ServerContext } from "./Models"
 import Color from "color"
 import crypto from "crypto"
-import { context } from "../server/index"
 
 const newId = (() => seed => {
 	let id = ""
@@ -12,12 +11,12 @@ export function newUser(user: {
 	name: string,
 	room: IdType,
 	team: IdType,
-}): User {
+}, context?: ServerContext): User {
 	const ret: User = {
 		id: newId(user.name),
 		...user
 	}
-	context.users.push(ret)
+	if (context) context.users.push(ret)
 	return ret
 }
 
@@ -27,13 +26,13 @@ export function newMessage(message: {
 	room: IdType,
 	team: IdType,
 	user: IdType
-}): Message {
+}, context?: ServerContext): Message {
 	const ret: Message = {
 		id: newId(message.timestamp),
 		timestamp: message.timestamp || new Date().getTime(),
 		...message
 	}
-	context.messages.push(ret)
+	if (context) context.messages.push(ret)
 	return ret
 }
 
@@ -41,29 +40,32 @@ export function newTeam(team: {
 	name: string,
 	color: Color,
 	room: IdType,
-}): Team {
+}, context?: ServerContext): Team {
 	const ret: Team = {
 		id: newId(team.name),
 		...team
 	}
-	context.teams.push(ret)
+	if (context) context.teams.push(ret)
 	return ret
 }
 
 export function newRoom(room: {
 	name: string,
 	pwd: string,
-}): Room {
+}, context?: ServerContext): Room {
 	const ret: Room = {
 		id: newId(room.name),
 		...room
 	}
-	context.rooms.push(ret)
+	if (context) context.rooms.push(ret)
 	return ret
 }
 
-const makeDefaultRoom = (params: { name: string, pwd: string }): Room => {
-	const room = newRoom(params);
+const makeDefaultRoom = (params: {
+	name: string,
+	pwd: string
+}, context?: ServerContext): Room => {
+	const room = newRoom(params, context);
 	[{
 		name: "red",
 		color: new Color("rgb(255,0,0)"),
@@ -81,11 +83,11 @@ const makeDefaultRoom = (params: { name: string, pwd: string }): Room => {
 		newTeam({
 			room: room.id,
 			...team
-		})
+		}, context)
 	}))
 	return room
 }
-export function newDefaultRoom(name: string, pwd: string): Room {
-	return makeDefaultRoom({ name, pwd })
+export function newDefaultRoom(name: string, pwd: string, context?: ServerContext): Room {
+	return makeDefaultRoom({ name, pwd }, context)
 }
 

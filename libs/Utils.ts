@@ -41,9 +41,9 @@ export function filterProp<T>(dict: Map<string | number, T>, key: string, value:
 }
 
 export function findByProps<T>(target: T[], props: {}): T[] {
-	return target.filter(t => {
+	return target.filter(t =>
 		Object.entries(props).every(([k, v]) => t[k] === v)
-	})
+	)
 }
 export function findOneByProps<T>(target: T[], props: {}): T {
 	const found = findByProps(target, props)

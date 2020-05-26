@@ -6,7 +6,7 @@ import { ServerContext } from "../libs/Models"
 import fetch from "node-fetch"
 
 
-export const context: ServerContext = {
+const context: ServerContext = {
 	io: null,
 	rooms: [],
 	teams: [],

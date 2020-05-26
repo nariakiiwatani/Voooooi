@@ -14,24 +14,23 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 }
 
 const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
+	const { context } = req
 	const name = firstOf(req.query.name)
 	const { pwd } = firstOf(req.body)
-	const found = findOneByProps(req.context.rooms, name)
+	const found = findOneByProps(context.rooms, { name })
 	if (found) {
-		console.info("create error")
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	console.info("create success")
-	const room = newDefaultRoom(name, pwd)
-	console.info("room", room)
+	const room = newDefaultRoom(name, pwd, context)
 
 	res.statusCode = 201
 	res.json({ result: "ok", data: room })
 }
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
+	const { context } = req
 	const name = firstOf(req.query.name)
 	const pwd = firstOf(req.query.pwd)
-	const room = findOneByProps(req.context.rooms, name)
+	const room = findOneByProps(context.rooms, { name })
 	if (!room) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}

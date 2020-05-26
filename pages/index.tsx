@@ -10,22 +10,22 @@ const Index = () => {
 	const handleCreate = async ({ roomName, password }) => {
 		const pwd = getHashString(password)
 		console.info("pwd", pwd)
-		// const result = await fetch(`/api/rooms/${roomName}`, {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"Content-Type": "application/json; charset=utf-8",
-		// 	},
-		// 	body: JSON.stringify({ pwd })
-		// })
-		// setError("")
-		// if (result.status === 201) {
-		// 	const response = (await result.json()).data
-		// }
-		// else {
-		// 	const response = await result.json()
-		// 	console.info("response(error)", response);
-		// 	setError(response.error)
-		// }
+		const result = await fetch(`/api/rooms/${roomName}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+			},
+			body: JSON.stringify({ pwd })
+		})
+		setError("")
+		if (result.status === 201) {
+			const response = (await result.json()).data
+		}
+		else {
+			const response = await result.json()
+			console.info("response(error)", response);
+			setError(response.error)
+		}
 	}
 	const handleEnter = async ({ roomName, password }) => {
 		const pwd = getHashString(password)

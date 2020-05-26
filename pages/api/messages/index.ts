@@ -16,7 +16,8 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 }
 
 const createMessage = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const message = newMessage(req.body)
+	const { context } = req
+	const message = newMessage(req.body, context)
 
 	res.statusCode = 201
 	res.json({ result: "ok", data: message })
