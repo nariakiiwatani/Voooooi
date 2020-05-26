@@ -1,8 +1,6 @@
 import { useState } from "react"
 import Router from 'next/router'
-import TeamSelectionModal from "../components/TeamSelectionModal"
-import { objectToArray, getHashString } from '../libs/Utils';
-import EnterRoom from '../components/EnterRoom';
+import { getHashString } from '../libs/Utils';
 import RoomForm from '../components/RoomForm';
 
 const Index = () => {
@@ -10,41 +8,45 @@ const Index = () => {
 	const [error, setError] = useState("")
 
 	const handleCreate = async ({ roomName, password }) => {
-		const result = await fetch(`/api/rooms/${roomName}`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			body: JSON.stringify({ password })
-		})
-		setError("")
-		if (result.status === 200) {
-			const response = (await result.json()).data
-		}
-		else {
-			const response = await result.json()
-			console.info("response(error)", response);
-			setError(response.error)
-		}
+		const pwd = getHashString(password)
+		console.info("pwd", pwd)
+		// const result = await fetch(`/api/rooms/${roomName}`, {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json; charset=utf-8",
+		// 	},
+		// 	body: JSON.stringify({ pwd })
+		// })
+		// setError("")
+		// if (result.status === 201) {
+		// 	const response = (await result.json()).data
+		// }
+		// else {
+		// 	const response = await result.json()
+		// 	console.info("response(error)", response);
+		// 	setError(response.error)
+		// }
 	}
 	const handleEnter = async ({ roomName, password }) => {
-		const result = await fetch(`/api/rooms/${roomName}`, {
+		const pwd = getHashString(password)
+		const response = await fetch(`/api/rooms/${roomName}?pwd=${pwd}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
 			}
 		})
 		setError("")
-		if (result.status === 200) {
-			const response = (await result.json()).data
+		if (response.status === 200) {
+			const result = (await response.json()).data
+			console.info(result)
 			Router.push(`/rooms/${roomName}`, {
-				query: { pwd: getHashString(password) }
+				query: { pwd }
 			})
 		}
 		else {
-			const response = await result.json()
-			console.info("response(error)", response);
-			setError(response.error)
+			const result = await response.json()
+			console.info("response(error)", result);
+			setError(result.error)
 		}
 	}
 	return (

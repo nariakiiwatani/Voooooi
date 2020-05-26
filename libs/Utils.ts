@@ -50,6 +50,6 @@ export function findOneByProps<T>(target: T[], props: {}): T {
 	return found.length > 0 ? found[0] : null
 }
 
-export function getHashString<T extends ArrayBuffer>(data: string, algorithm: string = "SHA-1"): string {
+export function getHashString<T extends ArrayBuffer>(data: string, algorithm: string = "sha1"): string {
 	return crypto.createHash(algorithm).update(data).digest("hex");
 }

@@ -52,6 +52,7 @@ export function newTeam(team: {
 
 export function newRoom(room: {
 	name: string,
+	pwd: string,
 }): Room {
 	const ret: Room = {
 		id: newId(room.name),
@@ -61,8 +62,8 @@ export function newRoom(room: {
 	return ret
 }
 
-const makeDefaultRoom = (name): Room => {
-	const room = newRoom(name);
+const makeDefaultRoom = (params: { name: string, pwd: string }): Room => {
+	const room = newRoom(params);
 	[{
 		name: "red",
 		color: new Color("rgb(255,0,0)"),
@@ -84,7 +85,7 @@ const makeDefaultRoom = (name): Room => {
 	}))
 	return room
 }
-export function newDefaultRoom(name: string): Room {
-	return makeDefaultRoom(name)
+export function newDefaultRoom(name: string, pwd: string): Room {
+	return makeDefaultRoom({ name, pwd })
 }
 

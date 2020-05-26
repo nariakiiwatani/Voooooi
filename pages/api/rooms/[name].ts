@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ServerContext } from "../../../libs/Models"
-import { firstOf, filterProp, mapToArray, firstOfMap, findByProps, findOneByProps } from "../../../libs/Utils"
+import { firstOf, findByProps, findOneByProps } from "../../../libs/Utils"
 import { newDefaultRoom } from "../../../libs/Factory"
 
 
-export type NextApiRequestWithContext = NextApiRequest & {
+type NextApiRequestWithContext = NextApiRequest & {
 	context: ServerContext
 }
 
@@ -15,21 +15,28 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 
 const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const name = firstOf(req.query.name)
+	const { pwd } = firstOf(req.body)
 	const found = findOneByProps(req.context.rooms, name)
 	if (found) {
+		console.info("create error")
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const room = newDefaultRoom(name)
+	console.info("create success")
+	const room = newDefaultRoom(name, pwd)
+	console.info("room", room)
 
 	res.statusCode = 201
 	res.json({ result: "ok", data: room })
 }
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const name = firstOf(req.query.name)
+	const pwd = firstOf(req.query.pwd)
 	const room = findOneByProps(req.context.rooms, name)
-
 	if (!room) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
+	}
+	if (room.pwd !== pwd) {
+		return error({ status: 400, message: `room:${name} invalid password` })(res)
 	}
 	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
 	params.forEach(p => {

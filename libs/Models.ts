@@ -14,6 +14,7 @@ export interface ServerContext {
 export interface Room {
 	id: IdType,
 	name: string,
+	pwd: string,
 }
 
 export interface Team {

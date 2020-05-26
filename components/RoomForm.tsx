@@ -1,6 +1,4 @@
 import { useState } from "react"
-import Router from "next/router"
-import { getHashString } from '../libs/Utils'
 
 const RoomForm = props => {
 
@@ -22,13 +20,13 @@ const RoomForm = props => {
 		</div>
 	)
 
-	const handleEnterSubmit = async e => {
+	const handleEnterSubmit = e => {
 		e.preventDefault()
 		props.onEnter({
 			roomName, password
 		})
 	}
-	const handleCreateSubmit = async e => {
+	const handleCreateSubmit = e => {
 		e.preventDefault()
 		props.onCreate({
 			roomName, password
@@ -37,7 +35,7 @@ const RoomForm = props => {
 
 	return (
 		<>
-			<form>
+			<form onSubmit={() => { }}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
 				{createInput(["パスワード", "password", "password", password])}
 				< button onClick={handleEnterSubmit}>部屋に入る</button>

@@ -15,7 +15,7 @@ const CommentList = (props) => {
 	})(color)
 
 	useEffect(() => {
-		const element = commentsElement.current;
+		const element: HTMLElement = commentsElement.current;
 		const fromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
 		if (fromBottom < 30) {
 			element.scrollTop = element.scrollHeight - element.clientHeight;
