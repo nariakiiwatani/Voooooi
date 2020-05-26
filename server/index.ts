@@ -2,13 +2,18 @@ import { parse } from 'url'
 import next from 'next'
 import socketIO from 'socket.io'
 import { createServer } from 'http'
-import { ServerContext, Room } from "../libs/Models"
+import { Room, Team, User, Message, IdType, ServerContext } from "../libs/Models"
 import fetch from "node-fetch"
 
-const context: ServerContext = {
+
+export const context: ServerContext = {
 	io: null,
-	rooms: new Map<string, Room>()
+	rooms: [],
+	teams: [],
+	users: [],
+	messages: [],
 }
+
 const dev = process.env.NODE_ENV !== 'production'
 
 const port = parseInt(process.env.PORT || '3000', 10)
@@ -23,7 +28,6 @@ const requestListener = (req: any, res: any) => {
 	// This tells it to parse the query portion of the URL.
 	const parsedUrl = parse(req.url, true)
 	req.context = context
-	req.handle = handle
 	handle(req, res, parsedUrl)
 }
 

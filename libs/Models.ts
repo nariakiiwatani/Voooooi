@@ -1,32 +1,42 @@
-import socketIO from 'socket.io'
+import socketIO from "socket.io"
 import Color from "color"
+
+export type IdType = string;
 
 export interface ServerContext {
 	io: socketIO.Server,
-	rooms: Map<string, Room>
+	rooms: Room[],
+	teams: Team[],
+	users: User[],
+	messages: Message[],
 }
 
 export interface Room {
+	id: IdType,
 	name: string,
-	teams: Map<string, Team>
-	messages: Map<string, Message>
 }
 
 export interface Team {
+	id: IdType,
 	name: string,
-	color: Color
+	color: Color,
+	room: IdType,
 }
 
 export interface User {
-	name: string
+	id: IdType,
+	name: string,
+	room: IdType,
+	team: IdType,
 }
 
 export interface Message {
-	timestamp: number // Unix Epoch Time
+	id: IdType,
 	text: string,
-	roomId: string,
-	teamId: string
-	userName: string,
+	timestamp: number // Unix Epoch Time
+	room: IdType,
+	team: IdType,
+	user: IdType,
 }
 
 

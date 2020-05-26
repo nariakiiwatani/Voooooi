@@ -16,16 +16,7 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 }
 
 const createMessage = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const { rooms } = req.context
-	const message = req.body
-	const { roomId } = message
-	const room = rooms[roomId]
-
-	if (room === undefined) {
-		return error({ status: 400, message: `roomId:${roomId} not exists` })(res)
-	}
-	const [id, m] = newMessage(message)
-	room.messages[id] = m
+	const message = newMessage(req.body)
 
 	res.statusCode = 201
 	res.json({ result: "ok", data: message })

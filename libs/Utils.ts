@@ -1,3 +1,5 @@
+import crypto from "crypto"
+
 export function firstOf<T>(t: T | T[]): T {
 	return Array.isArray(t) ? t[0] : t
 }
@@ -36,4 +38,18 @@ export function filterProp<T>(dict: Map<string | number, T>, key: string, value:
 			return acc
 		}
 		, new Map<string | number, T>())
+}
+
+export function findByProps<T>(target: T[], props: {}): T[] {
+	return target.filter(t => {
+		Object.entries(props).every(([k, v]) => t[k] === v)
+	})
+}
+export function findOneByProps<T>(target: T[], props: {}): T {
+	const found = findByProps(target, props)
+	return found.length > 0 ? found[0] : null
+}
+
+export function getHashString<T extends ArrayBuffer>(data: string, algorithm: string = "SHA-1"): string {
+	return crypto.createHash(algorithm).update(data).digest("hex");
 }

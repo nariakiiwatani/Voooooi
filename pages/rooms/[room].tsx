@@ -6,7 +6,7 @@ import { Message } from '../../libs/Models'
 import { objectToArray } from '../../libs/Utils'
 
 const Room = (props) => {
-	const { roomId, roomName, userName, teamName } = props
+	const { roomName, pwd } = props
 	const [myComments, setMyComments] = useState([])
 	const [teamComments, setTeamComments] = useState(new Map<string, Message[]>())
 	const [socket, setSocket] = useState(() => io())

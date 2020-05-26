@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServerContext } from '../../../libs/Models'
-import { firstOf, filterProp, mapToArray } from "../../../libs/Utils"
+import { ServerContext } from "../../../libs/Models"
+import { firstOf, filterProp, mapToArray, firstOfMap, findByProps, findOneByProps } from "../../../libs/Utils"
 import { newDefaultRoom } from "../../../libs/Factory"
 
-type NextApiRequestWithContext = NextApiRequest & {
+
+export type NextApiRequestWithContext = NextApiRequest & {
 	context: ServerContext
 }
-
 
 const error = ({ status, message }) => (res: NextApiResponse) => {
 	res.statusCode = status
@@ -14,32 +14,30 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 }
 
 const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const { rooms } = req.context
 	const name = firstOf(req.query.name)
-	if (filterProp(rooms, "name", name).size !== 0) {
+	const found = findOneByProps(req.context.rooms, name)
+	if (found) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const [id, room] = newDefaultRoom(name)
-	rooms[id] = room
+	const room = newDefaultRoom(name)
 
 	res.statusCode = 201
-	res.json({ result: "ok", data: { id, ...room } })
+	res.json({ result: "ok", data: room })
 }
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const { rooms } = req.context
 	const name = firstOf(req.query.name)
-	const room = firstOf(mapToArray(filterProp(rooms, "name", name)))
+	const room = findOneByProps(req.context.rooms, name)
 
-	if (room === null) {
+	if (!room) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}
 	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
-	const data = params.length === 0 ? room : (
-		params.reduce((acc, key) => ({ ...acc, [key]: room[key] }), {})
-	)
+	params.forEach(p => {
+		room[p] = findByProps(req.context[p], { room: room.id })
+	})
 
 	res.statusCode = 200
-	res.json({ result: "ok", data })
+	res.json({ result: "ok", data: room })
 }
 const updateRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	error({ status: 501, message: "update room is not implemented yet" })(res)
