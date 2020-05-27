@@ -55,7 +55,7 @@ const ChatRoom = props => {
 		})
 	}
 	const onVoextSubmit = (text) => {
-		setMyComments([...myComments, makeMessage(text)])
+		setMyComments(prev => ([...prev, makeMessage(text)]))
 		socket.emit("message", makeMessage(text))
 	}
 
