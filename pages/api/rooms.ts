@@ -14,7 +14,7 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 
 const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { context } = req
-	const { name, pwd } = firstOf(req.body)
+	const { name, pwd } = req.body
 	const found = findOneByProps(context.rooms, { name })
 	if (found) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)

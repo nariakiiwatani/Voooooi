@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ServerContext } from "../../../libs/Models"
 import { firstOf, findByProps, findOneByProps } from "../../../libs/Utils"
-import { newDefaultRoom, newUser } from "../../../libs/Factory"
 
 
 type NextApiRequestWithContext = NextApiRequest & {
@@ -14,17 +13,13 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 }
 
 const createUser = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const { context } = req
-	const name = firstOf(req.query.name)
-	const user = newUser({ name }, context)
-
-	res.statusCode = 201
-	res.json({ result: "ok", data: user })
+	return error({ status: 400, message: "you cannot use /api/users/[:id] to create a user. use /api/users instead." })
 }
 const readUser = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { context } = req
 	const id = firstOf(req.query.id)
 	const user = findOneByProps(context.users, { id })
+	console.log(context.users)
 	if (!user) {
 		return error({ status: 400, message: `userId:${id} not exists` })(res)
 	}

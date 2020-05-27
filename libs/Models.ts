@@ -27,6 +27,8 @@ export interface Team {
 export interface User {
 	id: IdType,
 	name: string,
+	room: IdType,
+	team: IdType,
 }
 
 export interface Message {
