@@ -1,18 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
+import Color from 'color';
+import { arrayToObject } from '../libs/Utils';
 
 const CommentList = (props) => {
-	const { title, messages, color } = props
+	const { title, messages, team, users, local = false } = props
 	const commentsElement = useRef()
-
-	const bgcolor = (color => {
-		const alpha = 0.5;
-		switch (color) {
-			case "red": return `rgba(255,0,0,${alpha})`;
-			case "blue": return `rgba(0,0,255,${alpha})`;
-			case "yellow": return `rgba(255,255,0,${alpha})`;
-			case "white": return `rgba(128,128,128,${alpha})`;
-		}
-	})(color)
+	const [userMap, setUserMap] = useState({})
+	const [bgColor, setBgColor] = useState("")
 
 	useEffect(() => {
 		const element: HTMLElement = commentsElement.current;
@@ -24,12 +18,26 @@ const CommentList = (props) => {
 		}
 	}, [messages]);
 
+	useEffect(() => {
+		setUserMap(arrayToObject(users, "id"))
+	}, [users])
+
+	useEffect(() => {
+		setBgColor(new Color(team.color.color).alpha(0.5).toString())
+	}, [team])
+
+	const printComment = (message, local) => (
+		local
+			? (message.text)
+			: (`${userMap[message.user].name} : ${message.text}`)
+	)
+
 	return (
 		<div className="wrapper">
 			<div className="header">{title}</div>
 			<div className="comments" ref={commentsElement}>
 				{messages.map((m, i) => (
-					<div key={i}>{m.userName}:{m.text}</div>
+					<div key={i} > {printComment(m, local)}</div>
 				))}
 			</div>
 			<style jsx>{`
@@ -39,7 +47,7 @@ const CommentList = (props) => {
 				flex-direction: column;
 				height: calc(50vh - 20px);
 				overflow: hidden;
-				background-color: ${bgcolor};
+				background-color: ${bgColor};
 				border: black 1px solid;
 				border-radius: 12px;
 			}
@@ -51,7 +59,7 @@ const CommentList = (props) => {
 				overflow-y: scroll;
 			}
 			`}</style>
-		</div>
+		</div >
 	)
 }
 

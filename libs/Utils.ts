@@ -28,6 +28,13 @@ export function mapToArray<K, V>(t: Map<K, V>, keyOfKey: string = "id"): {}[] {
 export function objectToArray(t: object, keyOfKey: string = "id"): {}[] {
 	return Object.entries(t).map(([k, v]) => ({ [keyOfKey]: k, ...v }))
 }
+export function arrayToObject(t: [], key: string = "id"): {} {
+	const ret = {}
+	t.forEach(t => {
+		ret[t[key]] = t
+	})
+	return ret
+}
 
 export function filterProp<T>(dict: Map<string | number, T>, key: string, value: any): Map<string | number, T> {
 	return Object.entries(dict).reduce(

@@ -67,16 +67,16 @@ const makeDefaultRoom = (params: {
 }, context?: ServerContext): Room => {
 	const room = newRoom(params, context);
 	[{
-		name: "red",
+		name: "赤チーム",
 		color: new Color("rgb(255,0,0)"),
 	}, {
-		name: "blue",
+		name: "青チーム",
 		color: new Color("rgb(0,0,255)"),
 	}, {
-		name: "yellow",
+		name: "黄チーム",
 		color: new Color("rgb(255,255,0)"),
 	}, {
-		name: "white",
+		name: "白チーム",
 		color: new Color("rgb(128,128,128)"),
 	},
 	].forEach((team => {

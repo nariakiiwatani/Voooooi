@@ -74,14 +74,14 @@ const ChatRoom = props => {
 			<div className="self">
 				{debugInfo()}
 				{<VoextInput onSubmit={onVoextSubmit} />}
-				{<CommentList title="self" messages={myComments} color="red" />}
+				{<CommentList title="自分のコメント" messages={myComments} team={user.team} users={users} local={true} />}
 			</div>
 			<div className="inRoom">
 				{teams.map(t => {
 					const c = teamComments[t.id];
 					return (
 						<div key={t.id} >
-							<CommentList title={t.name} messages={c} />
+							<CommentList title={`${t.name}のコメント`} messages={c} team={t} users={users} />
 						</div>
 					)
 				})}
