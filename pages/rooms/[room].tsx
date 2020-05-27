@@ -15,7 +15,7 @@ const RoomPage = (props) => {
 	// check room exists and password valid
 	useEffect(() => {
 		const asyncFunc = async () => {
-			const response = await fetch(`/api/rooms/${roomName}?pwd=${pwd}`)
+			const response = await fetch(`/api/rooms?name=${roomName}&pwd=${pwd}`)
 			if (response.status === 200) {
 				const result = await response.json()
 				user.setRoom(result.data)

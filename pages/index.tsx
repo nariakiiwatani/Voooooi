@@ -10,12 +10,12 @@ const Index = () => {
 
 	const handleCreate = async ({ roomName, password }) => {
 		const pwd = getHashString(password)
-		const result = await fetch(`/api/rooms/${roomName}`, {
+		const result = await fetch(`/api/rooms`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
 			},
-			body: JSON.stringify({ pwd })
+			body: JSON.stringify({ name: roomName, pwd })
 		})
 		setError("")
 		if (result.status === 201) {
@@ -29,7 +29,7 @@ const Index = () => {
 	}
 	const handleEnter = async ({ roomName, password }) => {
 		const pwd = getHashString(password)
-		const response = await fetch(`/api/rooms/${roomName}?pwd=${pwd}`, {
+		const response = await fetch(`/api/rooms?name=${roomName}&pwd=${pwd}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
