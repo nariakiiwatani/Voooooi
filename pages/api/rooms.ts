@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ServerContext } from '../../libs/Models'
-import { firstOf, findOneByProps } from '../../libs/Utils'
+import { firstOf, findOneByProps, findByProps } from '../../libs/Utils'
 import { newDefaultRoom } from '../../libs/Factory'
 
 type NextApiRequestWithContext = NextApiRequest & {
@@ -19,10 +19,11 @@ const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) =>
 	if (found) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const room = newDefaultRoom(name, pwd, context)
+	const data = { ...newDefaultRoom(name, pwd, context) }
+	delete data.pwd
 
 	res.statusCode = 201
-	res.json({ result: "ok", data: room })
+	res.json({ result: "ok", data })
 }
 
 const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
@@ -32,10 +33,16 @@ const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 		return error({ status: 400, message: `please contain 'name' and 'pwd' parameter in query.` })(res)
 	}
 	const { context } = req
-	const data = findOneByProps(context.rooms, { name })
+	const data = { ...findOneByProps(context.rooms, { name }) }
 	if (!data) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}
+	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
+	params.forEach(p => {
+		data[p] = findByProps(req.context[p], { room: data.id })
+	})
+	delete data.pwd
+
 	res.statusCode = 200
 	res.json({ result: true, data })
 }

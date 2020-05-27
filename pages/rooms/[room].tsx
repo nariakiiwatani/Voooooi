@@ -3,11 +3,14 @@ import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
 import EnterUser from '../../components/EnterUser'
 import ChatRoom from '../../components/ChatRoom'
+import { stringify } from 'querystring'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props
 	const [userValid, setUserValid] = useState(false)
+	const [users, setUsers] = useState([])
 	const [teams, setTeams] = useState([])
+	const [messages, setMessages] = useState([])
 	const [error, setError] = useState("")
 
 	const user = useContext(UserContext)
@@ -64,6 +67,7 @@ const RoomPage = (props) => {
 				const result = await response.json()
 				user.setUser(result.data)
 				user.setTeam(team)
+				await getRoomInfo({ users: true, teams: true, messages: true })
 				setError("")
 			}
 			else {
@@ -71,14 +75,36 @@ const RoomPage = (props) => {
 			}
 		}
 		asyncFunc()
-
+	}
+	const getRoomInfo = async (flags: {
+		teams: boolean,
+		users: boolean,
+		messages: boolean,
+	} = { teams: false, users: false, messages: false }) => {
+		const params = Object.entries(flags).filter(([k, v]) => v).map(([k, v]) => k)
+		console.info("query", `/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
+		const response = await fetch(`/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
+		if (response.status === 200) {
+			const result = await response.json()
+			const setters = {
+				teams: setTeams,
+				users: setUsers,
+				messages: setMessages
+			}
+			params.forEach(p => {
+				setters[p](result.data[p])
+			})
+		}
+		else {
+			console.log("getRoomInfo fail", await response.json())
+		}
 	}
 
 	return (
 		<>
 			{!userValid
 				? <EnterUser teams={teams} onSubmit={handleSubmitUser} />
-				: <ChatRoom teams={teams} />}
+				: <ChatRoom teams={teams} users={users} messages={messages} />}
 			<span className="error">{error}</span>
 		</>
 	)
