@@ -36,7 +36,7 @@ const Index = () => {
 			}
 		})
 		setError("")
-		if (response.status === 200) {
+		if (response.ok) {
 			const result = (await response.json()).data
 			Router.push({
 				pathname: `/rooms/${roomName}`,

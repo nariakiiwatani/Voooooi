@@ -19,7 +19,7 @@ const RoomPage = (props) => {
 	useEffect(() => {
 		const asyncFunc = async () => {
 			const response = await fetch(`/api/rooms?name=${roomName}&pwd=${pwd}`)
-			if (response.status === 200) {
+			if (response.ok) {
 				const result = await response.json()
 				user.setRoom(result.data)
 				setError("")
@@ -36,7 +36,7 @@ const RoomPage = (props) => {
 		if (user.room.id) {
 			const asyncFunc = async () => {
 				const response = await fetch(`/api/teams?room=${user.room.id}&pwd=${pwd}`)
-				if (response.status === 200) {
+				if (response.ok) {
 					const result = await response.json()
 					setTeams(result.data)
 					setError("")
@@ -84,7 +84,7 @@ const RoomPage = (props) => {
 		const params = Object.entries(flags).filter(([k, v]) => v).map(([k, v]) => k)
 		console.info("query", `/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
 		const response = await fetch(`/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
-		if (response.status === 200) {
+		if (response.ok) {
 			const result = await response.json()
 			const setters = {
 				teams: setTeams,
