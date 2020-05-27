@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ServerContext } from '../../libs/Models'
 import { findOneByProps, findByProps } from '../../libs/Utils'
+import { newMessage } from '../../libs/Factory'
 
 type NextApiRequestWithContext = NextApiRequest & {
 	context: ServerContext
@@ -10,7 +11,15 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 	res.json({ error: message })
 }
 
-const readTeams = (req: NextApiRequestWithContext, res: NextApiResponse) => {
+const createMessage = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
+	const { context } = req
+	const message = newMessage(req.body, context)
+
+	res.statusCode = 201
+	res.json({ result: "ok", data: message })
+}
+
+const readMessages = (req: NextApiRequestWithContext, res: NextApiResponse) => {
 	const { context } = req
 	const { room, pwd } = req.query
 	const found = findOneByProps(context.rooms, { id: room, pwd })
@@ -18,16 +27,19 @@ const readTeams = (req: NextApiRequestWithContext, res: NextApiResponse) => {
 		error({ status: 400, message: "room not found" })(res)
 		return
 	}
-	const data = findByProps(context.teams, { room })
+	const data = findByProps(context.messages, { room })
 	res.statusCode = 200
 	res.json({ result: true, data })
 }
 
-const TeamsAPI = (req: NextApiRequestWithContext, res: NextApiResponse) => {
+const MessagesAPI = (req: NextApiRequestWithContext, res: NextApiResponse) => {
 	switch (req.method) {
 		case "GET":
-			readTeams(req, res)
+			readMessages(req, res)
+			break;
+		case "POST":
+			createMessage(req)(res)
 			break;
 	}
 }
-export default TeamsAPI
+export default MessagesAPI

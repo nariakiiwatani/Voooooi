@@ -30,6 +30,20 @@ const ChatRoom = props => {
 	}, [user.room.id])
 	// get messages already posted
 	useEffect(() => {
+		const asyncFunc = async () => {
+			const response = await fetch(`/api/messages?room=${user.room.id}&pwd=${user.room.pwd}`)
+			if (response.status === 200) {
+				const result = await response.json()
+				setTeamComments(prev => {
+					const comments = { ...prev }
+					result.data.forEach(m => {
+						comments[m.team].push(m)
+					})
+					return comments
+				})
+			}
+		}
+		asyncFunc()
 	}, [])
 
 	const makeMessage = text => ({
