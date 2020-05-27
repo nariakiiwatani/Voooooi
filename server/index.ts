@@ -46,7 +46,7 @@ app.prepare().then(() => {
 				...message,
 				timestamp: new Date().getTime()
 			}
-			io.to(message.roomId).emit("message", m)
+			io.to(m.room).emit("message", m)
 			fetch(`${apiUrl}/messages`, {
 				method: "POST",
 				headers: {
@@ -57,9 +57,9 @@ app.prepare().then(() => {
 				.then(result => result.json())
 				.then(response => console.log("posted", response))
 		})
-		client.on("join", (roomId) => {
-			console.info("join to :", roomId)
-			client.join(roomId)
+		client.on("join", (room) => {
+			console.info("join to :", room)
+			client.join(room)
 		})
 	})
 

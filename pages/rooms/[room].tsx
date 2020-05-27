@@ -1,24 +1,25 @@
 import { useState, useEffect, useContext } from "react"
 import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
-import EnterPassword from '../../components/EnterPassword'
 import EnterUser from '../../components/EnterUser'
 import ChatRoom from '../../components/ChatRoom'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props
-	const [pwdValid, setPwdValid] = useState(false)
 	const [userValid, setUserValid] = useState(false)
+	const [teams, setTeams] = useState([])
+	const [error, setError] = useState("")
 
 	const user = useContext(UserContext)
 
-	// check room exists
+	// check room exists and password valid
 	useEffect(() => {
 		const asyncFunc = async () => {
-			const response = await fetch(`/api/rooms/${roomName}`)
+			const response = await fetch(`/api/rooms/${roomName}?pwd=${pwd}`)
 			if (response.status === 200) {
 				const result = await response.json()
 				user.setRoom(result.data)
+				setError("")
 			}
 			else {
 				Router.push("/")
@@ -27,10 +28,23 @@ const RoomPage = (props) => {
 		asyncFunc()
 	}, [])
 
-	// check pwd
+	// get team list
 	useEffect(() => {
-		setPwdValid(user && user.room && user.room.pwd === pwd)
-	}, [pwdValid, user.room])
+		if (user.room.id) {
+			const asyncFunc = async () => {
+				const response = await fetch(`/api/teams?room=${user.room.id}&pwd=${pwd}`)
+				if (response.status === 200) {
+					const result = await response.json()
+					setTeams(result.data)
+					setError("")
+				}
+				else {
+					Router.push("/")
+				}
+			}
+			asyncFunc()
+		}
+	}, [user.room.id])
 
 	// check user info
 	useEffect(() => {
@@ -60,12 +74,31 @@ const RoomPage = (props) => {
 		// asyncFunc();
 	}, [])
 
+	const handleSubmitUser = ({ name, team }) => {
+		const asyncFunc = async () => {
+			const response = await fetch(`/api/users/${name}`, {
+				method: "POST"
+			})
+			if (response.status === 201) {
+				const result = await response.json()
+				user.setUser(result.data)
+				user.setTeam(team)
+				setError("")
+			}
+			else {
+				Router.push("/")
+			}
+		}
+		asyncFunc()
+
+	}
 
 	return (
 		<>
-			{!pwdValid ? <EnterPassword /> :
-				!userValid ? <EnterUser /> :
-					<ChatRoom />}
+			{!userValid
+				? <EnterUser teams={teams} onSubmit={handleSubmitUser} />
+				: <ChatRoom teams={teams} />}
+			<span className="error">{error}</span>
 		</>
 	)
 }

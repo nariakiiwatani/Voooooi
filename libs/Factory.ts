@@ -9,8 +9,6 @@ const newId = (() => seed => {
 
 export function newUser(user: {
 	name: string,
-	room: IdType,
-	team: IdType,
 }, context?: ServerContext): User {
 	const ret: User = {
 		id: newId(user.name),

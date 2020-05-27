@@ -2,11 +2,18 @@ import { useState, useEffect, useContext } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from './contexts/UserContext'
+import io from "socket.io-client"
+import { IdType } from '../libs/Models'
 
 const ChatRoom = props => {
+	const { teams } = props
 	const [socket, setSocket] = useState(() => io())
 	const [myComments, setMyComments] = useState([])
-	const [teamComments, setTeamComments] = useState(new Map<string, Message[]>())
+	const [teamComments, setTeamComments] = useState(() => {
+		const comments = {}
+		teams.forEach(t => { comments[t.id] = [] })
+		return comments
+	})
 	const user = useContext(UserContext)
 
 	useEffect(() => {
@@ -21,6 +28,9 @@ const ChatRoom = props => {
 			socket.emit("leave", user.room.id)
 		}
 	}, [user.room.id])
+	// get messages already posted
+	useEffect(() => {
+	}, [])
 
 	const makeMessage = text => ({
 		room: user.room.id,
@@ -29,11 +39,10 @@ const ChatRoom = props => {
 		text
 	})
 	const onReceiveMessage = message => {
-		console.log(message)
 		setTeamComments(prev => {
 			return ({
 				...prev,
-				[message.teamName]: [...prev[message.teamName], message]
+				[message.team]: [...prev[message.team], message]
 			})
 		})
 	}
@@ -46,8 +55,10 @@ const ChatRoom = props => {
 		<div>
 			<div>Room:{user.room.name}</div>
 			<div>RoomID:{user.room.id}</div>
-			<div>user:{user.user.id}</div>
-			<div>team:{user.team.id}</div>
+			<div>user:{user.user.name}</div>
+			<div>userID:{user.user.id}</div>
+			<div>team:{user.team.name}</div>
+			<div>teamID:{user.team.id}</div>
 		</div>
 	)
 	return (
@@ -58,11 +69,14 @@ const ChatRoom = props => {
 				{<CommentList title="self" messages={myComments} color="red" />}
 			</div>
 			<div className="inRoom">
-				{Object.entries(teamComments).map(([k, v]) => (
-					<div className={k} key={k}>
-						<CommentList title={k} messages={v} color={k} />
-					</div>
-				))}
+				{teams.map(t => {
+					const c = teamComments[t.id];
+					return (
+						<div key={t.id} >
+							<CommentList title={t.name} messages={c} />
+						</div>
+					)
+				})}
 			</div>
 			<style jsx>{`
 			.wrapper {
@@ -79,7 +93,7 @@ const ChatRoom = props => {
 				row-gap: 10px;
 			}
 			`}</style>
-		</div>
+		</div >
 	)
 }
 
