@@ -1,30 +1,30 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
 import Color from 'color';
 import { arrayToObject } from '../libs/Utils';
 
 const CommentList = (props) => {
 	const { title, messages, team, users, local = false } = props
 	const commentsElement = useRef()
-	const [userMap, setUserMap] = useState({})
-	const [bgColor, setBgColor] = useState("")
+	const userMap = useMemo(() => arrayToObject(users, "id"), [users])
+	const bgColor = useMemo(() => new Color(team.color.color).alpha(0.5).toString(), [team])
 
 	useEffect(() => {
 		const element: HTMLElement = commentsElement.current;
 		const fromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
 		if (fromBottom < 30) {
-			element.scrollTop = element.scrollHeight - element.clientHeight;
-		}
-		return () => {
+			scrollToBottom(element)
 		}
 	}, [messages]);
 
-	useEffect(() => {
-		setUserMap(arrayToObject(users, "id"))
-	}, [users])
+	useLayoutEffect(() => {
+		scrollToBottom(commentsElement.current)
+	}, [])
 
-	useEffect(() => {
-		setBgColor(new Color(team.color.color).alpha(0.5).toString())
-	}, [team])
+	const scrollToBottom = (element) => {
+		console.log(messages.length)
+		console.log(element.scrollTop, element.scrollHeight, element.clientHeight)
+		element.scrollTop = element.scrollHeight - element.clientHeight;
+	}
 
 	const printComment = (message, local) => (
 		local
