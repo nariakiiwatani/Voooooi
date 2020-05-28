@@ -4,25 +4,30 @@ import { arrayToObject } from '../libs/Utils';
 
 const CommentList = (props) => {
 	const { title, messages, team, users, local = false } = props
-	const commentsElement = useRef()
+	const commentsRef = useRef()
 	const userMap = useMemo(() => arrayToObject(users, "id"), [users])
 	const bgColor = useMemo(() => new Color(team.color.color).alpha(0.5).toString(), [team])
 
 	useEffect(() => {
-		const element: HTMLElement = commentsElement.current;
-		const fromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-		if (fromBottom < 30) {
+		const element: HTMLElement = commentsRef.current;
+		if (element.scrollHeight <= element.clientHeight) return;
+		const lastCommentsTop = (count => {
+			let child = element.lastElementChild
+			while (child && --count > 0 && (child = child.previousElementSibling)) { }
+			return child.offsetTop - element.offsetTop
+		})
+		const margin = 10
+		const scrollBottom = element.scrollTop + element.clientHeight
+		if (scrollBottom + margin > lastCommentsTop(2)) {
 			scrollToBottom(element)
 		}
 	}, [messages]);
 
 	useLayoutEffect(() => {
-		scrollToBottom(commentsElement.current)
+		scrollToBottom(commentsRef.current)
 	}, [])
 
 	const scrollToBottom = (element) => {
-		console.log(messages.length)
-		console.log(element.scrollTop, element.scrollHeight, element.clientHeight)
 		element.scrollTop = element.scrollHeight - element.clientHeight;
 	}
 
@@ -35,9 +40,9 @@ const CommentList = (props) => {
 	return (
 		<div className="wrapper">
 			<div className="header">{title}</div>
-			<div className="comments" ref={commentsElement}>
+			<div className="comments" ref={commentsRef}>
 				{messages.map((m, i) => (
-					<div key={i} > {printComment(m, local)}</div>
+					<div key={i}> {printComment(m, local)}</div>
 				))}
 			</div>
 			<style jsx>{`
