@@ -3,12 +3,11 @@ import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from './contexts/UserContext'
 import io from "socket.io-client"
-import { IdType } from '../libs/Models'
 
 const ChatRoom = props => {
 	const { teams, users, messages } = props
 	const user = useContext(UserContext)
-	const [socket, setSocket] = useState(() => io())
+	const [socket] = useState(() => io())
 	const [myComments, setMyComments] = useState(() => messages.filter(m => m.user === user.user.id))
 	const [teamComments, setTeamComments] = useState(() => {
 		const comments = {}

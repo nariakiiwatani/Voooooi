@@ -2,7 +2,6 @@ import { useState } from "react"
 import Router from 'next/router'
 import { getHashString } from '../libs/Utils';
 import RoomForm from '../components/RoomForm';
-import { userInfo } from 'os';
 
 const Index = () => {
 
@@ -10,7 +9,7 @@ const Index = () => {
 
 	const handleCreate = async ({ roomName, password }) => {
 		const pwd = getHashString(password)
-		const result = await fetch(`/api/rooms`, {
+		const response = await fetch(`/api/rooms`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
@@ -18,17 +17,17 @@ const Index = () => {
 			body: JSON.stringify({ name: roomName, pwd })
 		})
 		setError("")
-		if (result.status === 201) {
-			const response = (await result.json()).data
+		if (response.ok) {
+			const result = (await response.json()).data
 			Router.push({
 				pathname: `/admin/rooms/${roomName}`,
 				query: { password, pwd }
 			})
 		}
 		else {
-			const response = await result.json()
+			const result = await response.json()
 			console.info("response(error)", response);
-			setError(response.error)
+			setError(result.error)
 		}
 	}
 	const handleEnter = async ({ roomName, password }) => {

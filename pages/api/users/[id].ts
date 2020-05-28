@@ -19,7 +19,7 @@ const readUser = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 	const { context } = req
 	const id = firstOf(req.query.id)
 	const user = findOneByProps(context.users, { id })
-	console.log(context.users)
+
 	if (!user) {
 		return error({ status: 400, message: `userId:${id} not exists` })(res)
 	}

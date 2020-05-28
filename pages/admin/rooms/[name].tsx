@@ -1,5 +1,3 @@
-import { useState, useEffect, useContext } from "react"
-
 const RoomAdminPage = (props) => {
 	const { roomName, password, pwd } = props
 	return (

@@ -62,7 +62,7 @@ const RoomPage = (props) => {
 				},
 				body: JSON.stringify({ name, room: user.room.id, pwd, team: team.id })
 			})
-			if (response.status === 201) {
+			if (response.ok) {
 				const result = await response.json()
 				await getRoomInfo({ users: true, teams: true, messages: true })
 				user.setUser(result.data)
