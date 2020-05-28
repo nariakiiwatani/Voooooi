@@ -37,7 +37,7 @@ const RoomForm = props => {
 
 	return (
 		<>
-			<form onSubmit={() => { }}>
+			<form onSubmit={handleSubmit}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
 				{createInput(["パスワード", "password", "password", password])}
 				<Button

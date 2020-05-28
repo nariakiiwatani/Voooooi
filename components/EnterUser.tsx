@@ -1,4 +1,6 @@
 import { useState, CSSProperties } from "react"
+import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, Box, ListItemIcon } from '@material-ui/core'
+import { People } from "@material-ui/icons"
 import Color from 'color'
 const EnterUser = props => {
 	const [formInput, setFormInput] = useState({
@@ -6,7 +8,7 @@ const EnterUser = props => {
 	})
 	const { name } = formInput
 	const { teams } = props
-	const [team, setTeam] = useState({})
+	const [team, setTeam] = useState(teams[0])
 
 	const handleSubmit = e => {
 		e.preventDefault()
@@ -19,56 +21,57 @@ const EnterUser = props => {
 			[name]: e.target.value
 		})
 	}
-	const handleTeamSelect = t => {
-		setTeam(t)
+	const handleTeamSelect = e => {
+		setTeam(e.target.value)
 	}
-	const createInput = ([label, type, name, value]) => (
-		<div>
-			<span>{label}</span><input type={type} name={name} value={value} onChange={handleChange(name)} />
+	const createInput = ([label, type, name, value, id = label]) => (
+		<div key={id}>
+			<TextField
+				fullWidth
+				label={label}
+				type={type}
+				name={name}
+				value={value}
+				onChange={handleChange(name)}
+			/>
 		</div>
 	)
 	return (
 		<>
-			<div>名前とチームを入力してください</div>
+			<h3>名前とチームを入力してください</h3>
 			<form onSubmit={handleSubmit}>
 				{createInput(["名前", "text", "name", name])}
-				<div className="teams">
-					{teams.map((t, i) => {
-						const cssColor: CSSProperties = {
-							backgroundColor: new Color(t.color.color).toString()
-						};
-						return <div key={i} data-selected={t.id === team.id} style={cssColor} onClick={() => { handleTeamSelect(t) }}><div></div></div>
-					})}
-				</div>
-				<button type="submit">決定</button>
+				<FormControl fullWidth>
+					<InputLabel id="id-team-select">チーム</InputLabel>
+					<Select
+						labelId="id-team-select"
+						id="team-select"
+						value={team}
+						onChange={handleTeamSelect}
+					>
+						{teams.map((t, i) => {
+							const cssProperty = {
+								color: new Color(t.color.color).toString()
+							}
+							return <MenuItem value={t} >
+								<ListItemIcon>
+									<People style={cssProperty} />
+								</ListItemIcon>
+								<Typography variant="inherit">{t.name}</Typography>
+							</MenuItem>
+						})}
+					</Select>
+				</FormControl>
+				<Button
+					type="submit"
+					variant="contained"
+					color="primary"
+					fullWidth
+				>
+					入室
+				</Button>
 			</form>
-			<style jsx>{`
-				.teams {
-					display: flex;
-					$button-width: 40px;
-					$border-width: 3px;
-					div {
-						position: relative;
-						width: $button-width;
-						height: $button-width;
-						padding: $border-width;
-						border-radius: $button-width + $border-width*2;
-						&:nth-child(n+2) {
-							margin-left: 10px;
-						}
-						> div {
-							position: absolute;
-							top: -$border-width;
-							left: -$border-width;
-							width: $button-width;
-							height: $button-width;
-						}
-						&[data-selected=true] > div {
-							border: solid $border-width rgb(170,250,220);
-						}
-					}
-				}
-				`}</style>
+
 		</>
 	)
 }

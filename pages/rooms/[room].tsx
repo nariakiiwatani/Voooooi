@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
 import EnterUser from '../../components/EnterUser'
 import ChatRoom from '../../components/ChatRoom'
+import MyLayout from '../../components/Layout'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props
@@ -99,12 +100,12 @@ const RoomPage = (props) => {
 	}
 
 	return (
-		<>
+		<MyLayout>
 			{!userValid
 				? <EnterUser teams={teams} onSubmit={handleSubmitUser} />
 				: <ChatRoom teams={teams} users={users} messages={messages} />}
 			<span className="error">{error}</span>
-		</>
+		</MyLayout>
 	)
 }
 
