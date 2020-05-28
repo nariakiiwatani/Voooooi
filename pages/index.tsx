@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { getHashString } from '../libs/Utils';
 import RoomForm from '../components/RoomForm';
 import { AppBar, Tabs, Tab, Paper } from '@material-ui/core';
+import MyLayout from '../components/Layout';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -75,10 +76,7 @@ const Index = () => {
 		}
 	}
 	return (
-		<div>
-			<AppBar position="static">
-				<h1>Voext Chat</h1>
-			</AppBar>
+		<MyLayout>
 			<Tabs centered
 				value={tabSelect}
 				onChange={handleTabSelect}
@@ -109,7 +107,7 @@ const Index = () => {
 					}}
 				/>
 			</TabPanel>
-		</div>
+		</MyLayout>
 	);
 };
 
