@@ -1,6 +1,8 @@
 import { useState } from "react"
+import { TextField, Button } from "@material-ui/core"
 
 const RoomForm = props => {
+	const { buttonProps } = props
 
 	const [formInput, setFormInput] = useState({
 		roomName: "",
@@ -14,21 +16,21 @@ const RoomForm = props => {
 			[name]: e.target.value
 		})
 	}
-	const createInput = ([label, type, name, value]) => (
-		<div>
-			<span>{label}</span><input type={type} name={name} value={value} onChange={handleChange(name)} />
+	const createInput = ([label, type, name, value, id = label]) => (
+		<div key={id}>
+			<TextField fullWidth
+				type={type}
+				label={label}
+				name={name}
+				value={value}
+				onChange={handleChange(name)}
+			/>
 		</div>
 	)
 
-	const handleEnterSubmit = e => {
+	const handleSubmit = e => {
 		e.preventDefault()
-		props.onEnter({
-			roomName, password
-		})
-	}
-	const handleCreateSubmit = e => {
-		e.preventDefault()
-		props.onCreate({
+		props.onSubmit({
 			roomName, password
 		})
 	}
@@ -38,8 +40,10 @@ const RoomForm = props => {
 			<form onSubmit={() => { }}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
 				{createInput(["パスワード", "password", "password", password])}
-				< button onClick={handleEnterSubmit}>部屋に入る</button>
-				< button onClick={handleCreateSubmit}>部屋を作る</button>
+				<Button
+					onClick={handleSubmit}
+					{...buttonProps}
+				>{buttonProps.value}</Button>
 			</form>
 			<span className="error">{props.error}</span>
 		</>
