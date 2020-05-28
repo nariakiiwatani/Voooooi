@@ -7,14 +7,17 @@ import { IdType } from '../libs/Models'
 
 const ChatRoom = props => {
 	const { teams, users, messages } = props
+	const user = useContext(UserContext)
 	const [socket, setSocket] = useState(() => io())
-	const [myComments, setMyComments] = useState([])
+	const [myComments, setMyComments] = useState(() => messages.filter(m => m.user === user.user.id))
 	const [teamComments, setTeamComments] = useState(() => {
 		const comments = {}
 		teams.forEach(t => { comments[t.id] = [] })
+		messages.forEach(m => {
+			comments[m.team].push(m)
+		})
 		return comments
 	})
-	const user = useContext(UserContext)
 
 	useEffect(() => {
 		socket.on("message", onReceiveMessage)
@@ -28,17 +31,6 @@ const ChatRoom = props => {
 			socket.emit("leave", user.room.id)
 		}
 	}, [user.room.id])
-	// sort messages
-	useEffect(() => {
-		setTeamComments(prev => {
-			const comments = { ...prev }
-			Object.keys(comments).forEach(k => { comments[k] = [] })
-			messages.forEach(m => {
-				comments[m.team].push(m)
-			})
-			return comments
-		})
-	}, [messages])
 
 	const makeMessage = text => ({
 		room: user.room.id,

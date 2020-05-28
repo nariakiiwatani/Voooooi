@@ -3,7 +3,6 @@ import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
 import EnterUser from '../../components/EnterUser'
 import ChatRoom from '../../components/ChatRoom'
-import { stringify } from 'querystring'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props
@@ -65,9 +64,9 @@ const RoomPage = (props) => {
 			})
 			if (response.status === 201) {
 				const result = await response.json()
+				await getRoomInfo({ users: true, teams: true, messages: true })
 				user.setUser(result.data)
 				user.setTeam(team)
-				await getRoomInfo({ users: true, teams: true, messages: true })
 				setError("")
 			}
 			else {
@@ -82,7 +81,6 @@ const RoomPage = (props) => {
 		messages: boolean,
 	} = { teams: false, users: false, messages: false }) => {
 		const params = Object.entries(flags).filter(([k, v]) => v).map(([k, v]) => k)
-		console.info("query", `/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
 		const response = await fetch(`/api/rooms/${user.room.id}?pwd=${pwd}&params=${params.join(",")}`)
 		if (response.ok) {
 			const result = await response.json()
