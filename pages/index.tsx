@@ -20,6 +20,10 @@ const Index = () => {
 		setError("")
 		if (result.status === 201) {
 			const response = (await result.json()).data
+			Router.push({
+				pathname: `/admin/rooms/${roomName}`,
+				query: { password, pwd }
+			})
 		}
 		else {
 			const response = await result.json()
