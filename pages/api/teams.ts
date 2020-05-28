@@ -14,7 +14,7 @@ const readTeams = (req: NextApiRequestWithContext, res: NextApiResponse) => {
 	const { context } = req
 	const { room, pwd } = req.query
 	const found = findOneByProps(context.rooms, { id: room, pwd })
-	if (!findOneByProps(context.rooms, { id: room, pwd })) {
+	if (!found) {
 		error({ status: 400, message: "room not found" })(res)
 		return
 	}

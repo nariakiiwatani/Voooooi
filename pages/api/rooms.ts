@@ -19,7 +19,9 @@ const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) =>
 	if (found) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const data = { ...newDefaultRoom(name, pwd, context) }
+	const room = newDefaultRoom(name, pwd, context)
+
+	const data = { ...room }
 	delete data.pwd
 
 	res.statusCode = 201
@@ -33,15 +35,17 @@ const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 		return error({ status: 400, message: `please contain 'name' and 'pwd' parameter in query.` })(res)
 	}
 	const { context } = req
-	const data = { ...findOneByProps(context.rooms, { name }) }
-	if (!data) {
+	const room = findOneByProps(context.rooms, { name })
+	if (!room) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}
+	const data = { ...room }
+	delete data.pwd
+
 	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
 	params.forEach(p => {
 		data[p] = findByProps(req.context[p], { room: data.id })
 	})
-	delete data.pwd
 
 	res.statusCode = 200
 	res.json({ result: true, data })
