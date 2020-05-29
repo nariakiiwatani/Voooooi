@@ -76,7 +76,7 @@ const Index = () => {
 		}
 	}
 	return (
-		<MyLayout>
+		<MyLayout title="Voext Chat">
 			<Tabs centered
 				value={tabSelect}
 				onChange={handleTabSelect}

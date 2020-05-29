@@ -100,11 +100,12 @@ const RoomPage = (props) => {
 	}
 
 	return (
-		<MyLayout>
+		<MyLayout title={`Voext Chat - Room: ${roomName}`}>
 			{!userValid
 				? <EnterUser teams={teams} onSubmit={handleSubmitUser} />
-				: <ChatRoom teams={teams} users={users} messages={messages} />}
-		</MyLayout>
+				: <ChatRoom teams={teams} users={users} messages={messages} />
+			}
+		</MyLayout >
 	)
 }
 

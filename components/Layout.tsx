@@ -5,7 +5,7 @@ const MyLayout = props => {
 	return (
 		<React.Fragment>
 			<AppBar position="static" style={{ flexShrink: 0 }}>
-				<h1>Voext Chat</h1>
+				<h1>{props.title}</h1>
 			</AppBar>
 			{props.children}
 		</React.Fragment>
