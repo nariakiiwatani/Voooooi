@@ -41,6 +41,7 @@ const RoomForm = props => {
 				{createInput(["部屋名", "text", "roomName", roomName])}
 				{createInput(["パスワード", "password", "password", password])}
 				<Button
+					fullWidth
 					onClick={handleSubmit}
 					{...buttonProps}
 				>{buttonProps.value}</Button>
