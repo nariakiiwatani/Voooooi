@@ -1,8 +1,10 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from './contexts/UserContext'
 import io from "socket.io-client"
+import { Grid, Paper, Box } from '@material-ui/core'
+import { sizing } from '@material-ui/system';
 
 const ChatRoom = props => {
 	const { teams, users, messages } = props
@@ -17,6 +19,13 @@ const ChatRoom = props => {
 		})
 		return comments
 	})
+	const inputRef = useRef(null)
+	const [inputHeight, setInputHeight] = useState(0)
+	useEffect(() => {
+		if (inputRef.current) {
+			setInputHeight(inputRef.current.clientHeight);
+		}
+	});
 
 	useEffect(() => {
 		socket.on("message", onReceiveMessage)
@@ -61,38 +70,45 @@ const ChatRoom = props => {
 		</div>
 	)
 	return (
-		<div className="wrapper">
-			<div className="self">
-				{debugInfo()}
-				{<VoextInput onSubmit={onVoextSubmit} />}
-				{<CommentList title="自分のコメント" messages={myComments} team={user.team} users={users} local={true} />}
-			</div>
-			<div className="inRoom">
+		<>
+			<VoextInput
+				onSubmit={onVoextSubmit}
+				style={{
+					flexShrink: 0
+				}}
+			/>
+			<Grid container
+
+				spacing={2}
+				style={{
+					flexGrow: 1,
+					display: "flex",
+					flexDirection: "column",
+					minHeight: 0,
+				}}
+			>
 				{teams.map(t => {
 					const c = teamComments[t.id];
 					return (
-						<div key={t.id} >
-							<CommentList title={`${t.name}のコメント`} messages={c} team={t} users={users} />
-						</div>
+						<Grid item
+							xs={3}
+							key={t.id}
+							style={{
+								flexGrow: 1,
+								minHeight: "100%",
+							}}
+						>
+							<Paper style={{
+								height: "100%",
+								overflow: "auto",
+							}}>
+								<CommentList title={`${t.name}のコメント`} messages={c} team={t} users={users} />
+							</Paper>
+						</Grid>
 					)
 				})}
-			</div>
-			<style jsx>{`
-			.wrapper {
-				display: grid;
-				grid-template-columns: 320px 1fr;
-				column-gap: 10px;
-				row-gap: 10px;
-			}
-			.inRoom {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				grid-template-rows: 1fr 1fr;
-				column-gap: 10px;
-				row-gap: 10px;
-			}
-			`}</style>
-		</div >
+			</Grid>
+		</>
 	)
 }
 

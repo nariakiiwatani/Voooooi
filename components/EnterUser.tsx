@@ -53,7 +53,7 @@ const EnterUser = props => {
 							const cssProperty = {
 								color: new Color(t.color.color).toString()
 							}
-							return <MenuItem value={t} >
+							return <MenuItem value={t} key={i} >
 								<ListItemIcon>
 									<People style={cssProperty} />
 								</ListItemIcon>

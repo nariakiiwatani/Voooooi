@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
 import Color from 'color';
 import { arrayToObject } from '../libs/Utils';
+import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
+import React from 'react';
 
 const CommentList = (props) => {
 	const { title, messages, team, users, local = false } = props
@@ -34,37 +36,32 @@ const CommentList = (props) => {
 	const printComment = (message, local) => (
 		local
 			? (message.text)
-			: (`${userMap[message.user].name} : ${message.text}`)
+			: (<ListItemText
+				primary={message.text}
+				secondary={
+					<React.Fragment>
+						<Typography
+							component="span"
+							variant="caption"
+							color="textPrimary"
+						>
+							- {userMap[message.user].name}
+						</Typography>
+					</React.Fragment>
+				}
+			/>)
 	)
 
 	return (
-		<div className="wrapper">
-			<div className="header">{title}</div>
-			<div className="comments" ref={commentsRef}>
+		<List subheader={<ListSubheader>{title}</ListSubheader>} >
+			<div ref={commentsRef}>
 				{messages.map((m, i) => (
-					<div key={i}> {printComment(m, local)}</div>
+					<ListItem key={i}>
+						{printComment(m, local)}
+					</ListItem>
 				))}
 			</div>
-			<style jsx>{`
-			.wrapper {
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				height: calc(50vh - 20px);
-				overflow: hidden;
-				background-color: ${bgColor};
-				border: black 1px solid;
-				border-radius: 12px;
-			}
-			.header {
-				background-color: gray;
-			}
-			.comments {
-				flex: 1 1 100%;
-				overflow-y: scroll;
-			}
-			`}</style>
-		</div >
+		</List>
 	)
 }
 

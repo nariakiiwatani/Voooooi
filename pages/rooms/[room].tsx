@@ -104,7 +104,6 @@ const RoomPage = (props) => {
 			{!userValid
 				? <EnterUser teams={teams} onSubmit={handleSubmitUser} />
 				: <ChatRoom teams={teams} users={users} messages={messages} />}
-			<span className="error">{error}</span>
 		</MyLayout>
 	)
 }

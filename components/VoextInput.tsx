@@ -35,7 +35,7 @@ const VoextInput = (props) => {
 		setTalking("")
 	}
 	return (
-		<>
+		<div style={props.style}>
 			<form onSubmit={handleSubmit}>
 				<input type="text" value={talking} onChange={handleChange} />
 			</form>
@@ -44,7 +44,7 @@ const VoextInput = (props) => {
 				color: ${isInterim ? "gray" : "black"};
 			}
 			`}</style>
-		</>
+		</div>
 	)
 }
 
