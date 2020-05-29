@@ -78,7 +78,6 @@ const ChatRoom = props => {
 				}}
 			/>
 			<Grid container
-
 				spacing={2}
 				style={{
 					flexGrow: 1,
@@ -91,7 +90,7 @@ const ChatRoom = props => {
 					const c = teamComments[t.id];
 					return (
 						<Grid item
-							xs={3}
+							xs={12 / teams.length}
 							key={t.id}
 							style={{
 								flexGrow: 1,

@@ -59,6 +59,7 @@ const CommentList = (props) => {
 			style={{
 				height: "100%",
 				overflow: "auto",
+				overflowWrap: "break-word"
 			}}>
 			<List subheader={<ListSubheader>{title}</ListSubheader>} >
 				<div ref={commentsRef}>
