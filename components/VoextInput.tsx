@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import Analyzer from '../libs/Analyzer'
+import { FormControl, InputAdornment, IconButton, OutlinedInput } from '@material-ui/core'
+import { Mic } from "@material-ui/icons"
+import React from 'react'
 
 const VoextInput = (props) => {
 	const { onSubmit } = props
@@ -37,11 +40,35 @@ const VoextInput = (props) => {
 	return (
 		<div style={props.style}>
 			<form onSubmit={handleSubmit}>
-				<input type="text" value={talking} onChange={handleChange} />
+				<FormControl
+					margin="dense"
+					fullWidth
+				>
+					<OutlinedInput
+						type="text"
+						startAdornment={
+							<InputAdornment
+								position="start"
+							>
+								<Mic />
+							</InputAdornment>
+						}
+						value={talking}
+						autoFocus
+						onChange={handleChange}
+						inputProps={{
+							className: "input"
+						}}
+
+					/>
+				</FormControl>
 			</form>
-			<style jsx>{`
-			input {
+			<style jsx global>{`
+			.input {
+				position: relative;
+				display: block;
 				color: ${isInterim ? "gray" : "black"};
+				text-align: center;
 			}
 			`}</style>
 		</div>
