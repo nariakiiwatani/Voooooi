@@ -7,26 +7,28 @@ import React from 'react';
 const CommentList = (props) => {
 	const { title, messages, team, users, local = false } = props
 	const commentsRef = useRef()
+	const rootRef = useRef()
 	const userMap = useMemo(() => arrayToObject(users, "id"), [users])
 	const bgColor = useMemo(() => new Color(team.color.color).alpha(0.5).toString(), [team])
 
 	useEffect(() => {
-		const element: HTMLElement = commentsRef.current;
-		if (element.scrollHeight <= element.clientHeight) return;
+		const comments: HTMLElement = commentsRef.current;
+		const scroller: HTMLElement = rootRef.current;
+		if (scroller.scrollHeight <= scroller.clientHeight) return;
 		const lastCommentsTop = (count => {
-			let child = element.lastElementChild
+			let child = comments.lastElementChild
 			while (child && --count > 0 && (child = child.previousElementSibling)) { }
-			return child.offsetTop - element.offsetTop
+			return child.offsetTop - scroller.offsetTop
 		})
 		const margin = 10
-		const scrollBottom = element.scrollTop + element.clientHeight
-		if (scrollBottom + margin > lastCommentsTop(2)) {
-			scrollToBottom(element)
+		const scrollBottom = scroller.scrollTop + scroller.clientHeight
+		if (scrollBottom + margin > lastCommentsTop(1)) {
+			scrollToBottom(scroller)
 		}
 	}, [messages]);
 
 	useLayoutEffect(() => {
-		scrollToBottom(commentsRef.current)
+		scrollToBottom(rootRef.current)
 	}, [])
 
 	const scrollToBottom = (element) => {
@@ -53,15 +55,21 @@ const CommentList = (props) => {
 	)
 
 	return (
-		<List subheader={<ListSubheader>{title}</ListSubheader>} >
-			<div ref={commentsRef}>
-				{messages.map((m, i) => (
-					<ListItem key={i}>
-						{printComment(m, local)}
-					</ListItem>
-				))}
-			</div>
-		</List>
+		<Paper ref={rootRef}
+			style={{
+				height: "100%",
+				overflow: "auto",
+			}}>
+			<List subheader={<ListSubheader>{title}</ListSubheader>} >
+				<div ref={commentsRef}>
+					{messages.map((m, i) => (
+						<ListItem key={i}>
+							{printComment(m, local)}
+						</ListItem>
+					))}
+				</div>
+			</List>
+		</Paper>
 	)
 }
 

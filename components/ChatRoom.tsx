@@ -98,12 +98,7 @@ const ChatRoom = props => {
 								minHeight: "100%",
 							}}
 						>
-							<Paper style={{
-								height: "100%",
-								overflow: "auto",
-							}}>
-								<CommentList title={`${t.name}のコメント`} messages={c} team={t} users={users} />
-							</Paper>
+							<CommentList title={`${t.name}のコメント`} messages={c} team={t} users={users} />
 						</Grid>
 					)
 				})}
