@@ -2,10 +2,21 @@
   "name": "default",
   "version": "0.1.0",
   "private": true,
+    "main": "dist/server/index.js",
+    "engines": {
+        "node": "10"
+    },
   "scripts": {
-    "dev": "ts-node --project tsconfig.server.json server/index.ts",
-    "build": "next build",
-    "start": "next start"
+    "dev:client": "next src/client",
+    "dev:server": "babel src/server --out-dir dist/server --source-maps --watch",
+    "dev": "npm run dev:client & npm run dev:server",
+    "build:client": "next build src/client",
+    "build:server": "babel src/server --out-dir dist/server --source-maps",
+    "build": "npm run build:client && npm run build:server",
+    "preserve": "npm run build",
+    "serve": "cross-env NODE_ENV=production firebase serve --only functions,hosting",
+    "predeploy": "rimraf dist/ && npm run build",
+    "deploy": "cross-env NODE_ENV=production firebase deploy --only functions,hosting"
   },
   "dependencies": {
     "@material-ui/core": "^4.10.0",
@@ -13,6 +24,8 @@
     "color": "^3.1.2",
     "color-convert": "^1.9.1",
     "color-string": "^1.5.2",
+    "firebase-admin": "^8.12.1",
+    "firebase-functions": "^3.6.2",
     "next": "^9.4.2",
     "node-fetch": "^2.6.0",
     "node-sass": "^4.14.1",
@@ -25,6 +38,9 @@
     "ts-node": "^8.10.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
     "@types/color": "^3.0.1",
     "@types/color-convert": "^1.9.0",
     "@types/color-string": "^1.5.0",
@@ -36,6 +52,8 @@
     "@types/socket.io": "^2.1.6",
     "@types/socket.io-client": "^1.4.33",
     "@types/styled-jsx": "^2.2.8",
+    "cross-env": "^7.0.2",
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.2"
   }
 }

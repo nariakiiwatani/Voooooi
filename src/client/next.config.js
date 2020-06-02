@@ -15,5 +15,6 @@ module.exports = {
 		});
 
 		return config;
-	}
+	},
+	distDir: "../../dist/client"
 };
