@@ -1,22 +1,31 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, Box, ListItemIcon } from '@material-ui/core'
 import { People } from "@material-ui/icons"
-import Color from 'color'
-import { useCollection } from "@nandorojo/swr-firestore"
+import { useCollection, useFuegoContext } from "@nandorojo/swr-firestore"
+import { UserContext } from '../contexts/UserContext'
 
 const EnterUser = props => {
 	const { roomId } = props
 	const teams = useCollection(`rooms/${roomId}/teams`)
+	const { fuego } = useFuegoContext()
+	const user = useContext(UserContext)
 
 	const [formInput, setFormInput] = useState({
 		name: "",
-		team: null
+		team: {}
 	})
 	const { name, team } = formInput
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
-		props.onSubmit({ name, team })
+		const userInfo = { name, team: team.id }
+		fuego.db.collection(`rooms/${roomId}/users`).add(userInfo)
+			.then(data => {
+				user.setUser({ id: data.id, ...userInfo });
+				const { id, name, color } = team
+				user.setTeam({ id, name, color })
+			})
+			.catch(e => { console.error(e) })
 	}
 
 	const handleChange = name => e => {

@@ -2,45 +2,17 @@ import { useState, useEffect, useContext, useRef } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
-import io from "socket.io-client"
 import { Grid, Paper, Box } from '@material-ui/core'
+import { useCollection } from '@nandorojo/swr-firestore'
 
 const ChatRoom = props => {
-	const { teams, users, messages } = props
+	const { roomId } = props
 	const user = useContext(UserContext)
-	const [socket] = useState(() => io())
-	const [myComments, setMyComments] = useState(() => messages.filter(m => m.user === user.user.id))
-	const [teamComments, setTeamComments] = useState(() => {
-		const comments = {}
-		teams.forEach(t => { comments[t.id] = [] })
-		messages.forEach(m => {
-			comments[m.team].push(m)
-		})
-		return comments
-	})
-	const inputRef = useRef(null)
-	const [inputHeight, setInputHeight] = useState(0)
-	useEffect(() => {
-		if (inputRef.current) {
-			setInputHeight(inputRef.current.clientHeight);
-		}
-	});
-
-	useEffect(() => {
-		socket.on("message", onReceiveMessage)
-		return () => {
-			socket.off("message")
-		}
-	}, [])
-	useEffect(() => {
-		socket.emit("join", user.room.id)
-		return () => {
-			socket.emit("leave", user.room.id)
-		}
-	}, [user.room.id])
+	const teams = useCollection(`rooms/${roomId}/teams`)
+	const messages = useCollection(`rooms/${roomId}/messages`)
 
 	const makeMessage = text => ({
-		room: user.room.id,
+		room: roomId,
 		user: user.user.id,
 		team: user.team.id,
 		text
@@ -55,7 +27,6 @@ const ChatRoom = props => {
 	}
 	const onVoextSubmit = (text) => {
 		setMyComments(prev => ([...prev, makeMessage(text)]))
-		socket.emit("message", makeMessage(text))
 	}
 
 	const debugInfo = () => (

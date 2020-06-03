@@ -25,33 +25,12 @@ const RoomPage = (props) => {
 		return (<div>{`room(${roomName}) not exist`}</div>)
 	}
 
-	const handleSubmitUser = ({ name, team }) => {
-		const asyncFunc = async () => {
-			const response = await fetch(`/api/users`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json; charset=utf-8",
-				},
-				body: JSON.stringify({ name, room: user.room.id, pwd, team: team.id })
-			})
-			if (response.ok) {
-				const result = await response.json()
-				//				await getRoomInfo({ users: true, teams: true, messages: true })
-				user.setUser(result.data)
-				user.setTeam(team)
-				setError("")
-			}
-			else {
-				Router.push("/")
-			}
-		}
-		asyncFunc()
-	}
+
 	return (
 		<MyLayout title={`Voext Chat - Room: ${roomName}`}>
 			{!userValid
-				? <EnterUser roomId={roomId} onSubmit={handleSubmitUser} />
-				: <ChatRoom teams={teams} users={users} />
+				? <EnterUser roomId={roomId} />
+				: <ChatRoom roomId={roomId} />
 			}
 		</MyLayout >
 	)
