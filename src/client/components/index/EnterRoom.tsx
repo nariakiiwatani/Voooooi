@@ -1,8 +1,14 @@
 import { useState } from "react"
 import { TextField, Button } from "@material-ui/core"
+import { getHashString } from '../../libs/Utils'
+import { useFuegoContext } from '@nandorojo/swr-firestore';
+import Router from 'next/router'
 
-const RoomForm = props => {
-	const { buttonProps } = props
+const EnterRoom = props => {
+
+	const [error, setError] = useState("")
+	// @ts-ignore
+	const { fuego } = useFuegoContext()
 
 	const [formInput, setFormInput] = useState({
 		roomName: "",
@@ -28,10 +34,20 @@ const RoomForm = props => {
 		</div>
 	)
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
-		props.onSubmit({
-			roomName, password
+
+		const pwd = getHashString(password)
+		const roomsRef = fuego.db.collection("rooms")
+		const existing = await roomsRef.where("name", "==", roomName).where("pwd", "==", pwd).get()
+		if (existing.empty) {
+			setError(`room:${roomName} not exists or password invalid`)
+			return
+		}
+		setError("")
+		Router.push({
+			pathname: `/rooms/${roomName}`,
+			query: { pwd }
 		})
 	}
 
@@ -43,13 +59,14 @@ const RoomForm = props => {
 				<Button
 					fullWidth
 					onClick={handleSubmit}
-					{...buttonProps}
-				>{buttonProps.value}</Button>
+					variant="contained"
+					color="primary"
+				>部屋に入る</Button>
 			</form>
-			<span className="error">{props.error}</span>
+			<span className="error">{error}</span>
 		</>
 	)
 
 }
 
-export default RoomForm;
+export default EnterRoom;
