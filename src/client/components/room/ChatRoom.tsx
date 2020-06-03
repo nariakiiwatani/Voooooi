@@ -1,14 +1,15 @@
-import { useState, useEffect, useContext, useRef, Suspense } from 'react'
+import { useContext } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
-import { Grid, Paper, Box } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { useCollection, useFuegoContext } from '@nandorojo/swr-firestore'
 
 const ChatRoom = props => {
 	const { roomId } = props
 	const user = useContext(UserContext)
 	const teams = useCollection(`rooms/${roomId}/teams`)
+	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const { fuego } = useFuegoContext()
 
 	const makeMessage = text => ({
@@ -43,23 +44,21 @@ const ChatRoom = props => {
 					minHeight: 0,
 				}}
 			>
-				<Suspense fallback={<div>チーム情報取得中</div>}>
-					{teams.data.map(t => {
-						return (
-							<Grid item
-								xs={3}
-								sm={3}
-								key={t.id}
-								style={{
-									flexGrow: 1,
-									minHeight: "100%",
-								}}
-							>
-								<CommentList roomId={roomId} team={t} />
-							</Grid>
-						)
-					})}
-				</Suspense>
+				{isTeamsValid() && teams.data.map(t => {
+					return (
+						<Grid item
+							xs={3}
+							sm={3}
+							key={t.id}
+							style={{
+								flexGrow: 1,
+								minHeight: "100%",
+							}}
+						>
+							<CommentList roomId={roomId} team={t} />
+						</Grid>
+					)
+				})}
 			</Grid>
 		</>
 	)

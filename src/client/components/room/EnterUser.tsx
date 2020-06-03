@@ -1,5 +1,5 @@
 import { useState, useContext } from "react"
-import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, Box, ListItemIcon } from '@material-ui/core'
+import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, ListItemIcon } from '@material-ui/core'
 import { People } from "@material-ui/icons"
 import { useCollection, useFuegoContext } from "@nandorojo/swr-firestore"
 import { UserContext } from '../contexts/UserContext'
@@ -7,6 +7,7 @@ import { UserContext } from '../contexts/UserContext'
 const EnterUser = props => {
 	const { roomId } = props
 	const teams = useCollection(`rooms/${roomId}/teams`)
+	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const { fuego } = useFuegoContext()
 	const user = useContext(UserContext)
 
@@ -59,7 +60,7 @@ const EnterUser = props => {
 						value={team}
 						onChange={handleChange("team")}
 					>
-						{teams.data ? teams.data.map((t, i) => {
+						{isTeamsValid() && teams.data.map((t, i) => {
 							const cssProperty = {
 								color: `rgb(${t.color.join(",")})`
 							}
@@ -69,7 +70,7 @@ const EnterUser = props => {
 								</ListItemIcon>
 								<Typography variant="inherit">{t.name}</Typography>
 							</MenuItem>
-						}) : <div>チーム情報を取得中</div>}
+						})}
 					</Select>
 				</FormControl>
 				<Button

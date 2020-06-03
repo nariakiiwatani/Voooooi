@@ -22,7 +22,6 @@ function TabPanel(props) {
 	);
 }
 const Index = () => {
-	const [error, setError] = useState("")
 	const [tabSelect, setTabSelect] = useState(0)
 
 	const handleTabSelect = (event, newValue) => {

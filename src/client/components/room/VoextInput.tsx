@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import Analyzer from '../../libs/Analyzer'
-import { FormControl, InputAdornment, IconButton, OutlinedInput } from '@material-ui/core'
+import { FormControl, InputAdornment, OutlinedInput } from '@material-ui/core'
 import { Mic } from "@material-ui/icons"
 import React from 'react'
 
@@ -8,7 +8,6 @@ const VoextInput = (props) => {
 	const { onSubmit } = props
 	const [talking, setTalking] = useState("")
 	const [isInterim, setIsInterim] = useState(true)
-	const [enableAnalyze, setEnableAnalyze] = useState(true)
 
 	const handleInterim = text => {
 		setIsInterim(true)
