@@ -35,7 +35,7 @@ const CreateRoom = props => {
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		const roomsRef = fuego.db.collection("rooms")
+		const roomsRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData> = fuego.db.collection("rooms")
 		const existing = await roomsRef.where("name", "==", roomName).get()
 		if (!existing.empty) {
 			setError(`room:${roomName} already exists`)
@@ -43,18 +43,29 @@ const CreateRoom = props => {
 		}
 		const pwd = getHashString(password)
 		try {
-			await roomsRef.add({
+			const roomRef = await roomsRef.add({
 				name: roomName,
 				pwd
+			})
+			const teamsRef = roomRef.collection("teams")
+			console.info("room id", roomRef.id);
+			console.info("teams ref", teamsRef);
+			[
+				{ "name": "赤チーム", "color": [255, 0, 0] },
+				{ "name": "青チーム", "color": [0, 0, 255] },
+				{ "name": "黄チーム", "color": [255, 255, 0] },
+				{ "name": "白チーム", "color": [255, 255, 255] },
+			].forEach(t => {
+				teamsRef.add(t)
 			})
 			setError("")
 			Router.push({
 				pathname: `/admin/rooms/${roomName}`,
 				query: { password, pwd }
 			})
-		} catch (error) {
-			console.info(error);
-			setError(error)
+		} catch (e) {
+			console.info(e);
+			setError("部屋情報の作成に失敗")
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
 import Color from 'color';
-import { arrayToObject } from '../libs/Utils';
+import { arrayToObject } from '../../libs/Utils';
 import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
 import React from 'react';
 

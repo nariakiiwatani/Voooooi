@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from "react"
 import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
-import EnterUser from '../../components/EnterUser'
-import ChatRoom from '../../components/ChatRoom'
+import EnterUser from '../../components/room/EnterUser'
+import ChatRoom from '../../components/room/ChatRoom'
 import MyLayout from '../../components/Layout'
 import { useCollection } from "@nandorojo/swr-firestore"
 import { findRoomByName } from '../../libs/Firebase'
@@ -11,8 +11,6 @@ const RoomPage = (props) => {
 	const { roomId, roomName, pwd } = props
 	const [userValid, setUserValid] = useState(false)
 
-	const users = useCollection(`rooms/${roomId}/users`)
-	const teams = useCollection(`rooms/${roomId}/teams`)
 	const [error, setError] = useState("")
 
 	const user = useContext(UserContext)
@@ -26,11 +24,6 @@ const RoomPage = (props) => {
 	if (!roomId) {
 		return (<div>{`room(${roomName}) not exist`}</div>)
 	}
-	// check team info
-	if (!teams.data) {
-		return (<div>チーム情報を取得中</div>)
-	}
-
 
 	const handleSubmitUser = ({ name, team }) => {
 		const asyncFunc = async () => {
@@ -57,7 +50,7 @@ const RoomPage = (props) => {
 	return (
 		<MyLayout title={`Voext Chat - Room: ${roomName}`}>
 			{!userValid
-				? <EnterUser teams={teams.data} onSubmit={handleSubmitUser} />
+				? <EnterUser roomId={roomId} onSubmit={handleSubmitUser} />
 				: <ChatRoom teams={teams} users={users} />
 			}
 		</MyLayout >

@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext, useRef } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
-import { UserContext } from './contexts/UserContext'
+import { UserContext } from '../contexts/UserContext'
 import io from "socket.io-client"
 import { Grid, Paper, Box } from '@material-ui/core'
-import { sizing } from '@material-ui/system';
 
 const ChatRoom = props => {
 	const { teams, users, messages } = props

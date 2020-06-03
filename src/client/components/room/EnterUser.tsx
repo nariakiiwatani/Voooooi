@@ -5,7 +5,9 @@ import Color from 'color'
 import { useCollection } from "@nandorojo/swr-firestore"
 
 const EnterUser = props => {
-	const { teams } = props
+	const { roomId } = props
+	const teams = useCollection(`rooms/${roomId}/teams`)
+
 	const [formInput, setFormInput] = useState({
 		name: "",
 		team: null
@@ -48,9 +50,9 @@ const EnterUser = props => {
 						value={team}
 						onChange={handleChange("team")}
 					>
-						{teams.map((t, i) => {
+						{teams.data ? teams.data.map((t, i) => {
 							const cssProperty = {
-								color: new Color(t.color.color).toString()
+								color: `rgb(${t.color.join(",")})`
 							}
 							return <MenuItem value={t} key={i} >
 								<ListItemIcon>
@@ -58,7 +60,7 @@ const EnterUser = props => {
 								</ListItemIcon>
 								<Typography variant="inherit">{t.name}</Typography>
 							</MenuItem>
-						})}
+						}) : <div>チーム情報を取得中</div>}
 					</Select>
 				</FormControl>
 				<Button
