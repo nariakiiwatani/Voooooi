@@ -1,15 +1,20 @@
-import { useEffect, useState, useRef, useLayoutEffect, useMemo } from 'react';
-import Color from 'color';
-import { arrayToObject } from '../../libs/Utils';
+import { useEffect, useState, useRef, useLayoutEffect, useMemo, Suspense } from 'react';
 import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
 import React from 'react';
+import { useCollection } from '@nandorojo/swr-firestore';
+import { arrayToObject } from '../../libs/Utils';
 
 const CommentList = (props) => {
-	const { title, messages, team, users, local = false } = props
+	const { roomId, team } = props
 	const commentsRef = useRef()
 	const rootRef = useRef()
-	const userMap = useMemo(() => arrayToObject(users, "id"), [users])
-	const bgColor = useMemo(() => new Color(team.color.color).alpha(0.5).toString(), [team])
+	const users = useCollection(`rooms/${roomId}/users`)
+	const teams = useCollection(`rooms/${roomId}/teams`)
+	const messages = useCollection(`rooms/${roomId}/messages`)
+
+	const userMap = useMemo(() => {
+		return users.data ? arrayToObject(users.data) : {}
+	}, [users])
 
 	useEffect(() => {
 		const comments: HTMLElement = commentsRef.current;
@@ -61,15 +66,17 @@ const CommentList = (props) => {
 				overflow: "auto",
 				overflowWrap: "break-word"
 			}}>
-			<List subheader={<ListSubheader>{title}</ListSubheader>} >
-				<div ref={commentsRef}>
-					{messages.map((m, i) => (
-						<ListItem key={i}>
-							{printComment(m, local)}
-						</ListItem>
-					))}
-				</div>
-			</List>
+			<Suspense fallback={<div>コメントデータ取得中</div>}>
+				<List subheader={<ListSubheader>{team.name}</ListSubheader>} >
+					<div ref={commentsRef}>
+						{messages.data && messages.data.map((m, i) => (
+							<ListItem key={i}>
+								{printComment(m)}
+							</ListItem>
+						))}
+					</div>
+				</List>
+			</Suspense>
 		</Paper>
 	)
 }

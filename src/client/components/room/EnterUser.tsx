@@ -16,7 +16,7 @@ const EnterUser = props => {
 	})
 	const { name, team } = formInput
 
-	const handleSubmit = async e => {
+	const handleSubmit = e => {
 		e.preventDefault()
 		const userInfo = { name, team: team.id }
 		fuego.db.collection(`rooms/${roomId}/users`).add(userInfo)
