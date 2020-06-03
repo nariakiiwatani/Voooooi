@@ -1,16 +1,20 @@
 import { useState, useEffect, useContext } from "react"
-import Router from 'next/router'
 import { UserContext } from '../../components/contexts/UserContext'
 import EnterUser from '../../components/room/EnterUser'
 import ChatRoom from '../../components/room/ChatRoom'
 import MyLayout from '../../components/Layout'
-import { useCollection } from "@nandorojo/swr-firestore"
-import { findRoomByName } from '../../libs/Firebase'
+import { useCollection } from '@nandorojo/swr-firestore'
 
 const RoomPage = (props) => {
-	const { roomId, roomName, pwd } = props
+	const { roomName, pwd } = props
 	const [userValid, setUserValid] = useState(false)
-
+	const room = useCollection("rooms", {
+		where: [
+			["name", "==", roomName],
+			["pwd", "==", pwd]
+		],
+		limit: 1
+	})
 	const [error, setError] = useState("")
 
 	const user = useContext(UserContext)
@@ -21,10 +25,13 @@ const RoomPage = (props) => {
 	}, [userValid, user.user, user.team])
 
 	// check room exists
-	if (!roomId) {
-		return (<div>{`room(${roomName}) not exist`}</div>)
+	if (!room.data) {
+		return (<div>{`getting room data`}</div>)
 	}
-
+	else if (room.data.length === 0) {
+		return (<div>{`room not exist`}</div>)
+	}
+	const roomId = room.data[0].id
 
 	return (
 		<MyLayout title={`Voext Chat - Room: ${roomName}`}>
@@ -37,19 +44,8 @@ const RoomPage = (props) => {
 }
 
 export const getServerSideProps = async ({ params, query }) => {
-	let roomId = "";
-	try {
-		const response = await findRoomByName({ name: query.room, pwd: query.pwd })
-		console.info(response)
-		roomId = response[0].id
-	}
-	catch (error) {
-		console.log(error);
-	}
-
 	return {
 		props: {
-			roomId,
 			roomName: params.room,
 			...query
 		},
