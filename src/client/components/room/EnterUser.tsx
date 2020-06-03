@@ -3,6 +3,7 @@ import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typograph
 import { People } from "@material-ui/icons"
 import { useCollection, useFuegoContext } from "@nandorojo/swr-firestore"
 import { UserContext } from '../contexts/UserContext'
+import * as firebase from "firebase"
 
 const EnterUser = props => {
 	const { roomId } = props
@@ -19,7 +20,11 @@ const EnterUser = props => {
 
 	const handleSubmit = e => {
 		e.preventDefault()
-		const userInfo = { name, team: team.id }
+		const userInfo = {
+			name,
+			team: team.id,
+			createdAt: firebase.firestore.FieldValue.serverTimestamp()
+		}
 		fuego.db.collection(`rooms/${roomId}/users`).add(userInfo)
 			.then(data => {
 				user.setUser({ id: data.id, ...userInfo });

@@ -3,6 +3,7 @@ import { TextField, Button } from "@material-ui/core"
 import { getHashString } from '../../libs/Utils'
 import { useFuegoContext } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
+import * as firebase from "firebase"
 
 const CreateRoom = props => {
 
@@ -45,7 +46,8 @@ const CreateRoom = props => {
 		try {
 			const roomRef = await roomsRef.add({
 				name: roomName,
-				pwd
+				pwd,
+				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
 			const teamsRef = roomRef.collection("teams")
 			console.info("room id", roomRef.id);
@@ -56,7 +58,10 @@ const CreateRoom = props => {
 				{ "name": "黄チーム", "color": [255, 255, 0] },
 				{ "name": "白チーム", "color": [255, 255, 255] },
 			].forEach(t => {
-				teamsRef.add(t)
+				teamsRef.add({
+					...t,
+					createdAt: firebase.firestore.FieldValue.serverTimestamp()
+				})
 			})
 			setError("")
 			Router.push({

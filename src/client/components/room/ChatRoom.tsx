@@ -4,6 +4,7 @@ import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
 import { Grid } from '@material-ui/core'
 import { useCollection, useFuegoContext } from '@nandorojo/swr-firestore'
+import * as firebase from "firebase"
 
 const ChatRoom = props => {
 	const { roomId } = props
@@ -21,7 +22,8 @@ const ChatRoom = props => {
 
 	const handleSubmit = text => {
 		fuego.db.collection(`rooms/${roomId}/messages`).add({
-			...makeMessage(text)
+			...makeMessage(text),
+			createdAt: firebase.firestore.FieldValue.serverTimestamp()
 		})
 			.catch(e => { console.error(e) })
 
