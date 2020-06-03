@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import next from "next";
 
-admin.initializeApp();
+admin.initializeApp(functions.config().firebase);
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({

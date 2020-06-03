@@ -21,7 +21,6 @@ export interface Team {
 	id: IdType,
 	name: string,
 	color: Color,
-	room: IdType,
 }
 
 export interface User {

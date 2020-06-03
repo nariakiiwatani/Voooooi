@@ -4,6 +4,7 @@ import { getHashString } from '../libs/Utils';
 import RoomForm from '../components/RoomForm';
 import { AppBar, Tabs, Tab, Paper } from '@material-ui/core';
 import MyLayout from '../components/Layout';
+import { useFuegoContext } from '@nandorojo/swr-firestore';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -23,34 +24,36 @@ function TabPanel(props) {
 	);
 }
 const Index = () => {
-
 	const [error, setError] = useState("")
 	const [tabSelect, setTabSelect] = useState(0)
+	// @ts-ignore
+	const { fuego } = useFuegoContext()
 
 	const handleTabSelect = (event, newValue) => {
 		setTabSelect(newValue)
 	}
 	const handleCreate = async ({ roomName, password }) => {
+		const roomsRef = fuego.db.collection("rooms")
+
+		const existing = await roomsRef.where("name", "==", roomName).get()
+		if (!existing.empty) {
+			setError(`room:${roomName} already exists`)
+			return
+		}
 		const pwd = getHashString(password)
-		const response = await fetch(`/api/rooms`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json; charset=utf-8",
-			},
-			body: JSON.stringify({ name: roomName, pwd })
-		})
-		setError("")
-		if (response.ok) {
-			const result = (await response.json()).data
+		try {
+			await roomsRef.add({
+				name: roomName,
+				pwd
+			})
+			setError("")
 			Router.push({
 				pathname: `/admin/rooms/${roomName}`,
 				query: { password, pwd }
 			})
-		}
-		else {
-			const result = await response.json()
-			console.info("response(error)", response);
-			setError(result.error)
+		} catch (error) {
+			console.info(error);
+			setError(error)
 		}
 	}
 	const handleEnter = async ({ roomName, password }) => {

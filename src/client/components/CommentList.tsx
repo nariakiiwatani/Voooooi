@@ -16,8 +16,8 @@ const CommentList = (props) => {
 		const scroller: HTMLElement = rootRef.current;
 		if (scroller.scrollHeight <= scroller.clientHeight) return;
 		const lastCommentsTop = (count => {
-			let child = comments.lastElementChild
-			while (child && --count > 0 && (child = child.previousElementSibling)) { }
+			let child: HTMLElement = comments.lastElementChild as HTMLElement
+			while (child && --count > 0 && (child = child.previousElementSibling as HTMLElement)) { }
 			return child.offsetTop - scroller.offsetTop
 		})
 		const margin = 10

@@ -1,6 +1,7 @@
 import { User, Room, Team, Message, IdType, ServerContext } from "./Models"
 import Color from "color"
 import crypto from "crypto"
+import { db, docToRoom, docToTeam } from './Firebase'
 
 const newId = (() => seed => {
 	let id = ""
@@ -36,36 +37,36 @@ export function newMessage(message: {
 	return ret
 }
 
-export function newTeam(team: {
+export async function newTeam(team: {
 	name: string,
-	color: Color,
-	room: IdType,
-}, context?: ServerContext): Team {
-	const ret: Team = {
-		id: newId(team.name),
+	color: Color
+}, room: IdType
+): Promise<Team> {
+	console.info("create team")
+	const doc = await db.collection("rooms").doc(room).collection("teams").add({
 		...team
-	}
-	if (context) context.teams.push(ret)
-	return ret
+	})
+	console.info("team", doc)
+	return docToTeam(doc)
 }
 
-export function newRoom(room: {
+export async function newRoom(room: {
 	name: string,
 	pwd: string,
-}, context?: ServerContext): Room {
-	const ret: Room = {
-		id: newId(room.name),
+}): Promise<Room> {
+	console.info("create room")
+	const doc = await db.collection("rooms").add({
 		...room
-	}
-	if (context) context.rooms.push(ret)
-	return ret
+	})
+	console.info("room", doc)
+	return docToRoom(doc)
 }
 
-const makeDefaultRoom = (params: {
+const makeDefaultRoom = async (params: {
 	name: string,
 	pwd: string
-}, context?: ServerContext): Room => {
-	const room = newRoom(params, context);
+}): Promise<Room> => {
+	const room = await newRoom(params);
 	[{
 		name: "赤チーム",
 		color: new Color("rgb(255,0,0)"),
@@ -80,14 +81,16 @@ const makeDefaultRoom = (params: {
 		color: new Color("rgb(128,128,128)"),
 	},
 	].forEach((team => {
+		console.info("team", team)
+
 		newTeam({
-			room: room.id,
 			...team
-		}, context)
+		}, room.id,
+		)
 	}))
 	return room
 }
-export function newDefaultRoom(name: string, pwd: string, context?: ServerContext): Room {
-	return makeDefaultRoom({ name, pwd }, context)
+export async function newDefaultRoom(name: string, pwd: string): Promise<Room> {
+	return await makeDefaultRoom({ name, pwd })
 }
 

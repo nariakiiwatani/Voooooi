@@ -4,6 +4,7 @@ class Analyzer {
 	constructor(onFinishRef, onInterimRef) {
 		const recognition = ((klass) => {
 			return new klass();
+			// @ts-ignore Property 'webkitSpeechRecognition' does not exist on type 'Window & typeof globalThis'.
 		})(window.webkitSpeechRecognition || SpeechRecognition);
 
 		recognition.interimResults = (onInterimRef !== undefined);

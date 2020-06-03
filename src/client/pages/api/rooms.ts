@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServerContext } from '../../libs/Models'
+import { ServerContext, Room } from '../../libs/Models'
 import { firstOf, findOneByProps, findByProps } from '../../libs/Utils'
 import { newDefaultRoom } from '../../libs/Factory'
+import { findRoomByName } from "../../libs/Firebase"
+import { resolve } from 'dns'
 
 type NextApiRequestWithContext = NextApiRequest & {
 	context: ServerContext
@@ -12,14 +14,15 @@ const error = ({ status, message }) => (res: NextApiResponse) => {
 	res.json({ error: message })
 }
 
-const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
-	const { context } = req
+const createRoom = (req: NextApiRequestWithContext) => async (res: NextApiResponse) => {
 	const { name, pwd } = req.body
-	const found = findOneByProps(context.rooms, { name })
-	if (found) {
+
+	const found = await findRoomByName({ name, pwd })
+
+	if (found && found.length > 0) {
 		return error({ status: 400, message: `room:${name} already exists` })(res)
 	}
-	const room = newDefaultRoom(name, pwd, context)
+	const room: Room = await newDefaultRoom(name, pwd)
 
 	const data = { ...room }
 	delete data.pwd
@@ -28,18 +31,18 @@ const createRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) =>
 	res.json({ result: "ok", data })
 }
 
-const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
+const readRoom = (req: NextApiRequestWithContext) => async (res: NextApiResponse) => {
 	const name = firstOf(req.query.name)
 	const pwd = firstOf(req.query.pwd)
 	if (!name || !pwd) {
 		return error({ status: 400, message: `please contain 'name' and 'pwd' parameter in query.` })(res)
 	}
-	const { context } = req
-	const room = findOneByProps(context.rooms, { name })
-	if (!room) {
+	const room = await findRoomByName({ name, pwd })
+	console.info(room)
+	if (!room || room.length === 0) {
 		return error({ status: 400, message: `room:${name} not exists` })(res)
 	}
-	const data = { ...room }
+	const data = { ...room[0] }
 	delete data.pwd
 
 	const params = (firstOf(req.query.params) || "").split(",").filter(v => v !== "")
@@ -52,13 +55,16 @@ const readRoom = (req: NextApiRequestWithContext) => (res: NextApiResponse) => {
 }
 
 const RoomsAPI = (req: NextApiRequestWithContext, res: NextApiResponse) => {
-	switch (req.method) {
-		case "GET":
-			readRoom(req)(res)
-			break;
-		case "POST":
-			createRoom(req)(res)
-			break;
-	}
+	return new Promise(async resolve => {
+		switch (req.method) {
+			case "GET":
+				await readRoom(req)(res)
+				break;
+			case "POST":
+				await createRoom(req)(res)
+				break;
+		}
+		return resolve()
+	})
 }
 export default RoomsAPI

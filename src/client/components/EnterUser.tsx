@@ -1,14 +1,16 @@
-import { useState, CSSProperties } from "react"
+import { useState } from "react"
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, Box, ListItemIcon } from '@material-ui/core'
 import { People } from "@material-ui/icons"
 import Color from 'color'
+import { useCollection } from "@nandorojo/swr-firestore"
+
 const EnterUser = props => {
+	const { teams } = props
 	const [formInput, setFormInput] = useState({
 		name: "",
+		team: null
 	})
-	const { name } = formInput
-	const { teams } = props
-	const [team, setTeam] = useState(teams[0])
+	const { name, team } = formInput
 
 	const handleSubmit = e => {
 		e.preventDefault()
@@ -20,9 +22,6 @@ const EnterUser = props => {
 			...formInput,
 			[name]: e.target.value
 		})
-	}
-	const handleTeamSelect = e => {
-		setTeam(e.target.value)
 	}
 	const createInput = ([label, type, name, value, id = label]) => (
 		<div key={id}>
@@ -47,7 +46,7 @@ const EnterUser = props => {
 						labelId="id-team-select"
 						id="team-select"
 						value={team}
-						onChange={handleTeamSelect}
+						onChange={handleChange("team")}
 					>
 						{teams.map((t, i) => {
 							const cssProperty = {
