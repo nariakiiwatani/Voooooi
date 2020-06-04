@@ -17,7 +17,7 @@ module.exports =
 
 		return config;
 	},
-	distDir: "../../dist/client",
+	distDir: "../../dist/nextjs",
 	env: {
 		"FIREBASE_API_KEY": process.env.FIREBASE_API_KEY,
 		"FIREBASE_AUTH_DOMAIN": process.env.FIREBASE_AUTH_DOMAIN,

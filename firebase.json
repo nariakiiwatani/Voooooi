@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "src/static",
     "rewrites": [
 		{
 		  "source": "**/**",
@@ -11,11 +11,12 @@
   "functions": {
     "source": ".",
     "ignore": [
-      ".firebase/**",
-      ".firebaserc",
-      "firebase.json",
-      "**/node_modules/**",
-      "**/public/**"
+	  ".*",
+	  "firebase.json",
+	  "README.md",
+	  "secrets",
+	  "src",
+      "**/node_modules/**"
 	]
   }
 }

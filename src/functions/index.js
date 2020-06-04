@@ -9,7 +9,7 @@ const app = next({
 	dev,
 	// the absolute directory from the package.json file that initialises this module
 	// IE: the absolute path from the root of the Cloud Function
-	conf: { distDir: "dist/client" },
+	conf: { distDir: "dist/nextjs" },
 });
 const handle = app.getRequestHandler();
 
