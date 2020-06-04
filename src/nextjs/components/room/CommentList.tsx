@@ -12,6 +12,7 @@ const CommentList = (props) => {
 	const teams = useCollection(`rooms/${roomId}/teams`)
 	const messages = useCollection(`rooms/${roomId}/messages`,
 		{
+			listen: true,
 			where: ["team", "==", team.id]
 		}
 	)
