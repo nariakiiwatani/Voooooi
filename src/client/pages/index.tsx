@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AppBar, Tabs, Tab, Paper } from '@material-ui/core';
+import { Tabs, Tab } from '@material-ui/core';
 import MyLayout from '../components/Layout';
 import EnterRoom from '../components/index/EnterRoom';
 import CreateRoom from '../components/index/CreateRoom';

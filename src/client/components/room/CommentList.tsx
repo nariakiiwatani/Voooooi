@@ -17,7 +17,9 @@ const CommentList = (props) => {
 	)
 
 	const userMap = useMemo(() => {
-		return users.data ? arrayToObject(users.data) : {}
+		return !users.data ?
+			{} :
+			users.data.reduce((acc, user) => ({ ...acc, [user.id]: user }), {})
 	}, [users])
 
 	useEffect(() => {

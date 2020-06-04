@@ -3,7 +3,7 @@ import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
 import { Grid } from '@material-ui/core'
-import { useCollection, useFuegoContext } from '@nandorojo/swr-firestore'
+import { fuego, useCollection } from '@nandorojo/swr-firestore'
 import * as firebase from "firebase"
 
 const ChatRoom = props => {
@@ -11,7 +11,6 @@ const ChatRoom = props => {
 	const user = useContext(UserContext)
 	const teams = useCollection(`rooms/${roomId}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
-	const { fuego } = useFuegoContext()
 
 	const makeMessage = text => ({
 		room: roomId,

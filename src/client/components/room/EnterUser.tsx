@@ -1,35 +1,33 @@
 import { useState, useContext } from "react"
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, ListItemIcon } from '@material-ui/core'
 import { People } from "@material-ui/icons"
-import { useCollection, useFuegoContext } from "@nandorojo/swr-firestore"
+import { fuego, useCollection } from "@nandorojo/swr-firestore"
 import { UserContext } from '../contexts/UserContext'
 import * as firebase from "firebase"
 
 const EnterUser = props => {
 	const { roomId } = props
-	const teams = useCollection(`rooms/${roomId}/teams`)
+	const teams = useCollection<{ name: string, color: number[] }>(`rooms/${roomId}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
-	const { fuego } = useFuegoContext()
 	const user = useContext(UserContext)
 
 	const [formInput, setFormInput] = useState({
 		name: "",
-		team: {}
+		teamId: "",
 	})
-	const { name, team } = formInput
+	const { name, teamId } = formInput
 
 	const handleSubmit = e => {
 		e.preventDefault()
 		const userInfo = {
 			name,
-			team: team.id,
+			team: teamId,
 			createdAt: firebase.firestore.FieldValue.serverTimestamp()
 		}
 		fuego.db.collection(`rooms/${roomId}/users`).add(userInfo)
 			.then(data => {
 				user.setUser({ id: data.id, ...userInfo });
-				const { id, name, color } = team
-				user.setTeam({ id, name, color })
+				user.setTeam(teams.data.find(t => t.id === teamId))
 			})
 			.catch(e => { console.error(e) })
 	}
@@ -62,19 +60,21 @@ const EnterUser = props => {
 					<Select
 						labelId="id-team-select"
 						id="team-select"
-						value={team}
-						onChange={handleChange("team")}
+						value={teamId}
+						onChange={handleChange("teamId")}
 					>
 						{isTeamsValid() && teams.data.map((t, i) => {
 							const cssProperty = {
 								color: `rgb(${t.color.join(",")})`
 							}
-							return <MenuItem value={t} key={i} >
-								<ListItemIcon>
-									<People style={cssProperty} />
-								</ListItemIcon>
-								<Typography variant="inherit">{t.name}</Typography>
-							</MenuItem>
+							return (
+								<MenuItem value={t.id} key={i} >
+									<ListItemIcon>
+										<People style={cssProperty} />
+									</ListItemIcon>
+									<Typography variant="inherit">{t.name}</Typography>
+								</MenuItem>
+							)
 						})}
 					</Select>
 				</FormControl>

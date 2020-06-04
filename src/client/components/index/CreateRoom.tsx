@@ -1,15 +1,13 @@
 import { useState } from "react"
 import { TextField, Button } from "@material-ui/core"
 import { getHashString } from '../../libs/Utils'
-import { useFuegoContext } from '@nandorojo/swr-firestore';
+import { fuego } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
 import * as firebase from "firebase"
 
 const CreateRoom = props => {
 
 	const [error, setError] = useState("")
-	// @ts-ignore
-	const { fuego } = useFuegoContext()
 	const [formInput, setFormInput] = useState({
 		roomName: "",
 		password: "",

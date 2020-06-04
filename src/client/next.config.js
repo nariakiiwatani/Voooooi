@@ -1,4 +1,5 @@
-module.exports = {
+module.exports =
+{
 	webpack: (config, { defaultLoaders }) => {
 		config.module.rules.push({
 			test: /\.scss$|\.css$/,
