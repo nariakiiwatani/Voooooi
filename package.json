@@ -17,7 +17,7 @@
     "serve": "cross-env NODE_ENV=production firebase serve --only functions,hosting",
     "predeploy": "rimraf dist/ && npm run build",
 	"deploy": "cross-env NODE_ENV=production firebase deploy --only functions,hosting",
-	"build:now": "npm run build:nextjs && cp -r dist/nextjs/ .next/"
+	"build:now": "rimraf .next/ && npm run build:nextjs && cp -r dist/nextjs/ .next/"
   },
   "dependencies": {
     "@material-ui/core": "^4.10.1",
