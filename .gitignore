@@ -34,3 +34,4 @@ secrets
 .firebase
 .firebaserc
 .vscode
+.vercel

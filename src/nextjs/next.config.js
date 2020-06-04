@@ -17,6 +17,7 @@ module.exports =
 
 		return config;
 	},
+	target: 'experimental-serverless-trace',
 	distDir: "../../dist/nextjs",
 	env: {
 		"FIREBASE_API_KEY": process.env.FIREBASE_API_KEY,
