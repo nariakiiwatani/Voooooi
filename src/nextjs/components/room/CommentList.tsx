@@ -13,7 +13,8 @@ const CommentList = (props) => {
 	const messages = useCollection(`rooms/${roomId}/messages`,
 		{
 			listen: true,
-			where: ["team", "==", team.id]
+			where: ["team", "==", team.id],
+			orderBy: ["createdAt", "asc"]
 		}
 	)
 
