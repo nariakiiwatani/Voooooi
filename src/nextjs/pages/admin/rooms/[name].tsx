@@ -33,7 +33,8 @@ export const getServerSideProps = ({ params, query }) => {
 	return {
 		props: {
 			roomName: params.name,
-			...query
+			password: query.password || "",
+			pwd: query.pwd
 		},
 	}
 }
