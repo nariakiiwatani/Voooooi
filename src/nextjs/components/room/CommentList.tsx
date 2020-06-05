@@ -2,6 +2,24 @@ import { useEffect, useRef, useLayoutEffect, useMemo } from 'react';
 import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
 import React from 'react';
 import { useCollection } from '@nandorojo/swr-firestore';
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles({
+	commentBack: ({ color }: { color: number[] }) => ({
+		backgroundColor: `rgba(${color.join(",")},0.2)`,
+		paddingLeft: 8,
+		paddingRight: 8,
+		paddingTop: 4,
+		paddingBottom: 4,
+		borderRadius: 16
+	}),
+	commentPrimary: {
+	},
+	commentSecondary: {
+		float: "right",
+	}
+});
+
 
 const CommentList = (props) => {
 	const { roomId, team } = props
@@ -46,22 +64,40 @@ const CommentList = (props) => {
 		element.scrollTop = element.scrollHeight - element.clientHeight;
 	}
 
-	const printComment = (message) => (
-		<ListItemText
-			primary={message.text}
-			secondary={
-				<React.Fragment>
-					<Typography
-						component="span"
-						variant="caption"
-						color="textPrimary"
-					>
-						- {userMap[message.user].name}
-					</Typography>
-				</React.Fragment>
-			}
-		/>
-	)
+
+	const styles = useStyles(team)
+	const printComment = (message) => {
+
+		return (
+			<ListItemText
+				className={styles.commentBack}
+				primary={
+					<React.Fragment>
+						<Typography
+							className={styles.commentPrimary}
+							component="span"
+							variant="body1"
+							color="textPrimary"
+						>
+							{message.text}
+						</Typography>
+					</React.Fragment>
+				}
+				secondary={
+					<React.Fragment>
+						<Typography
+							className={styles.commentSecondary}
+							component="span"
+							variant="caption"
+							color="textPrimary"
+						>
+							- {userMap[message.user].name}
+						</Typography>
+					</React.Fragment>
+				}
+			/>
+		)
+	}
 
 	return (
 		<Paper ref={rootRef}
@@ -70,16 +106,19 @@ const CommentList = (props) => {
 				overflow: "auto",
 				overflowWrap: "break-word"
 			}}>
-			<List subheader={<ListSubheader>{team.name}</ListSubheader>} >
+			<List
+				subheader={<ListSubheader>{team.name}</ListSubheader>}
+				dense
+			>
 				<div ref={commentsRef}>
 					{messages.data && messages.data.map((m, i) => (
-						<ListItem key={i}>
+						<ListItem key={i} >
 							{printComment(m)}
 						</ListItem>
 					))}
 				</div>
 			</List>
-		</Paper>
+		</Paper >
 	)
 }
 
