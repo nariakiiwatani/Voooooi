@@ -2,14 +2,12 @@ import { useEffect, useRef, useLayoutEffect, useMemo } from 'react';
 import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
 import React from 'react';
 import { useCollection } from '@nandorojo/swr-firestore';
-import { arrayToObject } from '../../libs/Utils';
 
 const CommentList = (props) => {
 	const { roomId, team } = props
 	const commentsRef = useRef()
 	const rootRef = useRef()
 	const users = useCollection(`rooms/${roomId}/users`)
-	const teams = useCollection(`rooms/${roomId}/teams`)
 	const messages = useCollection(`rooms/${roomId}/messages`,
 		{
 			listen: true,

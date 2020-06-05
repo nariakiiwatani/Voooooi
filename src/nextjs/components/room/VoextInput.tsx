@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react"
 import Analyzer from '../../libs/Analyzer'
 import { FormControl, InputAdornment, OutlinedInput } from '@material-ui/core'
 import { Mic } from "@material-ui/icons"
-import React from 'react'
 
 const VoextInput = (props) => {
 	const { onSubmit } = props

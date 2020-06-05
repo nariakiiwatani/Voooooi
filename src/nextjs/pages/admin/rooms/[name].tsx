@@ -1,5 +1,4 @@
 import { useCollection } from '@nandorojo/swr-firestore'
-
 import { useMemo } from "react";
 import { useClipboard } from "use-clipboard-copy"
 import { Button } from '@material-ui/core';
