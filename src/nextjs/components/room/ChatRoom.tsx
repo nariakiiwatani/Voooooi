@@ -49,7 +49,6 @@ const ChatRoom = props => {
 					return (
 						<Grid item
 							xs={3}
-							sm={3}
 							key={t.id}
 							style={{
 								flexGrow: 1,
