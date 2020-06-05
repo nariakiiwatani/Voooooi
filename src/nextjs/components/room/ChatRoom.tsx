@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
@@ -11,6 +11,7 @@ const ChatRoom = props => {
 	const user = useContext(UserContext)
 	const teams = useCollection(`rooms/${roomId}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
+	const [teamsSeparated, setTeamsSeparated] = useState(true)
 
 	const makeMessage = text => ({
 		room: roomId,
@@ -37,30 +38,37 @@ const ChatRoom = props => {
 					flexShrink: 0
 				}}
 			/>
-			<Grid container
-				spacing={2}
-				style={{
-					flexGrow: 1,
-					display: "flex",
-					flexDirection: "column",
-					minHeight: 0,
-				}}
-			>
-				{isTeamsValid() && teams.data.map(t => {
-					return (
-						<Grid item
-							xs={3}
-							key={t.id}
-							style={{
-								flexGrow: 1,
-								minHeight: "100%",
-							}}
-						>
-							<CommentList roomId={roomId} team={t} />
-						</Grid>
+			{isTeamsValid() &&
+
+				(teamsSeparated ? (
+					<Grid container
+						spacing={2}
+						style={{
+							flexGrow: 1,
+							display: "flex",
+							flexDirection: "column",
+							minHeight: 0,
+						}}
+					>
+						{teams.data.map(t => (
+							<Grid item
+								xs={3}
+								key={t.id}
+								style={{
+									flexGrow: 1,
+									minHeight: "100%",
+								}}
+							>
+								<CommentList roomId={roomId} team={t} />
+							</Grid>
+						)
+						)}
+					</Grid>
+				) : (
+						<CommentList roomId={roomId} />
 					)
-				})}
-			</Grid>
+				)
+			}
 		</>
 	)
 }
