@@ -20,6 +20,7 @@ const ChatRoom = props => {
 	})
 
 	const handleSubmit = text => {
+		if (!text || text === "") return
 		fuego.db.collection(`rooms/${roomId}/messages`).add({
 			...makeMessage(text),
 			createdAt: firebase.firestore.FieldValue.serverTimestamp()
