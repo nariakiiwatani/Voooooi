@@ -1,8 +1,9 @@
-import { useEffect, useRef, useLayoutEffect, useMemo } from 'react';
+import { useEffect, useRef, useLayoutEffect, useMemo, RefObject } from 'react';
 import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
-import React from 'react';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { makeStyles } from '@material-ui/styles';
+import { useScroll } from "react-use"
+import React from "react"
 
 const useStyles = makeStyles({
 	commentBack: ({ color }: { color: number[] }) => ({
@@ -21,10 +22,23 @@ const useStyles = makeStyles({
 });
 
 
+const useScrollCustom = (ref: RefObject<HTMLElement>) => {
+	const original = useScroll(ref)
+
+	return {
+		...original,
+		left: original.x,
+		top: original.y,
+		right: ref.current && (ref.current.scrollWidth - original.x - ref.current.clientWidth),
+		bottom: ref.current && (ref.current.scrollHeight - original.y - ref.current.clientHeight),
+	}
+}
+
 const CommentList = (props) => {
 	const { roomId, team } = props
 	const commentsRef = useRef()
-	const rootRef = useRef()
+	const scrollRef = useRef(null);
+	const { bottom: restScroll } = useScrollCustom(scrollRef);
 	const users = useCollection(`rooms/${roomId}/users`)
 	const messages = useCollection(`rooms/${roomId}/messages`,
 		{
@@ -42,22 +56,22 @@ const CommentList = (props) => {
 
 	useEffect(() => {
 		const comments: HTMLElement = commentsRef.current;
-		const scroller: HTMLElement = rootRef.current;
-		if (scroller.scrollHeight <= scroller.clientHeight) return;
-		const lastCommentsTop = (count => {
-			let child: HTMLElement = comments.lastElementChild as HTMLElement
-			while (child && --count > 0 && (child = child.previousElementSibling as HTMLElement)) { }
-			return child.offsetTop - scroller.offsetTop
-		})
+		const scroller: HTMLElement = scrollRef.current;
+		const calcCommentsHeight = count => {
+			let ret = 0;
+			for (let child = comments.lastElementChild as HTMLElement; count-- > 0 && child; child = child.previousElementSibling as HTMLElement) {
+				ret += child.clientHeight
+			}
+			return ret
+		}
 		const margin = 10
-		const scrollBottom = scroller.scrollTop + scroller.clientHeight
-		if (scrollBottom + margin > lastCommentsTop(1)) {
+		if (restScroll < calcCommentsHeight(2) + margin) {
 			scrollToBottom(scroller)
 		}
-	}, [messages]);
+	}, [messages.data]);
 
 	useLayoutEffect(() => {
-		scrollToBottom(rootRef.current)
+		scrollToBottom(scrollRef.current)
 	}, [])
 
 	const scrollToBottom = (element) => {
@@ -100,7 +114,7 @@ const CommentList = (props) => {
 	}
 
 	return (
-		<Paper ref={rootRef}
+		<Paper ref={scrollRef}
 			style={{
 				height: "100%",
 				overflow: "auto",
