@@ -1,4 +1,5 @@
 import { createContext, useState } from 'react';
+import { useSessionStorage } from "react-use"
 
 export const UserContext = createContext({
 	user: null,
@@ -7,8 +8,8 @@ export const UserContext = createContext({
 	setTeam: null,
 });
 const UserContextProvider = (props) => {
-	const [user, setUser] = useState({});
-	const [team, setTeam] = useState({});
+	const [user, setUser] = useSessionStorage("user", {});
+	const [team, setTeam] = useSessionStorage("team", {});
 	return (
 		<UserContext.Provider value={{
 			user, setUser,
