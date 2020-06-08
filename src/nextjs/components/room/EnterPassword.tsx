@@ -1,9 +1,5 @@
-import { useState, useContext } from "react"
-import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Typography, ListItemIcon } from '@material-ui/core'
-import { People } from "@material-ui/icons"
-import { fuego, useCollection } from "@nandorojo/swr-firestore"
-import { UserContext } from '../contexts/UserContext'
-import * as firebase from "firebase"
+import { useState } from "react"
+import { TextField, Button } from '@material-ui/core'
 
 const EnterPassword = props => {
 	const { label, buttonText, onSubmit } = props

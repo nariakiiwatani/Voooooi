@@ -9,7 +9,7 @@ const EnterUser = props => {
 	const { room } = props
 	const teams = useCollection<{ name: string, color: number[] }>(`rooms/${room.id}/teams`)
 	const isTeamsValid = teams?.data?.length > 0
-	const user = useContext(UserContext)
+	const context = useContext(UserContext)
 
 	const [formInput, setFormInput] = useState({
 		name: "",
@@ -26,8 +26,8 @@ const EnterUser = props => {
 		}
 		fuego.db.collection(`rooms/${room.id}/users`).add(userInfo)
 			.then(data => {
-				user.setUser({ id: data.id, ...userInfo });
-				user.setTeam(teams.data.find(t => t.id === teamId))
+				context.user.set(data.id);
+				context.team.set(teamId);
 			})
 			.catch(e => { console.error(e) })
 	}

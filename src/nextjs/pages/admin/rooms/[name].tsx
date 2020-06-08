@@ -1,7 +1,7 @@
 import { useDocument } from '@nandorojo/swr-firestore'
 import { useMemo, useState } from "react";
 import { useClipboard } from "use-clipboard-copy"
-import { Button, TextField } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import EditPassword from '../../../components/admin/EditPassword';
 import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"

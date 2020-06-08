@@ -8,15 +8,15 @@ import * as firebase from "firebase"
 
 const ChatRoom = props => {
 	const { room } = props
-	const user = useContext(UserContext)
+	const context = useContext(UserContext)
 	const teams = useCollection(`rooms/${room.id}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const [teamsSeparated, setTeamsSeparated] = useState(true)
 
 	const makeMessage = text => ({
 		room: room.id,
-		user: user.user.id,
-		team: user.team.id,
+		user: context.user.get(),
+		team: context.team.get(),
 		text
 	})
 

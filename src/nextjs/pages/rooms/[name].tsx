@@ -13,8 +13,8 @@ const RoomPage = (props) => {
 	const [userPassword, setUserPassword] = useState(pwd || "")
 	const room = useDocument<{ userPassword: string }>(`rooms/${roomName}/`)
 
-	const user = useContext(UserContext)
-	const isUserValid = () => user?.user?.id && user.team?.id
+	const context = useContext(UserContext)
+	const isUserValid = () => context?.user?.get() && context.team?.get()
 
 	const handleSubmitPassword = password => {
 		const hashed = getHashString(password)

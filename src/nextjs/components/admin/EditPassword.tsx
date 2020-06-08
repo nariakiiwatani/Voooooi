@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TextField, Button, FormControl } from '@material-ui/core'
+import { TextField, Button } from '@material-ui/core'
 
 const EditPassword = props => {
 	const { label, onSubmit } = props

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useLayoutEffect, useMemo, RefObject } from 'react';
-import { List, ListItem, ListItemText, Paper, ListSubheader, Typography } from '@material-ui/core';
+import { List, ListItem, Paper, ListSubheader } from '@material-ui/core';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { useScroll } from "react-use"
 import React from "react"
