@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { TextField, Button } from "@material-ui/core"
 import { getHashString } from '../../libs/Utils'
 import { fuego } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
+import { UserContext } from '../contexts/UserContext';
 
 const EnterRoom = props => {
 
@@ -13,6 +14,8 @@ const EnterRoom = props => {
 		password: "",
 	})
 	const { roomName, password } = formInput
+
+	const context = useContext(UserContext)
 
 	const handleChange = name => e => {
 		setFormInput({
@@ -42,6 +45,7 @@ const EnterRoom = props => {
 			return
 		}
 		setError("")
+		context.token.set(pwd)
 		Router.push({
 			pathname: `/rooms/${roomName}`,
 			query: { pwd }

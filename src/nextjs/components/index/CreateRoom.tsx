@@ -42,8 +42,9 @@ const CreateRoom = props => {
 		}
 		const pwd = getHashString(password)
 		try {
-			roomRef.set({
+			await roomRef.set({
 				adminPassword: pwd,
+				userPassword: "",
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
 			const teamsRef = roomRef.collection("teams");

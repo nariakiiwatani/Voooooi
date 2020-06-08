@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { UserContext } from '../../components/contexts/UserContext'
 import EnterUser from '../../components/room/EnterUser'
 import ChatRoom from '../../components/room/ChatRoom'
@@ -10,7 +10,6 @@ import Router from 'next/router'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props
-	const [userPassword, setUserPassword] = useState(pwd || "")
 	const room = useDocument<{ userPassword: string }>(`rooms/${roomName}/`)
 
 	const context = useContext(UserContext)
@@ -18,14 +17,18 @@ const RoomPage = (props) => {
 
 	const handleSubmitPassword = password => {
 		const hashed = getHashString(password)
-		setUserPassword(hashed)
-		Router.push(`/rooms/${roomName}?pwd=${hashed}`, undefined, { shallow: true })
+		context.token.set(hashed)
 	}
-	const isPasswordValid = () => (
-		room.data.userPassword ?
-			room.data.userPassword === userPassword :
-			userPassword === ""
-	)
+
+	const isPasswordValid = () => {
+		if (pwd !== undefined) {
+			context.token.set(pwd)
+		}
+		const token = context.token.get()
+		return room.data.userPassword ?
+			room.data.userPassword === token :
+			token === ""
+	}
 
 	return (
 		<MyLayout title={`Voext Chat - Room: ${roomName}`}>
@@ -45,7 +48,7 @@ export const getServerSideProps = async ({ params, query }) => {
 	return {
 		props: {
 			roomName: params.name,
-			pwd: query.pwd
+			...query
 		},
 	}
 }
