@@ -43,7 +43,7 @@ const CreateRoom = props => {
 		const pwd = getHashString(password)
 		try {
 			roomRef.set({
-				pwd,
+				adminPassword: pwd,
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
 			const teamsRef = roomRef.collection("teams");
@@ -61,7 +61,7 @@ const CreateRoom = props => {
 			setError("")
 			Router.push({
 				pathname: `/admin/rooms/${roomName}`,
-				query: { password, pwd }
+				query: { pwd }
 			})
 		} catch (e) {
 			console.info(e);
@@ -73,7 +73,7 @@ const CreateRoom = props => {
 		<>
 			<form onSubmit={handleSubmit}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
-				{createInput(["パスワード", "password", "password", password])}
+				{createInput(["管理パスワード", "password", "password", password])}
 				<Button
 					fullWidth
 					onClick={handleSubmit}

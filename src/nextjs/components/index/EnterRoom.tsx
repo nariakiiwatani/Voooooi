@@ -35,7 +35,7 @@ const EnterRoom = props => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 
-		const pwd = getHashString(password)
+		const pwd = password ? getHashString(password) : ""
 		const room = await fuego.db.doc(`rooms/${roomName}`).get()
 		if (!room.exists) {
 			setError(`room:${roomName} not exist`)
@@ -52,7 +52,7 @@ const EnterRoom = props => {
 		<>
 			<form onSubmit={handleSubmit}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
-				{createInput(["パスワード", "password", "password", password])}
+				{createInput(["入室パスワード", "password", "password", password])}
 				<Button
 					fullWidth
 					onClick={handleSubmit}
