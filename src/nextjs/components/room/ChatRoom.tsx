@@ -7,14 +7,14 @@ import { fuego, useCollection } from '@nandorojo/swr-firestore'
 import * as firebase from "firebase"
 
 const ChatRoom = props => {
-	const { roomId } = props
+	const { room } = props
 	const user = useContext(UserContext)
-	const teams = useCollection(`rooms/${roomId}/teams`)
+	const teams = useCollection(`rooms/${room.id}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const [teamsSeparated, setTeamsSeparated] = useState(true)
 
 	const makeMessage = text => ({
-		room: roomId,
+		room: room.id,
 		user: user.user.id,
 		team: user.team.id,
 		text
@@ -22,7 +22,7 @@ const ChatRoom = props => {
 
 	const handleSubmit = text => {
 		if (!text || text === "") return
-		fuego.db.collection(`rooms/${roomId}/messages`).add({
+		fuego.db.collection(`rooms/${room.id}/messages`).add({
 			...makeMessage(text),
 			createdAt: firebase.firestore.FieldValue.serverTimestamp()
 		})
@@ -59,13 +59,13 @@ const ChatRoom = props => {
 									minHeight: "100%",
 								}}
 							>
-								<CommentList roomId={roomId} team={t} />
+								<CommentList room={room} team={t} />
 							</Grid>
 						)
 						)}
 					</Grid>
 				) : (
-						<CommentList roomId={roomId} />
+						<CommentList room={room} />
 					)
 				)
 			}

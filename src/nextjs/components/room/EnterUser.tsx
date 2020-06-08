@@ -6,9 +6,9 @@ import { UserContext } from '../contexts/UserContext'
 import * as firebase from "firebase"
 
 const EnterUser = props => {
-	const { roomId } = props
-	const teams = useCollection<{ name: string, color: number[] }>(`rooms/${roomId}/teams`)
-	const isTeamsValid = () => (teams && teams.data && teams.data.length)
+	const { room } = props
+	const teams = useCollection<{ name: string, color: number[] }>(`rooms/${room.id}/teams`)
+	const isTeamsValid = teams?.data?.length > 0
 	const user = useContext(UserContext)
 
 	const [formInput, setFormInput] = useState({
@@ -24,7 +24,7 @@ const EnterUser = props => {
 			team: teamId,
 			createdAt: firebase.firestore.FieldValue.serverTimestamp()
 		}
-		fuego.db.collection(`rooms/${roomId}/users`).add(userInfo)
+		fuego.db.collection(`rooms/${room.id}/users`).add(userInfo)
 			.then(data => {
 				user.setUser({ id: data.id, ...userInfo });
 				user.setTeam(teams.data.find(t => t.id === teamId))
@@ -63,7 +63,7 @@ const EnterUser = props => {
 						value={teamId}
 						onChange={handleChange("teamId")}
 					>
-						{isTeamsValid() && teams.data.map((t, i) => {
+						{isTeamsValid && teams.data.map((t, i) => {
 							const cssProperty = {
 								color: `rgb(${t.color.join(",")})`
 							}

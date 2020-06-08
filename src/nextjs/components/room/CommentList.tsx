@@ -24,13 +24,13 @@ const useScrollCustom = (ref: RefObject<HTMLElement>) => {
 }
 
 const CommentList = (props) => {
-	const { roomId, team } = props
+	const { room, team } = props
 	const commentsRef = useRef()
 	const scrollRef = useRef(null);
 	const { bottom: restScroll, scrollTo } = useScrollCustom(scrollRef);
-	const users = useCollection(`rooms/${roomId}/users`)
-	const teams = useCollection(`rooms/${roomId}/teams`)
-	const messages = useCollection<{ user: string, team: string, createdAt: any }>(`rooms/${roomId}/messages`,
+	const users = useCollection(`rooms/${room.id}/users`)
+	const teams = useCollection(`rooms/${room.id}/teams`)
+	const messages = useCollection<{ user: string, team: string, createdAt: any }>(`rooms/${room.id}/messages`,
 		{
 			listen: true,
 			where: team ? ["team", "==", team.id] : undefined,

@@ -34,22 +34,19 @@ const CreateRoom = props => {
 
 	const handleSubmit = async e => {
 		e.preventDefault()
-		const roomsRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData> = fuego.db.collection("rooms")
-		const existing = await roomsRef.where("name", "==", roomName).get()
-		if (!existing.empty) {
+		const roomRef = fuego.db.doc(`rooms/${roomName}`)
+
+		if ((await roomRef.get()).exists) {
 			setError(`room:${roomName} already exists`)
 			return
 		}
 		const pwd = getHashString(password)
 		try {
-			const roomRef = await roomsRef.add({
-				name: roomName,
+			roomRef.set({
 				pwd,
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
-			const teamsRef = roomRef.collection("teams")
-			console.info("room id", roomRef.id);
-			console.info("teams ref", teamsRef);
+			const teamsRef = roomRef.collection("teams");
 			[
 				{ "name": "赤チーム", "color": [255, 0, 0] },
 				{ "name": "青チーム", "color": [0, 0, 255] },

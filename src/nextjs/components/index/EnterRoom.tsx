@@ -36,10 +36,9 @@ const EnterRoom = props => {
 		e.preventDefault()
 
 		const pwd = getHashString(password)
-		const roomsRef = fuego.db.collection("rooms")
-		const existing = await roomsRef.where("name", "==", roomName).where("pwd", "==", pwd).get()
-		if (existing.empty) {
-			setError(`room:${roomName} not exists or password invalid`)
+		const room = await fuego.db.doc(`rooms/${roomName}`).get()
+		if (!room.exists) {
+			setError(`room:${roomName} not exist`)
 			return
 		}
 		setError("")
