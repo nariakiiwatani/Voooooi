@@ -59,7 +59,7 @@ const EnterRoom = props => {
 				{createInput(["入室パスワード", "password", "password", password])}
 				<Button
 					fullWidth
-					onClick={handleSubmit}
+					type="submit"
 					variant="contained"
 					color="primary"
 				>部屋に入る</Button>

@@ -77,7 +77,7 @@ const CreateRoom = props => {
 				{createInput(["管理パスワード", "password", "password", password])}
 				<Button
 					fullWidth
-					onClick={handleSubmit}
+					type="submit"
 					variant="contained"
 					color="secondary"
 				>部屋を作る</Button>
