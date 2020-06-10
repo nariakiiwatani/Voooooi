@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 import EditPassword from '../../../components/admin/EditPassword';
 import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"
+import MyLayout from '../../../components/Layout';
 
 const RoomAdminPage = (props) => {
 	const { roomName, pwd, url } = props
@@ -23,27 +24,27 @@ const RoomAdminPage = (props) => {
 		})
 	}
 	return (
-		<>
-			<div>admin page</div>
-			<div>部屋名:{roomName}</div>
+		<MyLayout title={`管理ページ - ${roomName}`}>
 			<EditPassword label="入室パスワードを設定" onSubmit={handleChangePassword} />
-			<Button
-				variant="contained"
-				onClick={() => {
-					clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
-				}}
-			>
-				パスワードを含む入室URLをクリップボードにコピー
-			</Button>
-			<Button
-				variant="contained"
-				onClick={() => {
-					clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
-				}}
-			>
-				管理画面（ここ）のURLをクリップボードにコピー
-			</Button>
-		</>
+			<form>
+				<Button
+					variant="contained"
+					onClick={() => {
+						clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
+					}}
+				>
+					パスワードを含む入室URLをクリップボードにコピー
+				</Button>
+				<Button
+					variant="contained"
+					onClick={() => {
+						clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
+					}}
+				>
+					管理画面（ここ）のURLをクリップボードにコピー
+				</Button>
+			</form>
+		</MyLayout>
 	)
 }
 
