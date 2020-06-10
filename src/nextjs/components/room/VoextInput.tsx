@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react"
 import Analyzer from '../../libs/Analyzer'
-import { FormControl, InputAdornment, OutlinedInput } from '@material-ui/core'
-import { Mic } from "@material-ui/icons"
+import { FormControl, InputAdornment, OutlinedInput, IconButton } from '@material-ui/core'
+import { Mic, MicOff } from "@material-ui/icons"
 
 const VoextInput = (props) => {
 	const { onSubmit } = props
 	const [talking, setTalking] = useState("")
 	const [isInterim, setIsInterim] = useState(true)
+	const [enableVoice, setEnableVoice] = useState(true)
 
 	const handleInterim = text => {
 		setIsInterim(true)
@@ -26,7 +27,18 @@ const VoextInput = (props) => {
 	const [analyzer] = useState(() => new Analyzer(handleFinishRef, handleInterimRef))
 	useEffect(() => {
 		analyzer.start()
+		return () => {
+			analyzer.stop()
+		}
 	}, [])
+	useEffect(() => {
+		analyzer.setContinuous(enableVoice)
+		enableVoice ? analyzer.start() : analyzer.stop()
+	}, [enableVoice])
+	const handleChangeVoiceEnabled = e => {
+		setEnableVoice(!enableVoice)
+	}
+
 	const handleChange = e => {
 		setTalking(e.target.value)
 	}
@@ -48,7 +60,11 @@ const VoextInput = (props) => {
 							<InputAdornment
 								position="start"
 							>
-								<Mic />
+								<IconButton
+									onClick={handleChangeVoiceEnabled}
+								>
+									{enableVoice ? <Mic /> : <MicOff />}
+								</IconButton>
 							</InputAdornment>
 						}
 						value={talking}

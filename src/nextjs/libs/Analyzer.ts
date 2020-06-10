@@ -1,5 +1,6 @@
 class Analyzer {
 	recognition: any;
+	continuous: boolean = true
 	isFinish: boolean = false;
 	constructor(onFinishRef, onInterimRef) {
 		const recognition = ((klass) => {
@@ -16,19 +17,25 @@ class Analyzer {
 		};
 
 		recognition.onend = () => {
-			this.start()
+			if (this.continuous) {
+				this.start();
+			}
 		};
 
 		recognition.onerror = (e) => {
 			if (e.error === 'no-speech') {
-				this.start();
+				if (this.continuous) {
+					this.start();
+				}
 			}
 		};
 
 		recognition.onspeechend = () => {
 			setTimeout(() => {
 				if (this.isFinish) { return; }
-				this.start();
+				if (this.continuous) {
+					this.start();
+				}
 			}, 500);
 		};
 		recognition.onresult = (event) => {
@@ -37,7 +44,9 @@ class Analyzer {
 			if (result.isFinal) {
 				this.isFinish = true
 				onFinishRef.current(transcript);
-				this.start();
+				if (this.continuous) {
+					this.start();
+				}
 			}
 			else {
 				onInterimRef.current(transcript);
@@ -54,6 +63,9 @@ class Analyzer {
 	}
 	stop(): void {
 		this.recognition.stop();
+	}
+	setContinuous(c: boolean): void {
+		this.continuous = c
 	}
 }
 export default Analyzer
