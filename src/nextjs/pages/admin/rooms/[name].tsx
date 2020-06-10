@@ -6,12 +6,15 @@ import EditPassword from '../../../components/admin/EditPassword';
 import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"
 import MyLayout from '../../../components/Layout';
+import MyAdminMenu from '../../../components/admin/Menu';
+import { Mic, HearingTwoTone, People } from '@material-ui/icons';
 
 const RoomAdminPage = (props) => {
 	const { roomName, pwd, url } = props
 	const origin = useMemo(() => (new URL(url).origin), [url])
 	const clipboard = useClipboard()
 	const room = useDocument<{ userPassword: string, updatedAt: firebase.firestore.FieldValue }>(`rooms/${roomName}`)
+	const [contentName, setContentName] = useState("room")
 
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
@@ -23,28 +26,59 @@ const RoomAdminPage = (props) => {
 			updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 		})
 	}
+	const handleMenuSelect = hint => {
+		setContentName(hint)
+	}
 	return (
-		<MyLayout title={`管理ページ - ${roomName}`}>
-			<EditPassword label="入室パスワードを設定" onSubmit={handleChangePassword} />
-			<form>
-				<Button
-					variant="contained"
-					onClick={() => {
-						clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
-					}}
-				>
-					パスワードを含む入室URLをクリップボードにコピー
+		<>
+			<MyAdminMenu
+				title={`管理ページ - ${roomName}`}
+				onSelect={handleMenuSelect}
+				menus={[
+					{
+						title: "部屋",
+						icon: <Mic />,
+						hint: "room"
+
+					},
+					{
+						title: "メンバー",
+						icon: <People />,
+						hint: "member"
+
+					}
+				]}
+			>
+				{contentName === "room" ? (
+					<>
+						<EditPassword label="入室パスワードを設定" onSubmit={handleChangePassword} />
+						<form>
+							<Button
+								variant="contained"
+								onClick={() => {
+									clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
+								}}
+							>
+								パスワードを含む入室URLをクリップボードにコピー
 				</Button>
-				<Button
-					variant="contained"
-					onClick={() => {
-						clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
-					}}
-				>
-					管理画面（ここ）のURLをクリップボードにコピー
+							<Button
+								variant="contained"
+								onClick={() => {
+									clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
+								}}
+							>
+								管理画面（ここ）のURLをクリップボードにコピー
 				</Button>
-			</form>
-		</MyLayout>
+						</form>
+					</>
+				) : ""}
+				{contentName === "member" ? (
+					<>
+						<div>メンバー管理</div>
+					</>
+				) : ""}
+			</MyAdminMenu>
+		</>
 	)
 }
 
