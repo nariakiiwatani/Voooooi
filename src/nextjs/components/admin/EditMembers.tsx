@@ -1,6 +1,5 @@
 import MaterialTable from "material-table"
 import { useCollection, fuego } from '@nandorojo/swr-firestore';
-import { CompactPicker } from "react-color"
 import * as firebase from "firebase"
 import { Button, FormControl, InputLabel, Select, MenuItem, ListItemIcon, Typography } from '@material-ui/core';
 import tableIcons from "../../libs/TableIcons"
@@ -68,33 +67,28 @@ const EditMembers = props => {
 
 	return (
 		<>
-			{users.data && teams.data ? <MaterialTable
-				icons={tableIcons}
-				columns={columns}
-				data={users.data}
-				editable={{
-					onRowAdd: async newData => {
-						await users.add({
-							...newData,
-							createdAt: firebase.firestore.FieldValue.serverTimestamp()
-						})
-					},
-					onRowUpdate: async (newData, oldData) => {
-						const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
-						await userDoc.update({
-							name: newData.name,
-							team: newData.team,
-							updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-						})
-						await users.revalidate()
-					},
-					onRowDelete: async oldData => {
-						const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
-						await userDoc.delete()
-						await users.revalidate()
-					}
-				}}
-			/> : ""}
+			{users.data && teams.data ?
+				<MaterialTable
+					icons={tableIcons}
+					columns={columns}
+					data={users.data}
+					editable={{
+						onRowUpdate: async (newData, oldData) => {
+							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
+							await userDoc.update({
+								name: newData.name,
+								team: newData.team,
+								updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+							})
+							await users.revalidate()
+						},
+						onRowDelete: async oldData => {
+							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
+							await userDoc.delete()
+							await users.revalidate()
+						}
+					}}
+				/> : ""}
 		</>
 	)
 }
