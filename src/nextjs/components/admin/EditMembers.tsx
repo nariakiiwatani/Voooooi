@@ -7,8 +7,16 @@ import { People } from '@material-ui/icons';
 
 const EditMembers = props => {
 	const { roomName } = props
-	const teams = useCollection(`rooms/${roomName}/teams`)
-	const users = useCollection(`rooms/${roomName}/users`)
+	const teams = useCollection<{
+		id: string,
+		color: number[],
+		name: string
+	}>(`rooms/${roomName}/teams`)
+	const users = useCollection<{
+		id: string,
+		name: string,
+		team: string
+	}>(`rooms/${roomName}/users`)
 	const columns = [
 		{ title: '名前', field: 'name' },
 		{
@@ -73,7 +81,7 @@ const EditMembers = props => {
 					columns={columns}
 					data={users.data}
 					editable={{
-						onRowUpdate: async (newData, oldData) => {
+						onRowUpdate: async (newData: { name: string, team: string }, oldData: { id: string, team: string }) => {
 							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
 							await userDoc.update({
 								name: newData.name,
@@ -82,7 +90,7 @@ const EditMembers = props => {
 							})
 							await users.revalidate()
 						},
-						onRowDelete: async oldData => {
+						onRowDelete: async (oldData: { id: string, team: string }) => {
 							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
 							await userDoc.delete()
 							await users.revalidate()

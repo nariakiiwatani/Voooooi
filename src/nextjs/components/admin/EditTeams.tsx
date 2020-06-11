@@ -33,7 +33,12 @@ const EditTeams = props => {
 			}
 		}
 	];
-	const teams = useCollection(`rooms/${roomName}/teams`)
+	const teams = useCollection<{
+		id: string,
+		name: string,
+		color: number[],
+		createdAt: firebase.firestore.FieldValue
+	}>(`rooms/${roomName}/teams`)
 
 	return (
 		<>
@@ -42,13 +47,13 @@ const EditTeams = props => {
 				columns={columns}
 				data={teams.data}
 				editable={{
-					onRowAdd: async newData => {
+					onRowAdd: async (newData: { id: string, name: string, color: number[] }) => {
 						await teams.add({
 							...newData,
 							createdAt: firebase.firestore.FieldValue.serverTimestamp()
 						})
 					},
-					onRowUpdate: async (newData, oldData) => {
+					onRowUpdate: async (newData: { name: string, color: number[] }, oldData: { id: string, color: number[] }) => {
 						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
 						await teamDoc.update({
 							name: newData.name,
@@ -57,7 +62,7 @@ const EditTeams = props => {
 						})
 						await teams.revalidate()
 					},
-					onRowDelete: async oldData => {
+					onRowDelete: async (oldData: { id: string, color: number[] }) => {
 						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
 						await teamDoc.delete()
 						await teams.revalidate()
