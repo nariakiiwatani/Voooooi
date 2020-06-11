@@ -5,17 +5,17 @@ import { Button } from '@material-ui/core';
 import EditPassword from '../../../components/admin/EditPassword';
 import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"
-import MyLayout from '../../../components/Layout';
 import MyAdminMenu from '../../../components/admin/Menu';
-import { Mic, HearingTwoTone, People, Flag } from '@material-ui/icons';
+import { Mic, People, Flag } from '@material-ui/icons';
 import EditTeams from '../../../components/admin/EditTeams';
+import EditMembers from '../../../components/admin/EditMembers';
 
 const RoomAdminPage = (props) => {
 	const { roomName, pwd, url } = props
 	const origin = useMemo(() => (new URL(url).origin), [url])
 	const clipboard = useClipboard()
 	const room = useDocument<{ userPassword: string, updatedAt: firebase.firestore.FieldValue }>(`rooms/${roomName}`)
-	const [contentName, setContentName] = useState("team")
+	const [contentName, setContentName] = useState("member")
 
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
@@ -83,9 +83,7 @@ const RoomAdminPage = (props) => {
 					<EditTeams roomName={roomName} />
 				) : ""}
 				{contentName === "member" ? (
-					<>
-						<div>メンバー管理</div>
-					</>
+					<EditMembers roomName={roomName} />
 				) : ""}
 			</MyAdminMenu>
 		</>
