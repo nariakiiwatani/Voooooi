@@ -1,6 +1,7 @@
 import MaterialTable from "material-table"
 import { useCollection } from '@nandorojo/swr-firestore';
 import { CompactPicker } from "react-color"
+import * as firebase from "firebase"
 
 import AddBox from '@material-ui/icons/AddBox';
 import Check from '@material-ui/icons/Check';
@@ -79,9 +80,13 @@ const EditTeams = props => {
 				columns={columns}
 				data={teams.data}
 				editable={{
-					onRowAdd: async newData => (
+					onRowAdd: async newData => {
 						console.info("add")
-					),
+						await teams.add({
+							...newData,
+							createdAt: firebase.firestore.FieldValue.serverTimestamp()
+						})
+					},
 					onRowUpdate: (newData, oldData) =>
 						new Promise((resolve, reject) => {
 							setTimeout(() => {
