@@ -7,14 +7,15 @@ import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"
 import MyLayout from '../../../components/Layout';
 import MyAdminMenu from '../../../components/admin/Menu';
-import { Mic, HearingTwoTone, People } from '@material-ui/icons';
+import { Mic, HearingTwoTone, People, Flag } from '@material-ui/icons';
+import EditTeams from '../../../components/admin/EditTeams';
 
 const RoomAdminPage = (props) => {
 	const { roomName, pwd, url } = props
 	const origin = useMemo(() => (new URL(url).origin), [url])
 	const clipboard = useClipboard()
 	const room = useDocument<{ userPassword: string, updatedAt: firebase.firestore.FieldValue }>(`rooms/${roomName}`)
-	const [contentName, setContentName] = useState("room")
+	const [contentName, setContentName] = useState("team")
 
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
@@ -42,11 +43,17 @@ const RoomAdminPage = (props) => {
 
 					},
 					{
+						title: "チーム",
+						icon: <Flag />,
+						hint: "team"
+
+					},
+					{
 						title: "メンバー",
 						icon: <People />,
 						hint: "member"
 
-					}
+					},
 				]}
 			>
 				{contentName === "room" ? (
@@ -71,6 +78,9 @@ const RoomAdminPage = (props) => {
 				</Button>
 						</form>
 					</>
+				) : ""}
+				{contentName === "team" ? (
+					<EditTeams roomName={roomName} />
 				) : ""}
 				{contentName === "member" ? (
 					<>
