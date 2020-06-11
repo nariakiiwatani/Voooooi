@@ -95,19 +95,12 @@ const EditTeams = props => {
 						})
 						await teams.revalidate()
 					},
-					onRowDelete: oldData =>
-						new Promise((resolve, reject) => {
-							setTimeout(() => {
-								// const dataDelete = [...data];
-								// const index = oldData.tableData.id;
-								// dataDelete.splice(index, 1);
-								// setData([...dataDelete]);
-
-								resolve()
-							}, 1000)
-						}),
-				}
-				}
+					onRowDelete: async oldData => {
+						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
+						await teamDoc.delete()
+						await teams.revalidate()
+					}
+				}}
 			/> : ""}
 		</>
 	)
