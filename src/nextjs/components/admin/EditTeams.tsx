@@ -1,5 +1,5 @@
 import MaterialTable from "material-table"
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection, fuego } from '@nandorojo/swr-firestore';
 import { CompactPicker } from "react-color"
 import * as firebase from "firebase"
 
@@ -81,23 +81,20 @@ const EditTeams = props => {
 				data={teams.data}
 				editable={{
 					onRowAdd: async newData => {
-						console.info("add")
 						await teams.add({
 							...newData,
 							createdAt: firebase.firestore.FieldValue.serverTimestamp()
 						})
 					},
-					onRowUpdate: (newData, oldData) =>
-						new Promise((resolve, reject) => {
-							setTimeout(() => {
-								// const dataUpdate = [...data];
-								// const index = oldData.tableData.id;
-								// dataUpdate[index] = newData;
-								// setData([...dataUpdate]);
-
-								resolve();
-							}, 1000)
-						}),
+					onRowUpdate: async (newData, oldData) => {
+						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
+						await teamDoc.update({
+							name: newData.name,
+							color: newData.color,
+							updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+						})
+						await teams.revalidate()
+					},
 					onRowDelete: oldData =>
 						new Promise((resolve, reject) => {
 							setTimeout(() => {
