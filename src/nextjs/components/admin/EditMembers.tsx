@@ -10,8 +10,13 @@ const EditMembers = props => {
 	const teams = useCollection<{
 		id: string,
 		color: number[],
-		name: string
-	}>(`rooms/${roomName}/teams`)
+		name: string,
+		createdAt: any
+	}>(`rooms/${roomName}/teams`,
+		{
+			orderBy: ["createdAt", "asc"]
+		}
+	)
 	const users = useCollection<{
 		id: string,
 		name: string,

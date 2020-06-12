@@ -38,7 +38,11 @@ const EditTeams = props => {
 		name: string,
 		color: number[],
 		createdAt: firebase.firestore.FieldValue
-	}>(`rooms/${roomName}/teams`)
+	}>(`rooms/${roomName}/teams`,
+		{
+			orderBy: ["createdAt", "asc"]
+		}
+	)
 
 	return (
 		<>

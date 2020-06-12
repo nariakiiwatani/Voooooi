@@ -9,7 +9,11 @@ import * as firebase from "firebase"
 const ChatRoom = props => {
 	const { room } = props
 	const context = useContext(UserContext)
-	const teams = useCollection(`rooms/${room.id}/teams`)
+	const teams = useCollection(`rooms/${room.id}/teams`,
+		{
+			orderBy: ["createdAt", "asc"]
+		}
+	)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const { data: viewSettings } = useDocument<{
 		combinedTimeline: boolean
