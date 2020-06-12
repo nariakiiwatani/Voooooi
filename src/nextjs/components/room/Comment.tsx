@@ -19,8 +19,7 @@ const useStyles = makeStyles({
 const UserComment = props => {
 	const { message, user, team } = props
 
-
-	const styles = useStyles(team)
+	const styles = useStyles(team || { color: [0, 0, 0] })
 	return (
 		<ListItemText
 			className={styles.commentBack}

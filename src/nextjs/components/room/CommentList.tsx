@@ -24,12 +24,11 @@ const useScrollCustom = (ref: RefObject<HTMLElement>) => {
 }
 
 const CommentList = (props) => {
-	const { room, team } = props
+	const { room, team, teams } = props
 	const commentsRef = useRef()
 	const scrollRef = useRef(null);
 	const { bottom: restScroll, scrollTo } = useScrollCustom(scrollRef);
 	const users = useCollection(`rooms/${room.id}/users`)
-	const teams = useCollection(`rooms/${room.id}/teams`)
 	const messages = useCollection<{ user: string, team: string, createdAt: any }>(`rooms/${room.id}/messages`,
 		{
 			listen: true,
@@ -43,10 +42,8 @@ const CommentList = (props) => {
 			users.data.reduce((acc, user) => ({ ...acc, [user.id]: user }), {})
 	}, [users.data])
 	const teamMap = useMemo(() => {
-		return !teams.data ?
-			{} :
-			teams.data.reduce((acc, team) => ({ ...acc, [team.id]: team }), {})
-	}, [teams.data])
+		return (teams ? teams : [team]).reduce((acc, team) => ({ ...acc, [team.id]: team }), {})
+	}, [team, teams])
 
 	useEffect(() => {
 		const comments: HTMLElement = commentsRef.current;

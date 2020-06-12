@@ -3,7 +3,7 @@ import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
 import { Grid } from '@material-ui/core'
-import { fuego, useCollection } from '@nandorojo/swr-firestore'
+import { fuego, useCollection, useDocument } from '@nandorojo/swr-firestore'
 import * as firebase from "firebase"
 
 const ChatRoom = props => {
@@ -11,7 +11,9 @@ const ChatRoom = props => {
 	const context = useContext(UserContext)
 	const teams = useCollection(`rooms/${room.id}/teams`)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
-	const [teamsSeparated, setTeamsSeparated] = useState(true)
+	const { data: viewSettings } = useDocument<{
+		combinedTimeline: boolean
+	}>(`rooms/${room.id}/settings/view`, { listen: true })
 
 	const makeMessage = text => ({
 		room: room.id,
@@ -30,6 +32,10 @@ const ChatRoom = props => {
 
 	}
 
+	if (!viewSettings) {
+		return <></>
+	}
+
 	return (
 		<>
 			<VoextInput
@@ -40,32 +46,32 @@ const ChatRoom = props => {
 			/>
 			{isTeamsValid() &&
 
-				(teamsSeparated ? (
-					<Grid container
-						spacing={2}
-						style={{
-							flexGrow: 1,
-							display: "flex",
-							flexDirection: "column",
-							minHeight: 0,
-						}}
-					>
-						{teams.data.map(t => (
-							<Grid item
-								xs={3}
-								key={t.id}
-								style={{
-									flexGrow: 1,
-									minHeight: "100%",
-								}}
-							>
-								<CommentList room={room} team={t} />
-							</Grid>
-						)
-						)}
-					</Grid>
+				(viewSettings.combinedTimeline ? (
+					<CommentList room={room} teams={teams.data} />
 				) : (
-						<CommentList room={room} />
+						<Grid container
+							spacing={2}
+							style={{
+								flexGrow: 1,
+								display: "flex",
+								flexDirection: "column",
+								minHeight: 0,
+							}}
+						>
+							{teams.data.map(t => (
+								<Grid item
+									xs={3}
+									key={t.id}
+									style={{
+										flexGrow: 1,
+										minHeight: "100%",
+									}}
+								>
+									<CommentList room={room} team={t} />
+								</Grid>
+							)
+							)}
+						</Grid>
 					)
 				)
 			}
