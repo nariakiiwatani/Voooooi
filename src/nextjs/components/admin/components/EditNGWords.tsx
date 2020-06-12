@@ -8,8 +8,14 @@ const EditNGWords = props => {
 	const ngWords = useCollection<{
 		text: string,
 		replace: string,
-		replaceWholeMessage: boolean
-	}>(`rooms/${roomName}/ngMessages`)
+		replaceWholeMessage: boolean,
+		createdAt: firebase.firestore.FieldValue
+	}>(
+		`rooms/${roomName}/ngMessages`,
+		{
+			orderBy: ["createdAt", "asc"]
+		}
+	)
 	const columns = [
 		{ title: '対象テキスト', field: 'text' },
 		{ title: "置換テキスト", field: "replace", initialEditValue: "---" },

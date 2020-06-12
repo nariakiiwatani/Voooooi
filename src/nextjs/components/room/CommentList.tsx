@@ -36,11 +36,10 @@ const CommentList = (props) => {
 			orderBy: ["createdAt", "asc"]
 		}
 	)
-	const ngWords = useCollection<{
-		text: string,
-		replace: string,
-		replaceWholeMessage: boolean
-	}>(`rooms/${room.id}/ngMessages`, { listen: true })
+	const ngWords = useCollection(`rooms/${room.id}/ngMessages`, {
+		listen: true,
+		orderBy: ['createdAt', 'asc']
+	})
 
 	const userMap = useMemo(() => {
 		return !users.data ?
