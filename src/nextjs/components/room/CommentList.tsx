@@ -36,6 +36,12 @@ const CommentList = (props) => {
 			orderBy: ["createdAt", "asc"]
 		}
 	)
+	const ngWords = useCollection<{
+		text: string,
+		replace: string,
+		replaceWholeMessage: boolean
+	}>(`rooms/${room.id}/ngMessages`, { listen: true })
+
 	const userMap = useMemo(() => {
 		return !users.data ?
 			{} :
@@ -78,7 +84,7 @@ const CommentList = (props) => {
 				<div ref={commentsRef}>
 					{messages.data && messages.data.map((m, i) => (
 						<ListItem key={i} >
-							<UserComment message={m} user={userMap[m.user]} team={teamMap[m.team]} />
+							<UserComment message={m} ng={ngWords.data} user={userMap[m.user]} team={teamMap[m.team]} />
 						</ListItem>
 					))}
 				</div>

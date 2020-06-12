@@ -1,4 +1,5 @@
 import { makeStyles, ListItemText, Typography } from '@material-ui/core'; import React, { useMemo } from 'react';
+import reactStringReplace from "react-string-replace"
 
 const useStyles = makeStyles({
 	commentBack: ({ color }: { color: number[] }) => ({
@@ -13,13 +14,28 @@ const useStyles = makeStyles({
 	},
 	commentSecondary: {
 		float: "right",
+	},
+	ngComment: {
+		fontStyle: "italic",
+		color: "red"
 	}
 });
 
 const UserComment = props => {
-	const { message, user, team } = props
+	const { message, user, team, ng } = props
 
 	const styles = useStyles(team || { color: [0, 0, 0] })
+
+	const showMessage = () => {
+		let ret = message.text
+		ng.filter(({ text }) => ret.indexOf(text) >= 0)
+			.forEach(ng => {
+				const replace = <span className={styles.ngComment}>{ng.replace}</span>
+				ret = ng.replaceWholeMessage ? replace : reactStringReplace(ret, ng.text, () => replace)
+			})
+		return ret
+	}
+
 	return (
 		<ListItemText
 			className={styles.commentBack}
@@ -31,7 +47,7 @@ const UserComment = props => {
 						variant="body1"
 						color="textPrimary"
 					>
-						{message.text}
+						{showMessage()}
 					</Typography>
 				</React.Fragment>
 			}

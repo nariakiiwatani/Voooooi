@@ -3,6 +3,7 @@ import { ListItemIcon, List, ListItem, ListItemText, Divider, Grid, Paper } from
 import { useState } from 'react';
 import { ViewList } from "@material-ui/icons"
 import ViewSettings from './components/ViewSettings';
+import EditNGWords from './components/EditNGWords';
 
 const EditMessages = props => {
 	const { roomName } = props
@@ -17,6 +18,11 @@ const EditMessages = props => {
 			title: "表示切り替え",
 			icon: <ViewList />,
 			content: <ViewSettings roomName={roomName} />
+		},
+		ngw: {
+			title: "NGワード",
+			icon: <ViewList />,
+			content: <EditNGWords roomName={roomName} />
 		}
 	}
 
