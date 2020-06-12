@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useMemo } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
@@ -16,8 +16,16 @@ const ChatRoom = props => {
 	)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const { data: viewSettings } = useDocument<{
-		combinedTimeline: boolean
+		combinedTimeline: boolean,
+		muteOtherTeams: boolean
 	}>(`rooms/${room.id}/settings/view`, { listen: true })
+
+	const dispTeams = useMemo(() => {
+		if (teams?.data?.length === 0 || !viewSettings) return []
+		return viewSettings.muteOtherTeams ?
+			teams.data.filter(t => t.id === context.team.get())
+			: teams.data
+	}, [teams.data, viewSettings])
 
 	const makeMessage = text => ({
 		room: room.id,
@@ -50,7 +58,7 @@ const ChatRoom = props => {
 			/>
 			{isTeamsValid() &&
 				(viewSettings.combinedTimeline ? (
-					<CommentList room={room} teams={teams.data} />
+					<CommentList room={room} teams={dispTeams} />
 				) : (
 						<Grid container
 							spacing={2}
@@ -61,9 +69,8 @@ const ChatRoom = props => {
 								minHeight: 0,
 							}}
 						>
-							{teams.data.map(t => (
+							{dispTeams.map(t => (
 								<Grid item
-									xs={3}
 									key={t.id}
 									style={{
 										flexGrow: 1,
