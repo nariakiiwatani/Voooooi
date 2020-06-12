@@ -28,10 +28,11 @@ const UserComment = props => {
 
 	const showMessage = () => {
 		let ret = message.text
-		ng?.filter(({ text }) => ret.indexOf(text) >= 0)
+		let key = 0
+		ng?.filter(ng => (ng.regexp ? ret.match(ng.text) !== null : ret.indexOf(ng.text) >= 0))
 			.forEach(ng => {
-				const replace = <span className={styles.ngComment}>{ng.replace}</span>
-				ret = ng.replaceWholeMessage ? replace : reactStringReplace(ret, ng.text, () => replace)
+				const replace = <span key={++key} className={styles.ngComment}>{ng.replace}</span>
+				ret = ng.replaceWholeMessage ? replace : reactStringReplace(ret, ng.regexp ? new RegExp(`(${ng.text})`, "g") : ng.text, () => replace)
 			})
 		return ret
 	}

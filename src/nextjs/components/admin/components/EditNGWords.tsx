@@ -9,6 +9,7 @@ const EditNGWords = props => {
 		text: string,
 		replace: string,
 		replaceWholeMessage: boolean,
+		regexp: boolean,
 		createdAt: firebase.firestore.FieldValue
 	}>(
 		`rooms/${roomName}/ngMessages`,
@@ -19,6 +20,7 @@ const EditNGWords = props => {
 	const columns = [
 		{ title: '対象テキスト', field: 'text' },
 		{ title: "置換テキスト", field: "replace", initialEditValue: "---" },
+		{ title: "正規表現", field: "regexp", type: "boolean", initialEditValue: false },
 		{ title: "メッセージ全体を置き換え", field: "replaceWholeMessage", type: "boolean", initialEditValue: true }
 	];
 
@@ -40,6 +42,7 @@ const EditNGWords = props => {
 						await doc.update({
 							text: newData.text,
 							replace: newData.replace,
+							regexp: newData.regexp,
 							replaceWholeMessage: newData.replaceWholeMessage,
 							updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 						})
