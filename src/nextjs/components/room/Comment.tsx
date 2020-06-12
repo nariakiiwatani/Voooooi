@@ -28,7 +28,7 @@ const UserComment = props => {
 
 	const showMessage = () => {
 		let ret = message.text
-		ng.filter(({ text }) => ret.indexOf(text) >= 0)
+		ng?.filter(({ text }) => ret.indexOf(text) >= 0)
 			.forEach(ng => {
 				const replace = <span className={styles.ngComment}>{ng.replace}</span>
 				ret = ng.replaceWholeMessage ? replace : reactStringReplace(ret, ng.text, () => replace)

@@ -49,7 +49,6 @@ const ChatRoom = props => {
 				}}
 			/>
 			{isTeamsValid() &&
-
 				(viewSettings.combinedTimeline ? (
 					<CommentList room={room} teams={teams.data} />
 				) : (
