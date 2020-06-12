@@ -6,16 +6,17 @@ import EditPassword from '../../../components/admin/EditPassword';
 import { getHashString } from '../../../libs/Utils';
 import * as firebase from "firebase"
 import MyAdminMenu from '../../../components/admin/Menu';
-import { Mic, People, Flag } from '@material-ui/icons';
+import { Mic, People, Flag, Message } from '@material-ui/icons';
 import EditTeams from '../../../components/admin/EditTeams';
 import EditMembers from '../../../components/admin/EditMembers';
+import EditMessages from '../../../components/admin/EditMessages';
 
 const RoomAdminPage = (props) => {
 	const { roomName, pwd, url } = props
 	const origin = useMemo(() => (new URL(url).origin), [url])
 	const clipboard = useClipboard()
 	const room = useDocument<{ userPassword: string, updatedAt: firebase.firestore.FieldValue }>(`rooms/${roomName}`)
-	const [contentName, setContentName] = useState("member")
+	const [contentName, setContentName] = useState("message")
 
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
@@ -54,6 +55,12 @@ const RoomAdminPage = (props) => {
 						hint: "member"
 
 					},
+					{
+						title: "メッセージ",
+						icon: <Message />,
+						hint: "message"
+
+					},
 				]}
 			>
 				{contentName === "room" ? (
@@ -84,6 +91,9 @@ const RoomAdminPage = (props) => {
 				) : ""}
 				{contentName === "member" ? (
 					<EditMembers roomName={roomName} />
+				) : ""}
+				{contentName === "message" ? (
+					<EditMessages roomName={roomName} />
 				) : ""}
 			</MyAdminMenu>
 		</>
