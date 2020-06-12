@@ -28,6 +28,7 @@ const EditNGWords = props => {
 		<>
 			<MaterialTable
 				icons={tableIcons}
+				// @ts-ignore
 				columns={columns}
 				data={ngWords.data}
 				editable={{
