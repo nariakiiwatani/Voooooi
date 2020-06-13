@@ -24,31 +24,22 @@ const useScrollCustom = (ref: RefObject<HTMLElement>) => {
 }
 
 const CommentList = (props) => {
-	const { room, team, teams } = props
+	const { room, teams, users, messages } = props
 	const commentsRef = useRef()
 	const scrollRef = useRef(null);
 	const { bottom: restScroll, scrollTo } = useScrollCustom(scrollRef);
-	const users = useCollection(`rooms/${room.id}/users`)
-	const messages = useCollection<{ user: string, team: string, createdAt: any }>(`rooms/${room.id}/messages`,
-		{
-			listen: true,
-			where: team ? ["team", "==", team.id] : undefined,
-			orderBy: ["createdAt", "asc"]
-		}
-	)
+	const adminTeam = useCollection(`rooms/${room.id}/teams/admin`)
 	const ngWords = useCollection(`rooms/${room.id}/ngMessages`, {
 		listen: true,
 		orderBy: ['createdAt', 'asc']
 	})
 
 	const userMap = useMemo(() => {
-		return !users.data ?
-			{} :
-			users.data.reduce((acc, user) => ({ ...acc, [user.id]: user }), {})
-	}, [users.data])
+		return users.reduce((acc, user) => ({ ...acc, [user.id]: user }), {})
+	}, [users])
 	const teamMap = useMemo(() => {
-		return (teams ? teams : [team]).reduce((acc, team) => ({ ...acc, [team.id]: team }), {})
-	}, [team, teams])
+		return [...teams, adminTeam.data].reduce((acc, team) => ({ ...acc, [team?.id]: team }), {})
+	}, [teams, adminTeam.data])
 
 	useEffect(() => {
 		const comments: HTMLElement = commentsRef.current;
@@ -63,7 +54,7 @@ const CommentList = (props) => {
 		if (restScroll < calcCommentsHeight(2) + margin) {
 			scrollTo({ bottom: 0 })
 		}
-	}, [messages.data]);
+	}, [messages]);
 
 	useLayoutEffect(() => {
 		scrollTo({ bottom: 0 })
@@ -77,11 +68,10 @@ const CommentList = (props) => {
 				overflowWrap: "break-word"
 			}}>
 			<List
-				subheader={team ? <ListSubheader>{team.name}</ListSubheader> : <></>}
 				dense
 			>
 				<div ref={commentsRef}>
-					{messages.data && messages.data.map((m, i) => (
+					{messages && messages.filter(m => teams.some(t => t?.id === m.team)).map((m, i) => (
 						<ListItem key={i} >
 							<UserComment message={m} ng={ngWords.data} user={userMap[m.user]} team={teamMap[m.team]} />
 						</ListItem>

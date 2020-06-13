@@ -14,18 +14,28 @@ const ChatRoom = props => {
 			orderBy: ["createdAt", "asc"]
 		}
 	)
+	const users = useCollection(`rooms/${room.id}/users`)
+	const messages = useCollection(`rooms/${room.id}/messages`,
+		{
+			orderBy: ["createdAt", "asc"],
+			listen: true
+		}
+	)
 	const isTeamsValid = () => (teams && teams.data && teams.data.length)
 	const { data: viewSettings } = useDocument<{
 		combinedTimeline: boolean,
 		muteOtherTeams: boolean
 	}>(`rooms/${room.id}/settings/view`, { listen: true })
 
-	const dispTeams = useMemo(() => {
+	const teamsColumn = useMemo(() => {
 		if (teams?.data?.length === 0 || !viewSettings) return []
 		return viewSettings.muteOtherTeams ?
 			teams.data.filter(t => t.id === context.team.get())
 			: teams.data
 	}, [teams.data, viewSettings])
+	const dispTeams = useMemo(() => {
+		return [...teamsColumn, teams.data?.find(t => t.id === "admin")]
+	}, [teamsColumn])
 
 	const makeMessage = text => ({
 		room: room.id,
@@ -58,7 +68,7 @@ const ChatRoom = props => {
 			/>
 			{isTeamsValid() &&
 				(viewSettings.combinedTimeline ? (
-					<CommentList room={room} teams={dispTeams} />
+					<CommentList room={room} teams={dispTeams} users={users.data} messages={messages.data} />
 				) : (
 						<Grid container
 							spacing={2}
@@ -69,7 +79,7 @@ const ChatRoom = props => {
 								minHeight: 0,
 							}}
 						>
-							{dispTeams.map(t => (
+							{teamsColumn.filter(t => t.id !== "admin").map(t => (
 								<Grid item
 									key={t.id}
 									style={{
@@ -77,7 +87,7 @@ const ChatRoom = props => {
 										minHeight: "100%",
 									}}
 								>
-									<CommentList room={room} team={t} />
+									<CommentList room={room} teams={[t, teams.data.find(t => t.id === "admin")]} users={users.data} messages={messages.data} />
 								</Grid>
 							)
 							)}
