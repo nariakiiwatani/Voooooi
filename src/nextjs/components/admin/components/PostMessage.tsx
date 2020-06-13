@@ -49,7 +49,6 @@ const PostMessage = props => {
 		}))
 	}
 	const handleChangeColor = name => ({ rgb }) => {
-		e.persist()
 		setState(state => ({
 			...state,
 			[name]: [rgb.r, rgb.g, rgb.b]
