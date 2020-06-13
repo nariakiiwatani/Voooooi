@@ -64,6 +64,12 @@ const CreateRoom = props => {
 				color: [0, 0, 0],
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
+			roomRef.collection("users").doc("admin").set({
+				name: "admin",
+				team: "admin",
+				createdAt: firebase.firestore.FieldValue.serverTimestamp()
+			});
+
 			setError("")
 			Router.push({
 				pathname: `/admin/rooms/${roomName}`,
