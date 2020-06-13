@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo } from 'react'
+import { useContext, useState, useMemo, useEffect } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
@@ -26,6 +26,9 @@ const ChatRoom = props => {
 		combinedTimeline: boolean,
 		muteOtherTeams: boolean
 	}>(`rooms/${room.id}/settings/view`, { listen: true })
+	const { data: postSettings } = useDocument<{
+		enableVoice: boolean
+	}>(`rooms/${room.id}/settings/post`, { listen: true })
 
 	const teamsColumn = useMemo(() => {
 		if (teams?.data?.length === 0 || !viewSettings) return []
@@ -62,6 +65,7 @@ const ChatRoom = props => {
 		<>
 			<VoextInput
 				onSubmit={handleSubmit}
+				enabled={postSettings?.enableVoice}
 				style={{
 					flexShrink: 0
 				}}
