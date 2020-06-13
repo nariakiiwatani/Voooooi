@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ViewList } from "@material-ui/icons"
 import ViewSettings from './components/ViewSettings';
 import EditNGWords from './components/EditNGWords';
+import PostMessage from './components/PostMessage';
 
 const EditMessages = props => {
 	const { roomName } = props
@@ -23,6 +24,11 @@ const EditMessages = props => {
 			title: "NGワード",
 			icon: <ViewList />,
 			content: <EditNGWords roomName={roomName} />
+		},
+		post: {
+			title: "管理者メッセージ",
+			icon: <ViewList />,
+			content: <PostMessage roomName={roomName} />
 		}
 	}
 
