@@ -2,14 +2,22 @@ import { makeStyles, ListItemText, Typography } from '@material-ui/core'; import
 import reactStringReplace from "react-string-replace"
 
 const useStyles = makeStyles({
-	commentBack: ({ color }: { color: number[] }) => ({
-		backgroundColor: `rgba(${color.join(",")},0.2)`,
-		paddingLeft: 8,
-		paddingRight: 8,
-		paddingTop: 4,
-		paddingBottom: 4,
-		borderRadius: 16
-	}),
+	commentBack: ({ color, id }: { color: number[], id: string }) => (
+		id === "admin" ? {
+			backgroundColor: `rgba(${color.join(",")},0.2)`,
+			paddingLeft: 8,
+			paddingRight: 8,
+			paddingTop: 4,
+			paddingBottom: 4,
+			borderRadius: 0
+		} : {
+				backgroundColor: `rgba(${color.join(",")},0.2)`,
+				paddingLeft: 8,
+				paddingRight: 8,
+				paddingTop: 4,
+				paddingBottom: 4,
+				borderRadius: 16
+			}),
 	commentPrimary: {
 	},
 	commentSecondary: {
