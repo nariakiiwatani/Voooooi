@@ -31,70 +31,57 @@ const RoomAdminPage = (props) => {
 	const handleMenuSelect = hint => {
 		setContentName(hint)
 	}
+	const menus = {
+		room: {
+			title: "部屋",
+			icon: <Mic />,
+			content: (<>
+				<EditPassword label="入室パスワードを設定" onSubmit={handleChangePassword} />
+				<form>
+					<Button
+						variant="contained"
+						onClick={() => {
+							clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
+						}}
+					>
+						パスワードを含む入室URLをクリップボードにコピー
+					</Button>
+					<Button
+						variant="contained"
+						onClick={() => {
+							clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
+						}}
+					>
+						管理画面（ここ）のURLをクリップボードにコピー
+					</Button>
+				</form>
+			</>)
+		},
+		team: {
+			title: "チーム",
+			icon: <Flag />,
+			content: <EditTeams roomName={roomName} />
+
+		},
+		member: {
+			title: "メンバー",
+			icon: <People />,
+			content: <EditMembers roomName={roomName} />
+		},
+		message: {
+			title: "メッセージ",
+			icon: <Message />,
+			content: <EditMessages roomName={roomName} />
+		}
+	}
 	return (
 		<>
 			<MyAdminMenu
 				title={`管理ページ - ${roomName}`}
 				onSelect={handleMenuSelect}
-				menus={[
-					{
-						title: "部屋",
-						icon: <Mic />,
-						hint: "room"
-
-					},
-					{
-						title: "チーム",
-						icon: <Flag />,
-						hint: "team"
-
-					},
-					{
-						title: "メンバー",
-						icon: <People />,
-						hint: "member"
-
-					},
-					{
-						title: "メッセージ",
-						icon: <Message />,
-						hint: "message"
-
-					},
-				]}
+				menus={menus}
 			>
-				{contentName === "room" ? (
-					<>
-						<EditPassword label="入室パスワードを設定" onSubmit={handleChangePassword} />
-						<form>
-							<Button
-								variant="contained"
-								onClick={() => {
-									clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
-								}}
-							>
-								パスワードを含む入室URLをクリップボードにコピー
-				</Button>
-							<Button
-								variant="contained"
-								onClick={() => {
-									clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
-								}}
-							>
-								管理画面（ここ）のURLをクリップボードにコピー
-				</Button>
-						</form>
-					</>
-				) : ""}
-				{contentName === "team" ? (
-					<EditTeams roomName={roomName} />
-				) : ""}
-				{contentName === "member" ? (
-					<EditMembers roomName={roomName} />
-				) : ""}
-				{contentName === "message" ? (
-					<EditMessages roomName={roomName} />
-				) : ""}
+				{menus[contentName].content}
 			</MyAdminMenu>
 		</>
 	)

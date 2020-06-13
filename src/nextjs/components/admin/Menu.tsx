@@ -72,10 +72,10 @@ const MyAdminMenu = props => {
 			<div className={classes.toolbar} />
 			<Divider />
 			<List>
-				{menus.map(({ icon, title, hint = title, key = title }) => (
+				{Object.entries(menus).map(([name, { icon, title }], index) => (
 					<ListItem button
-						key={key}
-						onClick={e => handleClickMenu(hint)}
+						key={index}
+						onClick={e => handleClickMenu(name)}
 					>
 						<ListItemIcon>{icon}</ListItemIcon>
 						<ListItemText primary={title} />
