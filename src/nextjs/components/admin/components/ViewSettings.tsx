@@ -51,7 +51,7 @@ const ViewSettings = props => {
 	return (
 		<>
 			<List>
-				{Object.entries(controls).map(([name, { type, label }], index) => {
+				{Object.entries(controls).map(([name, { type, label }]) => {
 					switch (type) {
 						case "boolean":
 							return (
@@ -67,7 +67,7 @@ const ViewSettings = props => {
 							)
 					}
 				})
-					.map(element => (<ListItem>{element}</ListItem>))
+					.map((element, index) => (<ListItem key={index}>{element}</ListItem>))
 				}
 			</List>
 		</>
