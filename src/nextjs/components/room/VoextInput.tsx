@@ -4,7 +4,7 @@ import { FormControl, InputAdornment, OutlinedInput, IconButton } from '@materia
 import { Mic, MicOff } from "@material-ui/icons"
 
 const VoextInput = (props) => {
-	const { onSubmit } = props
+	const { onSubmit, enabled } = props
 	const [talking, setTalking] = useState("")
 	const [isInterim, setIsInterim] = useState(true)
 	const [enableVoice, setEnableVoice] = useState(true)
@@ -32,9 +32,10 @@ const VoextInput = (props) => {
 		}
 	}, [])
 	useEffect(() => {
-		analyzer.setContinuous(enableVoice)
-		enableVoice ? analyzer.start() : analyzer.stop()
-	}, [enableVoice])
+		const result = enableVoice && enabled
+		analyzer.setContinuous(result)
+		result ? analyzer.start() : analyzer.stop()
+	}, [enableVoice, enabled])
 	const handleChangeVoiceEnabled = e => {
 		setEnableVoice(!enableVoice)
 	}
