@@ -63,7 +63,7 @@ const EnterUser = props => {
 						value={teamId}
 						onChange={handleChange("teamId")}
 					>
-						{isTeamsValid && teams.data.map((t, i) => {
+						{isTeamsValid && teams.data.filter(t => t.id !== "admin").map((t, i) => {
 							const cssProperty = {
 								color: `rgb(${t.color.join(",")})`
 							}
