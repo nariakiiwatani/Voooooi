@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import Analyzer from '../../libs/Analyzer'
-import { FormControl, InputAdornment, OutlinedInput, IconButton } from '@material-ui/core'
+import { FormControl, InputAdornment, TextField, IconButton } from '@material-ui/core'
 import { Mic, MicOff } from "@material-ui/icons"
 
 const VoextInput = (props) => {
@@ -55,19 +55,22 @@ const VoextInput = (props) => {
 					margin="dense"
 					fullWidth
 				>
-					<OutlinedInput
+					<TextField
 						type="text"
-						startAdornment={
-							<InputAdornment
-								position="start"
-							>
-								<IconButton
-									onClick={handleChangeVoiceEnabled}
+						variant={enabled ? "outlined" : "filled"}
+						disabled={!enabled}
+						InputProps={{
+							startAdornment: (
+								< InputAdornment
+									position="start"
 								>
-									{enableVoice ? <Mic /> : <MicOff />}
-								</IconButton>
-							</InputAdornment>
-						}
+									<IconButton
+										onClick={handleChangeVoiceEnabled}
+									>
+										{enableVoice && enabled ? <Mic /> : <MicOff />}
+									</IconButton>
+								</InputAdornment>)
+						}}
 						value={talking}
 						autoFocus
 						onChange={handleChange}

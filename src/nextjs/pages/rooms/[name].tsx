@@ -6,7 +6,6 @@ import MyLayout from '../../components/Layout'
 import { useDocument } from '@nandorojo/swr-firestore'
 import { getHashString } from '../../libs/Utils'
 import EnterPassword from '../../components/room/EnterPassword'
-import Router from 'next/router'
 
 const RoomPage = (props) => {
 	const { roomName, pwd } = props

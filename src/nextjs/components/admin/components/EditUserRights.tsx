@@ -1,20 +1,17 @@
 import { useDocument } from '@nandorojo/swr-firestore'
-import { Checkbox, FormControlLabel, List, ListItem } from '@material-ui/core'
 import { useState, useEffect } from 'react'
+import { List, FormControlLabel, Checkbox, ListItem } from '@material-ui/core'
 
-
-const ViewSettings = props => {
+const EditUserRights = props => {
 	const { roomName } = props
 
 	const settings = useDocument<{
-		combinedTimeline: boolean,
-		muteOtherTeams: boolean
-	}>(`rooms/${roomName}/settings/view`)
+		allowPost: boolean,
+	}>(`rooms/${roomName}/settings/rights`)
 	const [loadedInitialData, setLoadedInitialData] = useState(false)
 
 	const [state, setState] = useState({
-		combinedTimeline: false,
-		muteOtherTeams: false
+		allowPost: true,
 	})
 	useEffect(() => {
 		if (loadedInitialData) {
@@ -23,8 +20,7 @@ const ViewSettings = props => {
 	}, [loadedInitialData])
 	useEffect(() => {
 		settings.set({
-			combinedTimeline: state.combinedTimeline,
-			muteOtherTeams: state.muteOtherTeams
+			allowPost: state.allowPost
 		})
 	}, [state])
 	const handleChange = name => e => {
@@ -42,13 +38,9 @@ const ViewSettings = props => {
 	}
 
 	const controls = {
-		combinedTimeline: {
+		allowPost: {
 			type: "boolean",
-			label: "全チームのタイムラインを統合"
-		},
-		muteOtherTeams: {
-			type: "boolean",
-			label: "自分のチーム以外をミュート"
+			label: "投稿を許可"
 		}
 	}
 	return (
@@ -77,4 +69,4 @@ const ViewSettings = props => {
 	)
 }
 
-export default ViewSettings
+export default EditUserRights

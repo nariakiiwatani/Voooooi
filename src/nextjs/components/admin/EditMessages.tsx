@@ -5,6 +5,7 @@ import { ViewList } from "@material-ui/icons"
 import ViewSettings from './components/ViewSettings';
 import EditNGWords from './components/EditNGWords';
 import PostMessage from './components/PostMessage';
+import EditUserRights from './components/EditUserRights';
 
 const EditMessages = props => {
 	const { roomName } = props
@@ -29,6 +30,11 @@ const EditMessages = props => {
 			title: "管理者メッセージ",
 			icon: <ViewList />,
 			content: <PostMessage roomName={roomName} />
+		},
+		rights: {
+			title: "権限",
+			icon: <ViewList />,
+			content: <EditUserRights roomName={roomName} />
 		}
 	}
 

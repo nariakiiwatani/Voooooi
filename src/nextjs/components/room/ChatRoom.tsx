@@ -26,9 +26,9 @@ const ChatRoom = props => {
 		combinedTimeline: boolean,
 		muteOtherTeams: boolean
 	}>(`rooms/${room.id}/settings/view`, { listen: true })
-	const { data: postSettings } = useDocument<{
-		enableVoice: boolean
-	}>(`rooms/${room.id}/settings/post`, { listen: true })
+	const { data: rights } = useDocument<{
+		allowPost: boolean
+	}>(`rooms/${room.id}/settings/rights`, { listen: true })
 
 	const teamsColumn = useMemo(() => {
 		if (teams?.data?.length === 0 || !viewSettings) return []
@@ -65,7 +65,7 @@ const ChatRoom = props => {
 		<>
 			<VoextInput
 				onSubmit={handleSubmit}
-				enabled={postSettings?.enableVoice}
+				enabled={rights?.allowPost}
 				style={{
 					flexShrink: 0
 				}}

@@ -66,7 +66,6 @@ const MyAdminMenu = props => {
 	const handleClickMenu = hint => {
 		onSelect(hint)
 	}
-
 	const drawer = (
 		<div>
 			<div className={classes.toolbar} />
@@ -84,7 +83,7 @@ const MyAdminMenu = props => {
 			</List>
 		</div>
 	);
-	const container = window !== undefined ? () => window.document.body : undefined;
+	const container = typeof window === "undefined" ? () => window.document.body : undefined;
 
 	return (
 		<div className={classes.root}>

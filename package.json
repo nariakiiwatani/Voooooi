@@ -60,6 +60,7 @@
     "@types/socket.io": "^2.1.8",
     "@types/socket.io-client": "^1.4.33",
     "@types/styled-jsx": "^2.2.8",
+    "babel-plugin-styled-components": "^1.10.7",
     "cross-env": "^7.0.2",
     "rimraf": "^3.0.2",
     "typescript": "^3.9.3"
