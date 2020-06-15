@@ -54,7 +54,7 @@ export const getServerSideProps = ({ req, params, query }) => {
 		props: {
 			roomName: params.name,
 			pwd: query.pwd,
-			url: new URL(req.url, `http://${req.headers.host}`).href
+			url: new URL(req.url, `https://${req.headers.host}`).href
 		},
 	}
 }
