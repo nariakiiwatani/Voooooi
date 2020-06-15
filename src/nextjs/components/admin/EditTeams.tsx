@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 import tableIcons from "../../libs/TableIcons"
 
 const EditTeams = props => {
-	const { roomName } = props
+	const { roomRef } = props
 	const columns = [
 		{ title: '名前', field: 'name' },
 		{
@@ -38,7 +38,7 @@ const EditTeams = props => {
 		name: string,
 		color: number[],
 		createdAt: firebase.firestore.FieldValue
-	}>(`rooms/${roomName}/teams`,
+	}>(`rooms/${roomRef.data.id}/teams`,
 		{
 			orderBy: ["createdAt", "asc"]
 		}
@@ -59,7 +59,7 @@ const EditTeams = props => {
 						})
 					},
 					onRowUpdate: async (newData: { name: string, color: number[] }, oldData: { id: string, color: number[] }) => {
-						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
+						const teamDoc = fuego.db.doc(`rooms/${roomRef.data.id}/teams/${oldData.id}`)
 						await teamDoc.update({
 							name: newData.name,
 							color: newData.color,
@@ -68,7 +68,7 @@ const EditTeams = props => {
 						await teams.revalidate()
 					},
 					onRowDelete: async (oldData: { id: string, color: number[] }) => {
-						const teamDoc = fuego.db.doc(`rooms/${roomName}/teams/${oldData.id}`)
+						const teamDoc = fuego.db.doc(`rooms/${roomRef.data.id}/teams/${oldData.id}`)
 						await teamDoc.delete()
 						await teams.revalidate()
 					}

@@ -4,7 +4,7 @@ import * as firebase from "firebase"
 import tableIcons from "../../../libs/TableIcons"
 
 const EditNGWords = props => {
-	const { roomName } = props
+	const { roomRef } = props
 	const ngWords = useCollection<{
 		text: string,
 		replace: string,
@@ -12,7 +12,7 @@ const EditNGWords = props => {
 		regexp: boolean,
 		createdAt: firebase.firestore.FieldValue
 	}>(
-		`rooms/${roomName}/ngMessages`,
+		`rooms/${roomRef.data.id}/ngMessages`,
 		{
 			orderBy: ["createdAt", "asc"]
 		}
@@ -39,7 +39,7 @@ const EditNGWords = props => {
 						})
 					},
 					onRowUpdate: async (newData, oldData) => {
-						const doc = fuego.db.doc(`rooms/${roomName}/ngMessages/${oldData.id}`)
+						const doc = fuego.db.doc(`rooms/${roomRef.data.id}/ngMessages/${oldData.id}`)
 						await doc.update({
 							text: newData.text,
 							replace: newData.replace,
@@ -50,7 +50,7 @@ const EditNGWords = props => {
 						await ngWords.revalidate()
 					},
 					onRowDelete: async (oldData) => {
-						const doc = fuego.db.doc(`rooms/${roomName}/ngMessages/${oldData.id}`)
+						const doc = fuego.db.doc(`rooms/${roomRef.data.id}/ngMessages/${oldData.id}`)
 						await doc.delete()
 						await ngWords.revalidate()
 					}

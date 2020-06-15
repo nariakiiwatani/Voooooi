@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react'
 import { List, FormControlLabel, Checkbox, ListItem } from '@material-ui/core'
 
 const EditUserRights = props => {
-	const { roomName } = props
+	const { roomRef } = props
 
 	const settings = useDocument<{
 		allowPost: boolean,
-	}>(`rooms/${roomName}/settings/rights`)
+	}>(`rooms/${roomRef.data.id}/settings/rights`)
 	const [loadedInitialData, setLoadedInitialData] = useState(false)
 
 	const [state, setState] = useState({

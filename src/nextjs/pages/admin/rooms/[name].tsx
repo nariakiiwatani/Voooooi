@@ -5,10 +5,33 @@ import EditRoom from '../../../components/admin/EditRoom';
 import EditTeams from '../../../components/admin/EditTeams';
 import EditMembers from '../../../components/admin/EditMembers';
 import EditMessages from '../../../components/admin/EditMessages';
+import { useDocument } from '@nandorojo/swr-firestore';
+import { getHashString } from '../../../libs/Utils';
+import Router from 'next/router';
+import EnterPassword from '../../../components/room/EnterPassword';
 
 const RoomAdminPage = (props) => {
-	const { roomName } = props
+	const { roomName, pwd } = props
+
+	const roomRef = useDocument<{ adminPassword: string }>(`rooms/${roomName}`)
 	const [contentName, setContentName] = useState("room")
+
+	if (!roomRef.data) {
+		return <div>fetching room data...</div>
+	}
+
+	if (roomRef.data.adminPassword !== pwd) {
+		return (
+			<>
+				<EnterPassword
+					label="パスワードが違います"
+					buttonText="OK"
+					onSubmit={password => {
+						Router.push(`/admin/rooms/${roomName}?pwd=${getHashString(password)}`)
+					}} />
+			</>
+		)
+	}
 
 	const handleMenuSelect = hint => {
 		setContentName(hint)
@@ -17,23 +40,23 @@ const RoomAdminPage = (props) => {
 		room: {
 			title: "部屋",
 			icon: <Mic />,
-			content: <EditRoom roomName={roomName} />
+			content: <EditRoom roomRef={roomRef} />
 		},
 		team: {
 			title: "チーム",
 			icon: <Flag />,
-			content: <EditTeams roomName={roomName} />
+			content: <EditTeams roomRef={roomRef} />
 
 		},
 		member: {
 			title: "メンバー",
 			icon: <People />,
-			content: <EditMembers roomName={roomName} />
+			content: <EditMembers roomRef={roomRef} />
 		},
 		message: {
 			title: "メッセージ",
 			icon: <Message />,
-			content: <EditMessages roomName={roomName} />
+			content: <EditMessages roomRef={roomRef} />
 		}
 	}
 	return (

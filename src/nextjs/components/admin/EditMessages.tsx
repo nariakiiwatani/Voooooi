@@ -8,7 +8,7 @@ import PostMessage from './components/PostMessage';
 import EditUserRights from './components/EditUserRights';
 
 const EditMessages = props => {
-	const { roomName } = props
+	const { roomRef } = props
 
 	const [selected, setSelected] = useState("view")
 	const handleMenuItemClick = name => {
@@ -19,22 +19,22 @@ const EditMessages = props => {
 		view: {
 			title: "表示切り替え",
 			icon: <ViewList />,
-			content: <ViewSettings roomName={roomName} />
+			content: <ViewSettings roomRef={roomRef} />
 		},
 		ngw: {
 			title: "NGワード",
 			icon: <ViewList />,
-			content: <EditNGWords roomName={roomName} />
+			content: <EditNGWords roomRef={roomRef} />
 		},
 		post: {
 			title: "管理者メッセージ",
 			icon: <ViewList />,
-			content: <PostMessage roomName={roomName} />
+			content: <PostMessage roomRef={roomRef} />
 		},
 		rights: {
 			title: "権限",
 			icon: <ViewList />,
-			content: <EditUserRights roomName={roomName} />
+			content: <EditUserRights roomRef={roomRef} />
 		}
 	}
 

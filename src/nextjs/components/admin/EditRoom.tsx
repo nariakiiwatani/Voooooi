@@ -6,12 +6,11 @@ import { getHashString } from "../../libs/Utils"
 import firebase from 'firebase'
 
 const EditRoom = props => {
-	const { roomName } = props
-	const room = useDocument<{ userPassword: string, updatedAt: firebase.firestore.FieldValue }>(`rooms/${roomName}`)
+	const { roomRef } = props
 	const clipboard = useClipboard()
 	const handleChangePassword = password => {
 		const pwd = getHashString(password)
-		room.update({
+		roomRef.update({
 			userPassword: pwd,
 			updatedAt: firebase.firestore.FieldValue.serverTimestamp()
 		})
@@ -23,7 +22,7 @@ const EditRoom = props => {
 				<Button
 					variant="contained"
 					onClick={() => {
-						clipboard.copy(`${origin}/rooms/${roomName}?pwd=${room.data.userPassword}`)
+						clipboard.copy(`${origin}/rooms/${roomRef.data.id}?pwd=${roomRef.data.userPassword}`)
 					}}
 				>
 					パスワードを含む入室URLをクリップボードにコピー
@@ -31,7 +30,7 @@ const EditRoom = props => {
 				<Button
 					variant="contained"
 					onClick={() => {
-						clipboard.copy(`${origin}/admin/rooms/${roomName}?&pwd=${pwd}`)
+						clipboard.copy(`${origin}/admin/rooms/${roomRef.data.id}?&pwd=${roomRef.data.adminPassword}`)
 					}}
 				>
 					管理画面（ここ）のURLをクリップボードにコピー

@@ -6,13 +6,13 @@ import tableIcons from "../../libs/TableIcons"
 import { People } from '@material-ui/icons';
 
 const EditMembers = props => {
-	const { roomName } = props
+	const { roomRef } = props
 	const teams = useCollection<{
 		id: string,
 		color: number[],
 		name: string,
 		createdAt: any
-	}>(`rooms/${roomName}/teams`,
+	}>(`rooms/${roomRef.data.id}/teams`,
 		{
 			orderBy: ["createdAt", "asc"]
 		}
@@ -21,7 +21,7 @@ const EditMembers = props => {
 		id: string,
 		name: string,
 		team: string
-	}>(`rooms/${roomName}/users`)
+	}>(`rooms/${roomRef.data.id}/users`)
 	const columns = [
 		{ title: '名前', field: 'name' },
 		{
@@ -88,7 +88,7 @@ const EditMembers = props => {
 					editable={{
 						isDeletable: rowData => (rowData.id !== "admin"),
 						onRowUpdate: async (newData: { name: string, team: string }, oldData: { id: string, team: string }) => {
-							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
+							const userDoc = fuego.db.doc(`rooms/${roomRef.data.id}/users/${oldData.id}`)
 							await userDoc.update({
 								name: newData.name,
 								team: newData.team,
@@ -97,7 +97,7 @@ const EditMembers = props => {
 							await users.revalidate()
 						},
 						onRowDelete: async (oldData: { id: string, team: string }) => {
-							const userDoc = fuego.db.doc(`rooms/${roomName}/users/${oldData.id}`)
+							const userDoc = fuego.db.doc(`rooms/${roomRef.data.id}/users/${oldData.id}`)
 							await userDoc.delete()
 							await users.revalidate()
 						}

@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 
 
 const ViewSettings = props => {
-	const { roomName } = props
+	const { roomRef } = props
 
 	const settings = useDocument<{
 		combinedTimeline: boolean,
 		muteOtherTeams: boolean
-	}>(`rooms/${roomName}/settings/view`)
+	}>(`rooms/${roomRef.data.id}/settings/view`)
 	const [loadedInitialData, setLoadedInitialData] = useState(false)
 
 	const [state, setState] = useState({

@@ -5,10 +5,10 @@ import { CompactPicker } from "react-color"
 import * as firebase from "firebase"
 
 const PostMessage = props => {
-	const { roomName } = props
+	const { roomRef } = props
 	const adminId = "admin"
-	const user = useDocument<{ name: string }>(`rooms/${roomName}/users/${adminId}`)
-	const team = useDocument<{ color: number[] }>(`rooms/${roomName}/teams/${adminId}`)
+	const user = useDocument<{ name: string }>(`rooms/${roomRef.data.id}/users/${adminId}`)
+	const team = useDocument<{ color: number[] }>(`rooms/${roomRef.data.id}/teams/${adminId}`)
 	const [state, setState] = useState({
 		name: "名前",
 		color: [0, 0, 0],
@@ -58,8 +58,8 @@ const PostMessage = props => {
 		e.preventDefault()
 		user.update({ name: state.name })
 		team.update({ color: state.color })
-		fuego.db.collection(`rooms/${roomName}/messages`).add({
-			room: roomName,
+		fuego.db.collection(`rooms/${roomRef.data.id}/messages`).add({
+			room: roomRef.data.id,
 			user: adminId,
 			team: adminId,
 			text: state.message,
