@@ -48,6 +48,11 @@ const CreateRoom = props => {
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
 			const teamsRef = roomRef.collection("teams");
+			teamsRef.doc("admin").set({
+				name: "管理者",
+				color: [0, 0, 0],
+				createdAt: firebase.firestore.FieldValue.serverTimestamp()
+			});
 			[
 				{ "name": "赤チーム", "color": [255, 0, 0] },
 				{ "name": "青チーム", "color": [0, 0, 255] },
@@ -58,12 +63,7 @@ const CreateRoom = props => {
 					...t,
 					createdAt: firebase.firestore.FieldValue.serverTimestamp()
 				})
-			})
-			teamsRef.doc("admin").set({
-				name: "管理者",
-				color: [0, 0, 0],
-				createdAt: firebase.firestore.FieldValue.serverTimestamp()
-			})
+			});
 			roomRef.collection("users").doc("admin").set({
 				name: "admin",
 				team: "admin",
