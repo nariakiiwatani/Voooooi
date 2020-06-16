@@ -29,7 +29,7 @@ const Index = () => {
 	}
 
 	return (
-		<MyLayout title="Voext Chat">
+		<MyLayout title="Voooooi!">
 			<Tabs centered
 				value={tabSelect}
 				onChange={handleTabSelect}
