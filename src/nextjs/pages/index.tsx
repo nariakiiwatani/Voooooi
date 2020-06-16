@@ -29,7 +29,7 @@ const Index = () => {
 	}
 
 	return (
-		<MyLayout title="Voooooi!">
+		<MyLayout title="Voooooi!（ゔぉーい！）">
 			<Tabs centered
 				value={tabSelect}
 				onChange={handleTabSelect}

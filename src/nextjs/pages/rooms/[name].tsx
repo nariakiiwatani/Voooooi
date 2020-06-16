@@ -30,7 +30,7 @@ const RoomPage = (props) => {
 	}
 
 	return (
-		<MyLayout title={`Voooooi! - ${roomName}`}>
+		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${roomName}`}>
 			{!room?.data?.exists
 				? <div>{`room not exist`}</div>
 				: !isPasswordValid()
