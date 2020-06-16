@@ -85,7 +85,8 @@ const PostMessage = props => {
 		},
 		submit: {
 			type: "submit",
-			label: "投稿"
+			label: "投稿",
+			handle: null
 		}
 	}
 	return (

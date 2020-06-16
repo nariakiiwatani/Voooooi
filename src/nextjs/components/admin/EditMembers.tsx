@@ -86,7 +86,7 @@ const EditMembers = props => {
 					columns={columns}
 					data={users.data}
 					editable={{
-						isDeletable: rowData => (rowData.id !== "admin"),
+						isDeletable: (rowData: { id: string, name: string, team: string }) => (rowData.id !== "admin"),
 						onRowUpdate: async (newData: { name: string, team: string }, oldData: { id: string, team: string }) => {
 							const userDoc = fuego.db.doc(`rooms/${roomRef.data.id}/users/${oldData.id}`)
 							await userDoc.update({

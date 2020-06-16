@@ -3,10 +3,10 @@ import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
 import { Grid } from '@material-ui/core'
-import { fuego, useCollection, useDocument } from '@nandorojo/swr-firestore'
+import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
 import * as firebase from "firebase"
 
-const ChatRoom = props => {
+const ChatRoom = (props: { room: { id: string } }) => {
 	const { room } = props
 	const context = useContext(UserContext)
 	const teams = useCollection(`rooms/${room.id}/teams`,
@@ -40,7 +40,7 @@ const ChatRoom = props => {
 		return [...teamsColumn, teams.data?.find(t => t.id === "admin")]
 	}, [teamsColumn])
 
-	const makeMessage = text => ({
+	const makeMessage = (text: string) => ({
 		room: room.id,
 		user: context.user.get(),
 		team: context.team.get(),

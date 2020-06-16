@@ -51,7 +51,7 @@ const EditTeams = props => {
 				columns={columns}
 				data={teams.data}
 				editable={{
-					isDeletable: rowData => (rowData.id !== "admin"),
+					isDeletable: (rowData: { id: string, name: string, color: number[] }) => (rowData.id !== "admin"),
 					onRowAdd: async (newData: { id: string, name: string, color: number[] }) => {
 						await teams.add({
 							...newData,

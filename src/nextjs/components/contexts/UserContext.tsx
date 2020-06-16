@@ -2,9 +2,9 @@ import { createContext } from 'react';
 import { useSessionStorage } from "react-use"
 
 export const UserContext = createContext({
-	user: { get: null, set: null },
-	team: { get: null, set: null },
-	token: { get: null, set: null }
+	user: { get: () => String(), set: (v: string) => { } },
+	team: { get: () => String(), set: (v: string) => { } },
+	token: { get: () => String(), set: (v: string) => { } }
 });
 const UserContextProvider = (props) => {
 	const [user, setUser] = useSessionStorage("user", "");

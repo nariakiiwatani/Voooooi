@@ -5,12 +5,10 @@ import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -53,10 +51,20 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-const MyAdminMenu = props => {
+interface MenuItem {
+	[name: string]: {
+		icon: JSX.Element,
+		title: string
+	}
+}
+const MyAdminMenu = (props: {
+	title: string,
+	menus: MenuItem,
+	onSelect: (hint: string) => void,
+	children: any
+}) => {
 	const { title, menus, onSelect, children } = props
 	const classes = useStyles();
-	const theme = useTheme();
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 
 	const handleDrawerToggle = () => {
@@ -74,7 +82,7 @@ const MyAdminMenu = props => {
 				{Object.entries(menus).map(([name, { icon, title }], index) => (
 					<ListItem button
 						key={index}
-						onClick={e => handleClickMenu(name)}
+						onClick={() => handleClickMenu(name)}
 					>
 						<ListItemIcon>{icon}</ListItemIcon>
 						<ListItemText primary={title} />
