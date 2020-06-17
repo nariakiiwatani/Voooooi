@@ -1,7 +1,7 @@
 import { useState } from "react";
 import MyAdminMenu from '../../../components/admin/Menu';
-import { Mic, People, Flag, Message } from '@material-ui/icons';
-import EditRoom from '../../../components/admin/EditRoom';
+import { Mic, People, Flag, Message, PersonAdd } from '@material-ui/icons';
+import Invitation from '../../../components/admin/Invitation';
 import EditTeams from '../../../components/admin/EditTeams';
 import EditMembers from '../../../components/admin/EditMembers';
 import EditMessages from '../../../components/admin/EditMessages';
@@ -38,9 +38,9 @@ const RoomAdminPage = (props) => {
 	}
 	const menus = {
 		room: {
-			title: "部屋",
-			icon: <Mic />,
-			content: <EditRoom roomRef={roomRef} />
+			title: "招待",
+			icon: <PersonAdd />,
+			content: <Invitation roomRef={roomRef} />
 		},
 		team: {
 			title: "チーム",

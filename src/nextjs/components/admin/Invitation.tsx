@@ -5,7 +5,7 @@ import { useClipboard } from "use-clipboard-copy"
 import { getHashString } from "../../libs/Utils"
 import firebase from 'firebase'
 
-const EditRoom = props => {
+const Invitation = props => {
 	const { roomRef } = props
 	const clipboard = useClipboard()
 	const handleChangePassword = password => {
@@ -40,4 +40,4 @@ const EditRoom = props => {
 	)
 }
 
-export default EditRoom
+export default Invitation
