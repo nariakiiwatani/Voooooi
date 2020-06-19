@@ -28,16 +28,20 @@ const RoomPage = (props) => {
 			room.data.userPassword === token :
 			token === ""
 	}
+	if (!room.data) {
+		return (<div>fetching room data...</div>)
+	}
+	if (!room.data.exists) {
+		return (<div>room not exist</div>)
+	}
 
 	return (
 		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${roomName}`}>
-			{!room?.data?.exists
-				? <div>{`room not exist`}</div>
-				: !isPasswordValid()
-					? <EnterPassword label="入室パスワード" buttonText="入室" onSubmit={handleSubmitPassword} />
-					: !isUserValid()
-						? <EnterUser room={room.data} />
-						: <ChatRoom room={room.data} />
+			{!isPasswordValid()
+				? <EnterPassword label="入室パスワード" buttonText="入室" onSubmit={handleSubmitPassword} />
+				: !isUserValid()
+					? <EnterUser room={room.data} />
+					: <ChatRoom room={room.data} />
 			}
 		</MyLayout >
 	)
