@@ -2,8 +2,9 @@ import { useContext, useState, useMemo, useEffect } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
-import { Grid, createStyles, Theme, makeStyles } from '@material-ui/core'
+import { Grid, createStyles, Theme, makeStyles, MenuItem, ListItem, ListItemIcon, ListItemText, Collapse, List } from '@material-ui/core'
 import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
+import { Person, ExitToApp } from "@material-ui/icons"
 import * as firebase from "firebase"
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
@@ -15,6 +16,25 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
 		height: "100%",
 		display: "flex",
 		flexDirection: "column"
+	},
+	drawerOpen: {
+		width: "100%",
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
+		overflowX: 'hidden',
+	},
+	drawerClose: {
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		overflowX: 'hidden',
+		width: theme.spacing(7) + 1,
+		[theme.breakpoints.up('sm')]: {
+			width: theme.spacing(9) + 1,
+		},
 	},
 	voextInput: {
 		flexShrink: 0
@@ -79,9 +99,50 @@ const ChatRoom = (props: { room: { id: string } }) => {
 
 	}
 
+	const menus = Object.entries({
+		user: {
+			label: "自分",
+			icon: <Person />,
+			content: <div>usermenu</div>
+		},
+		exit: {
+			label: "退室",
+			icon: <ExitToApp />,
+			content: <div>exitbutton</div>
+		}
+	}).map(([k, v]) => {
+		const [open, setOpen] = useState(false)
+		return {
+			name: k,
+			...v,
+			open, setOpen
+		}
+	})
+	const menuOpen = menus.some(m => m.open)
+
+	const listItem = props => {
+		const { name, label, icon, content, open, setOpen } = props
+		return (
+			<>
+				<ListItem
+					key={name}
+					selected={open}
+					onClick={() => setOpen(!open)}
+				>
+					<ListItemIcon>{icon}</ListItemIcon>
+					<ListItemText style={{ whiteSpace: "nowrap" }}>{label}</ListItemText>
+				</ListItem>
+				<Collapse in={open} timeout="auto" unmountOnExit>
+					{content}
+				</Collapse>
+			</>
+		)
+	}
+
 	if (!viewSettings) {
 		return <></>
 	}
+
 
 	return (
 		<>
@@ -91,7 +152,9 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				<Grid item
 					xs="auto"
 				>
-					left
+					<List className={menuOpen ? classes.drawerOpen : classes.drawerClose}>
+						{menus.map(listItem)}
+					</List>
 				</Grid>
 				<Grid item
 					className={classes.content}
