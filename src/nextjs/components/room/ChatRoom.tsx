@@ -15,14 +15,10 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
 	},
 	messageColumns: {
 		flexGrow: 1,
-		display: "flex",
-		flexDirection: "column",
 		minHeight: 0,
-		overflow: "scroll",
 	},
 	messageColumn: {
-		flexGrow: 1,
-		minHeight: "100%",
+		height: "100%",
 	}
 }))
 
@@ -95,6 +91,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				) : (
 						<Grid container
 							spacing={2}
+							direction="row"
 							className={classes.messageColumns}
 						>
 							{teamsColumn.filter(t => t.id !== "admin").map(t => (
