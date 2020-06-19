@@ -9,11 +9,15 @@ import * as firebase from "firebase"
 const useStyle = makeStyles((theme: Theme) => createStyles({
 	root: {
 		flexGrow: 1,
-		display: "flex",
-		flexDirection: "column",
 		minHeight: 0,
 	},
+	content: {
+		height: "100%",
+		display: "flex",
+		flexDirection: "column"
+	},
 	voextInput: {
+		flexShrink: 0
 	},
 	messageColumns: {
 		minHeight: 0,
@@ -80,36 +84,50 @@ const ChatRoom = (props: { room: { id: string } }) => {
 	}
 
 	return (
-		<div className={classes.root}>
-			<VoextInput
-				onSubmit={handleSubmit}
-				enabled={rights?.allowPost}
-				className={classes.voextInput}
-			/>
-			{isTeamsValid() &&
-				(viewSettings.combinedTimeline ? (
-					<CommentList room={room} teams={dispTeams} users={users.data} messages={messages.data} />
-				) : (
-						<Grid container
-							spacing={2}
-							direction="row"
-							className={classes.messageColumns}
-						>
-							{teamsColumn.filter(t => t.id !== "admin").map(t => (
-								<Grid item
-									key={t.id}
-									xs={true}
-									className={classes.messageColumn}
+		<>
+			<Grid container
+				direction="row"
+				className={classes.root}>
+				<Grid item
+					xs="auto"
+				>
+					left
+				</Grid>
+				<Grid item
+					className={classes.content}
+					xs={true}
+				>
+					<VoextInput
+						onSubmit={handleSubmit}
+						enabled={rights?.allowPost}
+						className={classes.voextInput}
+					/>
+					{isTeamsValid() &&
+						(viewSettings.combinedTimeline ? (
+							<CommentList room={room} teams={dispTeams} users={users.data} messages={messages.data} />
+						) : (
+								<Grid container
+									spacing={2}
+									direction="row"
+									className={classes.messageColumns}
 								>
-									<CommentList room={room} teams={[t, teams.data.find(t => t.id === "admin")]} users={users.data} messages={messages.data} />
+									{teamsColumn.filter(t => t.id !== "admin").map(t => (
+										<Grid item
+											key={t.id}
+											xs={true}
+											className={classes.messageColumn}
+										>
+											<CommentList room={room} teams={[t, teams.data.find(t => t.id === "admin")]} users={users.data} messages={messages.data} />
+										</Grid>
+									)
+									)}
 								</Grid>
 							)
-							)}
-						</Grid>
-					)
-				)
-			}
-		</div>
+						)
+					}
+				</Grid>
+			</Grid>
+		</>
 	)
 }
 
