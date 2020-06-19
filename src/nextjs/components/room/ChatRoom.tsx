@@ -6,6 +6,7 @@ import { Grid, createStyles, Theme, makeStyles, MenuItem, ListItem, ListItemIcon
 import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
 import { Person, ExitToApp } from "@material-ui/icons"
 import * as firebase from "firebase"
+import UserMenu from './settings/UserMenu'
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
 	root: {
@@ -56,6 +57,12 @@ const ChatRoom = (props: { room: { id: string } }) => {
 		}
 	)
 	const users = useCollection(`rooms/${room.id}/users`)
+	const myUser = useMemo(() => (
+		users.data?.find(u => u.id === context.user?.get())
+	), [context.user, users.data])
+	const myTeam = useMemo(() => (
+		teams.data?.find(t => t.id === context.team?.get())
+	), [context.team, teams.data])
 	const messages = useCollection(`rooms/${room.id}/messages`,
 		{
 			orderBy: ["createdAt", "asc"],
@@ -101,14 +108,12 @@ const ChatRoom = (props: { room: { id: string } }) => {
 
 	const menus = Object.entries({
 		user: {
-			label: "自分",
+			label: "ユーザー情報",
 			icon: <Person />,
-			content: <div>usermenu</div>
-		},
-		exit: {
-			label: "退室",
-			icon: <ExitToApp />,
-			content: <div>exitbutton</div>
+			content: <UserMenu
+				user={myUser}
+				team={myTeam}
+			/>
 		}
 	}).map(([k, v]) => {
 		const [open, setOpen] = useState(false)
@@ -142,7 +147,6 @@ const ChatRoom = (props: { room: { id: string } }) => {
 	if (!viewSettings) {
 		return <></>
 	}
-
 
 	return (
 		<>
