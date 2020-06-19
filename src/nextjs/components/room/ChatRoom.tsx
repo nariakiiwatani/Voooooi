@@ -2,9 +2,28 @@ import { useContext, useState, useMemo, useEffect } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
-import { Grid } from '@material-ui/core'
+import { Grid, createStyles, Theme, makeStyles } from '@material-ui/core'
 import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
 import * as firebase from "firebase"
+
+const useStyle = makeStyles((theme: Theme) => createStyles({
+	root: {
+
+	},
+	voextInput: {
+		flexShrink: 0
+	},
+	messageColumns: {
+		flexGrow: 1,
+		display: "flex",
+		flexDirection: "column",
+		minHeight: 0,
+	},
+	messageColumn: {
+		flexGrow: 1,
+		minHeight: "100%",
+	}
+}))
 
 const ChatRoom = (props: { room: { id: string } }) => {
 	const { room } = props
@@ -40,6 +59,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 		return [...teamsColumn, teams.data?.find(t => t.id === "admin")]
 	}, [teamsColumn])
 
+	const classes = useStyle()
 	const makeMessage = (text: string) => ({
 		room: room.id,
 		user: context.user.get(),
@@ -66,9 +86,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 			<VoextInput
 				onSubmit={handleSubmit}
 				enabled={rights?.allowPost}
-				style={{
-					flexShrink: 0
-				}}
+				className={classes.voextInput}
 			/>
 			{isTeamsValid() &&
 				(viewSettings.combinedTimeline ? (
@@ -76,20 +94,13 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				) : (
 						<Grid container
 							spacing={2}
-							style={{
-								flexGrow: 1,
-								display: "flex",
-								flexDirection: "column",
-								minHeight: 0,
-							}}
+							className={classes.messageColumns}
 						>
 							{teamsColumn.filter(t => t.id !== "admin").map(t => (
 								<Grid item
 									key={t.id}
-									style={{
-										flexGrow: 1,
-										minHeight: "100%",
-									}}
+									xs={true}
+									className={classes.messageColumn}
 								>
 									<CommentList room={room} teams={[t, teams.data.find(t => t.id === "admin")]} users={users.data} messages={messages.data} />
 								</Grid>
