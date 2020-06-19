@@ -7,6 +7,7 @@ import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
 import { Person, ExitToApp } from "@material-ui/icons"
 import * as firebase from "firebase"
 import UserMenu from './settings/UserMenu'
+import ExitMenu from './settings/ExitMenu'
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
 	root: {
@@ -114,6 +115,11 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				user={myUser}
 				team={myTeam}
 			/>
+		},
+		exit: {
+			label: "退室",
+			icon: <ExitToApp />,
+			content: <ExitMenu />
 		}
 	}).map(([k, v]) => {
 		const [open, setOpen] = useState(false)
