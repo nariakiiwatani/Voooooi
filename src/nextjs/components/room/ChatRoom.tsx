@@ -18,6 +18,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
 		display: "flex",
 		flexDirection: "column",
 		minHeight: 0,
+		overflow: "scroll",
 	},
 	messageColumn: {
 		flexGrow: 1,
