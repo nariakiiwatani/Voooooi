@@ -8,13 +8,14 @@ import * as firebase from "firebase"
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
 	root: {
-
+		flexGrow: 1,
+		display: "flex",
+		flexDirection: "column",
+		minHeight: 0,
 	},
 	voextInput: {
-		flexShrink: 0
 	},
 	messageColumns: {
-		flexGrow: 1,
 		minHeight: 0,
 	},
 	messageColumn: {
@@ -79,7 +80,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 	}
 
 	return (
-		<>
+		<div className={classes.root}>
 			<VoextInput
 				onSubmit={handleSubmit}
 				enabled={rights?.allowPost}
@@ -108,7 +109,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 					)
 				)
 			}
-		</>
+		</div>
 	)
 }
 
