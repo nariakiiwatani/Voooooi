@@ -24,8 +24,11 @@ GitHub Issuesに書くか、[@nariakiiwatani(Twitter)](https://twitter.com/naria
 > 何か作ったり遊んだりしたらぜひご報告ください。  
 > こちらに追記していきます。
 
-[ことば玉入れ〜ことタマ〜](https://bit.ly/undokai_kototama)  
-お題に合うことばを30秒間で言えた数を競う競技
+[ことば玉入れ〜ことタマ〜](https://bit.ly/undokai_kototama) by anno lab  
+お題に合うことばを30秒間で言えた数を競う競技  
+
+[単語逃げ](https://twitter.com/zoomin0107/status/1274963512297574400) by YCAM教育普及スタッフ  
+お題の言葉をシステムに誤認識させる
 
 
 # Voooooi!（ゔぉーい！）でできること
