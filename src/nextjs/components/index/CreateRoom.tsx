@@ -5,6 +5,40 @@ import { fuego } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
 import * as firebase from "firebase"
 
+const createDefaultRoom = async (roomRef) => {
+	const teamsRef = roomRef.collection("teams");
+	await teamsRef.doc("admin").set({
+		name: "管理者",
+		color: [0, 0, 0],
+		createdAt: firebase.firestore.FieldValue.serverTimestamp()
+	});
+	[
+		{ "name": "赤チーム", "color": [255, 0, 0] },
+		{ "name": "青チーム", "color": [0, 0, 255] },
+		{ "name": "黄チーム", "color": [255, 255, 0] },
+		{ "name": "白チーム", "color": [255, 255, 255] },
+	].forEach(async t => {
+		await teamsRef.add({
+			...t,
+			createdAt: firebase.firestore.FieldValue.serverTimestamp()
+		})
+	});
+	await roomRef.collection("users").doc("admin").set({
+		name: "admin",
+		team: "admin",
+		createdAt: firebase.firestore.FieldValue.serverTimestamp()
+	});
+	await roomRef.collection("settings").doc("view").set({
+		combinedTimeline: false,
+		muteOtherTeams: false,
+		createdAt: firebase.firestore.FieldValue.serverTimestamp()
+	});
+	await roomRef.collection("settings").doc("rights").set({
+		allowPost: true,
+		createdAt: firebase.firestore.FieldValue.serverTimestamp()
+	});
+}
+
 const CreateRoom = props => {
 
 	const [error, setError] = useState("")
@@ -47,28 +81,7 @@ const CreateRoom = props => {
 				userPassword: "",
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
-			const teamsRef = roomRef.collection("teams");
-			teamsRef.doc("admin").set({
-				name: "管理者",
-				color: [0, 0, 0],
-				createdAt: firebase.firestore.FieldValue.serverTimestamp()
-			});
-			[
-				{ "name": "赤チーム", "color": [255, 0, 0] },
-				{ "name": "青チーム", "color": [0, 0, 255] },
-				{ "name": "黄チーム", "color": [255, 255, 0] },
-				{ "name": "白チーム", "color": [255, 255, 255] },
-			].forEach(t => {
-				teamsRef.add({
-					...t,
-					createdAt: firebase.firestore.FieldValue.serverTimestamp()
-				})
-			});
-			roomRef.collection("users").doc("admin").set({
-				name: "admin",
-				team: "admin",
-				createdAt: firebase.firestore.FieldValue.serverTimestamp()
-			});
+			createDefaultRoom(roomRef)
 
 			setError("")
 			Router.push({
