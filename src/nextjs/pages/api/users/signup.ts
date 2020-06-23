@@ -41,7 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return success(res, 201, {
 			message: "user created",
 			token: tokenRef.id,
-			data: { user }
+			data: { user: { id: userRef.id, ...user } }
 		})
 	}
 	catch (err) {

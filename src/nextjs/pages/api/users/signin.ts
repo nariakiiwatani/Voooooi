@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		const user = userRef.data()
 		return success(res, 200, {
 			message: "login successful",
-			data: { user }
+			data: { user: { id: userRef.id, ...user } }
 		})
 	}
 	catch (err) {
