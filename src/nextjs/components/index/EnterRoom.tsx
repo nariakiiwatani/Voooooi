@@ -116,6 +116,7 @@ const EnterRoom = props => {
 			>
 				<Fade in={openModal}>
 					<div className={classes.paper}>
+						<h4>チームを選択して入室</h4>
 						<SelectTeam teams={teams} onSelect={handleTeamSelect} />
 					</div>
 				</Fade>
