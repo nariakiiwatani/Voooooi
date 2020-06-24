@@ -3,7 +3,7 @@ import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade } from 
 import { getHashString, makeQueryString } from '../../libs/Utils'
 import Router from 'next/router'
 import { UserContext } from '../contexts/UserContext';
-import SelectTeam from './SelectTeam';
+import EnterUser from './EnterUser';
 import { useLocalStorage } from 'react-use';
 import SelectFromTokens from './SelectFromTokens';
 
@@ -36,9 +36,8 @@ const EnterRoom = props => {
 	const [formInput, setFormInput] = useState({
 		roomName: "",
 		password: "",
-		userName: "",
 	})
-	const { roomName, password, userName } = formInput
+	const { roomName, password } = formInput
 	const handleChange = name => e => {
 		setFormInput({
 			...formInput,
@@ -80,7 +79,7 @@ const EnterRoom = props => {
 		{
 			teams: (<>
 				<h4>チームを選択して入室</h4>
-				<SelectTeam teams={teams} onSelect={handleTeamSelect} />
+				<EnterUser teams={teams} onSelect={handleSignup} />
 			</>),
 			tokens: (<>
 				<h4>過去に入室済みの選手として入室</h4>
@@ -91,13 +90,13 @@ const EnterRoom = props => {
 	)
 
 
-	const handleTeamSelect = async teamId => {
+	const handleSignup = async ({ name, team }) => {
 		setError("")
 		const response = await fetch(`/api/users/signup?${makeQueryString({
 			room: roomName,
 			pwd: password === "" ? "" : getHashString(password),
-			name: userName,
-			team: teamId
+			name,
+			team
 		})}`)
 		if (!response.ok) {
 			setError(response.statusText)
@@ -144,7 +143,6 @@ const EnterRoom = props => {
 			<form onSubmit={handleSubmit}>
 				{createInput(["部屋名", "text", "roomName", roomName])}
 				{createInput(["入室パスワード", "password", "password", password])}
-				{createInput(["選手名", "text", "userName", userName])}
 				<Button
 					fullWidth
 					type="submit"

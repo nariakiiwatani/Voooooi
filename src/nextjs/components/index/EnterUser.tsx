@@ -1,4 +1,4 @@
-import { Button, ListItemIcon, makeStyles, createStyles, Select, MenuItem } from '@material-ui/core'
+import { Button, ListItemIcon, makeStyles, createStyles, Select, MenuItem, TextField } from '@material-ui/core'
 import { People } from '@material-ui/icons'
 import { useState } from 'react'
 
@@ -14,21 +14,32 @@ const useStyle = makeStyles(theme => createStyles({
 		padding: theme.spacing(2),
 	}
 }))
-export default props => {
+export default (props: {
+	teams: { id: string, name: string, color: number[] }[],
+	onSelect: ({ name, team }: { name: string, team: string }) => void
+}) => {
 	const { teams, onSelect } = props
-	const [selected, setSelected] = useState("")
+	const [name, setName] = useState("")
+	const [team, setTeam] = useState(teams.length && teams[0].id)
 	const handleSubmit = e => {
 		e.preventDefault()
-		onSelect(selected)
+		onSelect({ name, team })
 	}
 	const classes = useStyle()
 	return (
 		<>
 			<form onSubmit={handleSubmit}>
+				<TextField
+					fullWidth
+					value={name}
+					required
+					onChange={e => { setName(e.target.value) }}
+				/>
 				<Select
 					fullWidth
-					value={selected}
-					onChange={e => { setSelected(e.target.value as string) }}
+					value={team}
+					onChange={e => { setTeam(e.target.value as string) }}
+					required
 				>
 					{teams.filter(t => t.id !== "admin").map((t, i) => {
 						const cssProperty = {
@@ -54,7 +65,6 @@ export default props => {
 					type="submit"
 					variant="contained"
 					color="primary"
-					disabled={selected === ""}
 				>
 					入室
 				</Button>
