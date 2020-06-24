@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const EnterRoom = props => {
 	const [error, setError] = useState("")
 	const context = useContext(UserContext)
-	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", {})
 	const someTokenValid = useMemo(() => (
 		tokens && Object.values(tokens).some(v => Object.keys(v).length)
 	), [tokens])

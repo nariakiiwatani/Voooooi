@@ -12,7 +12,7 @@ const useStyle = makeStyles(theme => createStyles({
 }))
 
 export default props => {
-	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", {})
 
 	const [room, setRoom] = useState(props.room || Object.keys(tokens)[0])
 	const [token, setToken] = useState(Object.keys(tokens[room])[0])

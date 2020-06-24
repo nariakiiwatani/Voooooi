@@ -25,7 +25,7 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 		revalidateOnMount: true
 	})
 	const token = useDocument(`rooms/${name}/tokens/${context.token.get()}`)
-	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", {})
 	const validTokenExists = useMemo(() => (
 		tokens && tokens[name] && Object.keys(tokens[name]).length
 	), [tokens, name])

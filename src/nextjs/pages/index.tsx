@@ -42,6 +42,7 @@ const Index = () => {
 		<MyLayout title="Voooooi!（ゔぉーい！）">
 			<EnterRoom />
 			<Button
+				fullWidth
 				className={classes.infoButton}
 				onClick={() => openModal("create")}
 				color="primary"
@@ -49,6 +50,7 @@ const Index = () => {
 				新しい部屋を作る
 			</Button>
 			<Button
+				fullWidth
 				className={classes.infoButton}
 				onClick={() => openModal("about")}
 				color="primary"

@@ -41,7 +41,7 @@ export default (props: {
 		revalidateOnFocus: false
 	})
 	const [error, setError] = useState("")
-	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", {})
 	const [name, setName] = useState("")
 	const [team, setTeam] = useState("")
 	const handleSubmit = async e => {
