@@ -1,14 +1,11 @@
 import { useState, useContext, useMemo } from "react"
-import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade, Select } from "@material-ui/core"
+import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade } from "@material-ui/core"
 import { getHashString, makeQueryString } from '../../libs/Utils'
-import { fuego } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
 import { UserContext } from '../contexts/UserContext';
 import SelectTeam from './SelectTeam';
-import classes from '*.module.css';
 import { useLocalStorage } from 'react-use';
 import SelectFromTokens from './SelectFromTokens';
-import { CodeSharp } from '@material-ui/icons';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -71,29 +68,29 @@ const EnterRoom = props => {
 			return
 		}
 		const result = (await response.json()).data
-		openTeamModal(result.teams)
+		setTeams(result.teams)
+		openModal("teams")
 	}
 
-	const [openModal, setOpenModal] = useState(false)
-	const [modalContent, setModalContent] = useState(<></>)
-	const openTeamModal = (teams) => {
-		setModalContent(
-			<>
+	const [teams, setTeams] = useState([])
+	const [modalType, openModal] = useState("")
+	const closeModal = () => { openModal("") }
+	const isOpenModal = () => (modalType !== "")
+	const ModalContent = props => (
+		{
+			teams: (<>
 				<h4>チームを選択して入室</h4>
 				<SelectTeam teams={teams} onSelect={handleTeamSelect} />
-			</>
-		)
-		setOpenModal(true)
-	}
-	const openTokenModal = (tokens) => {
-		setModalContent(
-			<>
+			</>),
+			tokens: (<>
 				<h4>過去に入室済みの選手として入室</h4>
 				<SelectFromTokens tokens={tokens} onSubmit={handleTokenSelect} />
-			</>
-		)
-		setOpenModal(true)
-	}
+			</>)
+
+		}[props.type] || <></>
+	)
+
+
 	const handleTeamSelect = async teamId => {
 		setError("")
 		const response = await fetch(`/api/users/signup?${makeQueryString({
@@ -159,19 +156,19 @@ const EnterRoom = props => {
 			{someTokenValid ?
 				<Button
 					fullWidth
-					onClick={() => { openTokenModal(tokens) }}>
+					onClick={() => { openModal("tokens") }}>
 					過去に入室済みの選手として入室
 				</Button> :
 				<></>}
 			<Modal
 				className={classes.modal}
-				open={openModal}
-				onClose={() => { setOpenModal(false) }}
+				open={isOpenModal()}
+				onClose={() => { closeModal() }}
 				closeAfterTransition
 			>
-				<Fade in={openModal}>
+				<Fade in={isOpenModal()}>
 					<div className={classes.paper}>
-						{modalContent}
+						<ModalContent type={modalType} />
 					</div>
 				</Fade>
 			</Modal>
