@@ -8,6 +8,7 @@ import SelectTeam from './SelectTeam';
 import classes from '*.module.css';
 import { useLocalStorage } from 'react-use';
 import SelectFromTokens from './SelectFromTokens';
+import { CodeSharp } from '@material-ui/icons';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,9 +31,9 @@ const EnterRoom = props => {
 
 	const [error, setError] = useState("")
 	const context = useContext(UserContext)
-	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { token: string, user: any }[] }>("tokens", {})
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const someTokenValid = useMemo(() => (
-		Object.values(tokens).some(v => v.length)
+		tokens && Object.values(tokens).some(v => Object.keys(v).length)
 	), [tokens])
 
 	const [formInput, setFormInput] = useState({
@@ -106,16 +107,11 @@ const EnterRoom = props => {
 			return
 		}
 		const result = (await response.json()).data
-		console.log(result)
 		context.user.set(result.user.id)
 		context.team.set(result.user.team)
 		setTokens(prev => {
-			const thisRooms = prev[roomName] !== undefined ?
-				[...prev[roomName]] : []
-			thisRooms.push({
-				token: result.token,
-				user: result.user
-			})
+			const thisRooms = { ...(prev[roomName] || {}) }
+			thisRooms[result.token] = result.user
 			return {
 				...prev,
 				[roomName]: thisRooms
@@ -133,6 +129,14 @@ const EnterRoom = props => {
 		const result = (await response.json()).data
 		context.user.set(result.user.id)
 		context.team.set(result.user.team)
+		setTokens(prev => {
+			const thisRooms = { ...(prev[roomName] || {}) }
+			thisRooms[result.token] = result.user
+			return {
+				...prev,
+				[roomName]: thisRooms
+			}
+		})
 		Router.push(`/rooms/${room}`)
 	}
 

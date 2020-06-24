@@ -9,21 +9,18 @@ const useStyle = makeStyles(theme => createStyles({
 
 export default props => {
 	const { tokens, onSubmit }: {
-		tokens: { [room: string]: { token: string, user: { id: string, name: string, team: string } }[] },
+		tokens: { [room: string]: { [token: string]: { name: string } } },
 		onSubmit: ({ room, token }: { room: string, token: string }) => void
 	} = props
-	const [room, setRoom] = useState("")
-	const [user, setUser] = useState("")
+	const [room, setRoom] = useState(Object.keys(tokens)[0])
+	const [token, setToken] = useState(Object.keys(tokens[room])[0])
 	const handleRoomSelect = roomName => {
 		setRoom(roomName)
-		setUser(tokens[roomName][0].user.id)
+		setToken(Object.keys(tokens[roomName])[0])
 	}
 	const handleSubmit = e => {
 		e.preventDefault()
-		onSubmit({
-			room,
-			token: tokens[room].find(token => token.user.id === user).token
-		})
+		onSubmit({ room, token })
 	}
 	const classes = useStyle()
 	return (
@@ -36,7 +33,7 @@ export default props => {
 					value={room}
 					onChange={e => { handleRoomSelect(e.target.value as string) }}
 				>
-					{Object.entries(tokens).filter(([k, v]) => v?.length).map(([k, v]) => (
+					{Object.entries(tokens).filter(([k, v]) => Object.keys(v).length).map(([k, v]) => (
 						<MenuItem
 							key={k}
 							className={classes.lowAttentionButton}
@@ -53,14 +50,14 @@ export default props => {
 					<Select
 						labelId="id-token-select-user"
 						id="token-select-user"
-						value={user}
-						onChange={e => { setUser(e.target.value as string) }}
+						value={token}
+						onChange={e => { setToken(e.target.value as string) }}
 					>
-						{tokens[room].map(({ token, user }) => (
+						{Object.entries(tokens[room]).map(([token, user]) => (
 							<MenuItem
 								key={token}
 								className={classes.lowAttentionButton}
-								value={user.id}
+								value={token}
 							>
 								{user.name}
 							</MenuItem>
@@ -73,7 +70,7 @@ export default props => {
 				type="submit"
 				variant="contained"
 				color="primary"
-				disabled={user === ""}
+				disabled={token === ""}
 			>
 				入室
 				</Button>
