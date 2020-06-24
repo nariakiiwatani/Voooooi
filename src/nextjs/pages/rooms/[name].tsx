@@ -20,7 +20,9 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 		.then(r => r.json())
 		.then(r => r.data.room)
 		.catch(e => ({ error: "error" }))
-	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher)
+	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher, {
+		revalidateOnFocus: false
+	})
 	const user = useDocument(`rooms/${name}/users/${context.user.get()}`)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const validTokenExists = useMemo(() => (
