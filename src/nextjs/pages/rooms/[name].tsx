@@ -4,8 +4,6 @@ import EnterUser from '../../components/room/EnterUser'
 import ChatRoom from '../../components/room/ChatRoom'
 import MyLayout from '../../components/Layout'
 import { useDocument } from '@nandorojo/swr-firestore'
-import { getHashString } from '../../libs/Utils'
-import EnterPassword from '../../components/room/EnterPassword'
 
 const RoomPage = (props) => {
 	const { roomName } = props

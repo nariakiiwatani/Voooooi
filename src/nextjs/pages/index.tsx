@@ -5,24 +5,6 @@ import EnterRoom from '../components/index/EnterRoom';
 import CreateRoom from '../components/index/CreateRoom';
 import About from '../components/index/About';
 
-function TabPanel(props) {
-	const { children, value, index, ...other } = props;
-
-	return (
-		<div
-			role="tabpanel"
-			hidden={value !== index}
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-			{...other}
-		>
-			{
-				value === index && (<div>{children}</div>)
-			}
-		</div>
-	);
-}
-
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		modal: {
@@ -42,51 +24,46 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 const Index = () => {
-	const [tabSelect, setTabSelect] = useState(0)
-	const handleTabSelect = (event, newValue) => {
-		setTabSelect(newValue)
-	}
-
 	const classes = useStyles();
-	const [openModal, setOpenModal] = useState(false)
-	const handleOpenAbout = () => {
-		setOpenModal(true)
-	}
-	const handleCloseAbout = () => {
-		setOpenModal(false)
-	}
+	const [modalType, openModal] = useState("")
+	const closeModal = () => { openModal("") }
+	const isOpenModal = () => (modalType !== "")
+	const ModalContent = props => (
+		{
+			about: <About />,
+			create: <>
+				<h4>新しい部屋を作る</h4>
+				<CreateRoom />
+			</>
+
+		}[props.type] || <></>
+	)
 	return (
 		<MyLayout title="Voooooi!（ゔぉーい！）">
-			<Tabs centered
-				value={tabSelect}
-				onChange={handleTabSelect}
-				variant="fullWidth"
-			>
-				<Tab label="部屋に入る" />
-				<Tab label="部屋を作る" />
-			</Tabs>
-			<TabPanel value={tabSelect} index={0}>
-				<EnterRoom />
-			</TabPanel>
-			<TabPanel value={tabSelect} index={1}>
-				<CreateRoom />
-			</TabPanel>
+			<EnterRoom />
 			<Button
 				className={classes.infoButton}
-				onClick={handleOpenAbout}
+				onClick={() => openModal("create")}
+				color="primary"
+			>
+				新しい部屋を作る
+			</Button>
+			<Button
+				className={classes.infoButton}
+				onClick={() => openModal("about")}
 				color="primary"
 			>
 				Voooooi!（ゔぉーい！）について
 			</Button>
 			<Modal
 				className={classes.modal}
-				open={openModal}
-				onClose={handleCloseAbout}
+				open={isOpenModal()}
+				onClose={closeModal}
 				closeAfterTransition
 			>
-				<Fade in={openModal}>
+				<Fade in={isOpenModal()}>
 					<div className={classes.paper}>
-						<About />
+						<ModalContent type={modalType} />
 					</div>
 				</Fade>
 			</Modal>
