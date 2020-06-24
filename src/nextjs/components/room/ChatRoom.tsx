@@ -2,7 +2,7 @@ import { useContext, useState, useMemo, useEffect } from 'react'
 import VoextInput from './VoextInput'
 import CommentList from './CommentList'
 import { UserContext } from '../contexts/UserContext'
-import { Grid, createStyles, Theme, makeStyles, MenuItem, ListItem, ListItemIcon, ListItemText, Collapse, List } from '@material-ui/core'
+import { Grid, createStyles, Theme, makeStyles, MenuItem, ListItem, ListItemIcon, ListItemText, Collapse, List, Box } from '@material-ui/core'
 import { useCollection, useDocument, fuego } from '@nandorojo/swr-firestore'
 import { Person, ExitToApp } from "@material-ui/icons"
 import * as firebase from "firebase"
@@ -134,9 +134,8 @@ const ChatRoom = (props: { room: { id: string } }) => {
 	const listItem = props => {
 		const { name, label, icon, content, open, setOpen } = props
 		return (
-			<>
+			<Box key={name}>
 				<ListItem
-					key={name}
 					selected={open}
 					onClick={() => setOpen(!open)}
 				>
@@ -146,7 +145,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				<Collapse in={open} timeout="auto" unmountOnExit>
 					{content}
 				</Collapse>
-			</>
+			</Box>
 		)
 	}
 
@@ -160,6 +159,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 				direction="row"
 				className={classes.root}>
 				<Grid item
+					key="menu"
 					xs="auto"
 				>
 					<List className={menuOpen ? classes.drawerOpen : classes.drawerClose}>
@@ -167,6 +167,7 @@ const ChatRoom = (props: { room: { id: string } }) => {
 					</List>
 				</Grid>
 				<Grid item
+					key="chat"
 					className={classes.content}
 					xs={true}
 				>

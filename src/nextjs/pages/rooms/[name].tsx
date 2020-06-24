@@ -21,7 +21,8 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 		.then(r => r.data.room)
 		.catch(e => ({ error: "error" }))
 	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher, {
-		revalidateOnFocus: false
+		revalidateOnFocus: false,
+		revalidateOnMount: true
 	})
 	const token = useDocument(`rooms/${name}/tokens/${context.token.get()}`)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
