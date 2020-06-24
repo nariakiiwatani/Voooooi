@@ -6,6 +6,9 @@ import MyLayout from '../../components/Layout'
 import { useDocument } from '@nandorojo/swr-firestore'
 import { getHashString, makeQueryString } from '../../libs/Utils'
 import useSWR from 'swr'
+import EnterPassword from '../../components/room/EnterPassword'
+import Router from 'next/router'
+import Link from "next/link"
 
 const RoomPage = (props: { name: string, pwd?: string }) => {
 	const { name, pwd = getHashString("") } = props
@@ -25,7 +28,19 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 	return (
 		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${name}`}>
 			{signedIn ? <ChatRoom room={room} /> :
-				error ? "error while fetching room data" :
+				error ? (<>
+					<div>部屋が存在しないかパスワードが間違っています</div>
+					<EnterPassword
+						buttonText="パスワードを入力"
+						onSubmit={pw => {
+							Router.push({
+								pathname: `/rooms/${name}`,
+								query: { pwd: getHashString(pw) }
+							})
+						}}
+					/>
+					<Link href="/"><a>トップページへ</a></Link>
+				</>) :
 					room === undefined ? "fetching room data..." :
 						(<>
 							<h4>選手名とチームを入力してください</h4>
