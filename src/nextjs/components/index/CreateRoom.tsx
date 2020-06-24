@@ -78,7 +78,7 @@ const CreateRoom = props => {
 		try {
 			await roomRef.set({
 				adminPassword: pwd,
-				userPassword: "",
+				userPassword: getHashString(""),
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
 			createDefaultRoom(roomRef)
