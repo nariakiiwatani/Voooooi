@@ -58,20 +58,9 @@ const EnterRoom = props => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setError("")
-		const response = await fetch(`/api/teams?${makeQueryString({
-			room: roomName,
-			pwd: getHashString(password)
-		})}`)
-		if (!response.ok) {
-			setError(response.statusText)
-			return
-		}
-		const result = (await response.json()).data
-		setTeams(result.teams)
 		openModal("teams")
 	}
 
-	const [teams, setTeams] = useState([])
 	const [modalType, openModal] = useState("")
 	const closeModal = () => { openModal("") }
 	const isOpenModal = () => (modalType !== "")
@@ -79,7 +68,7 @@ const EnterRoom = props => {
 		{
 			teams: (<>
 				<h4>チームを選択して入室</h4>
-				<EnterUser room={roomName} pwd={getHashString(password)} teams={teams} />
+				<EnterUser room={roomName} pwd={getHashString(password)} />
 			</>),
 			tokens: (<>
 				<h4>過去に入室済みの選手として入室</h4>

@@ -43,6 +43,7 @@
     "socket.io-client": "^2.3.0",
     "styled-jsx": "^3.3.0",
     "styled-jsx-plugin-sass": "^1.0.0",
+    "swr": "^0.2.3",
     "ts-node": "^8.10.2",
     "use-clipboard-copy": "^0.1.2"
   },

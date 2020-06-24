@@ -13,10 +13,10 @@ const createDefaultRoom = async (roomRef) => {
 		createdAt: firebase.firestore.FieldValue.serverTimestamp()
 	});
 	[
-		{ "name": "赤チーム", "color": [255, 0, 0] },
-		{ "name": "青チーム", "color": [0, 0, 255] },
-		{ "name": "黄チーム", "color": [255, 255, 0] },
-		{ "name": "白チーム", "color": [255, 255, 255] },
+		{ name: "赤チーム", color: [255, 0, 0] },
+		{ name: "青チーム", color: [0, 0, 255] },
+		{ name: "黄チーム", color: [255, 255, 0] },
+		{ name: "白チーム", color: [255, 255, 255] },
 	].forEach(async t => {
 		await teamsRef.add({
 			...t,
@@ -81,7 +81,7 @@ const CreateRoom = props => {
 				userPassword: getHashString(""),
 				createdAt: firebase.firestore.FieldValue.serverTimestamp()
 			})
-			createDefaultRoom(roomRef)
+			await createDefaultRoom(roomRef)
 
 			setError("")
 			Router.push({

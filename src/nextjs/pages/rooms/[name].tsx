@@ -1,16 +1,21 @@
 import { useContext, useState, useEffect } from "react"
 import { UserContext } from '../../components/contexts/UserContext'
-import EnterUser from '../../components/room/EnterUser'
+import EnterUser from '../../components/index/EnterUser'
 import ChatRoom from '../../components/room/ChatRoom'
 import MyLayout from '../../components/Layout'
 import { useDocument } from '@nandorojo/swr-firestore'
+import { getHashString } from '../../libs/Utils'
 
-const RoomPage = (props) => {
-	const { roomName } = props
-	const room = useDocument(`rooms/${roomName}/`)
-
+const RoomPage = (props: { name: string, pwd?: string }) => {
+	const { name, pwd = getHashString("") } = props
+	const room = useDocument(`rooms/${name}/`)
 	const context = useContext(UserContext)
-	const isUserValid = () => context?.user?.get() && context.team?.get()
+	const user = useDocument(`rooms/${name}/users/${context.user.get()}`)
+
+	const [signedIn, setSignedIn] = useState(false)
+	useEffect(() => {
+		setSignedIn(user.data?.exists)
+	}, [user.data])
 
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
@@ -20,10 +25,13 @@ const RoomPage = (props) => {
 	}
 
 	return (
-		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${roomName}`}>
-			{!isUserValid()
-				? <EnterUser room={room.data} />
-				: <ChatRoom room={room.data} />
+		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${name}`}>
+			{signedIn
+				? <ChatRoom room={room.data} />
+				: (<>
+					<h4>選手名とチームを入力してください</h4>
+					<EnterUser room={name} pwd={pwd} />
+				</>)
 			}
 		</MyLayout >
 	)
@@ -32,7 +40,7 @@ const RoomPage = (props) => {
 export const getServerSideProps = async ({ params, query }) => {
 	return {
 		props: {
-			roomName: params.name,
+			...params,
 			...query
 		},
 	}

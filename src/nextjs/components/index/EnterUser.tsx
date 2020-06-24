@@ -1,10 +1,11 @@
-import { Button, ListItemIcon, makeStyles, createStyles, Select, MenuItem, TextField } from '@material-ui/core'
+import { Button, ListItemIcon, makeStyles, createStyles, Select, MenuItem, TextField, FormControl, InputLabel } from '@material-ui/core'
 import { People } from '@material-ui/icons'
 import { useState, useContext } from 'react'
 import { makeQueryString } from '../../libs/Utils'
 import Router from 'next/router'
 import { UserContext } from '../contexts/UserContext'
 import { useLocalStorage } from 'react-use'
+import useSWR from 'swr'
 
 const useStyle = makeStyles(theme => createStyles({
 	lowAttentionButton: {
@@ -18,17 +19,28 @@ const useStyle = makeStyles(theme => createStyles({
 		padding: theme.spacing(2),
 	}
 }))
+
+type Team = {
+	id: string,
+	name: string,
+	color: number[]
+}
 export default (props: {
 	room: string,
 	pwd: string,
-	teams: { id: string, name: string, color: number[] }[],
 }) => {
-	const { room, pwd, teams } = props
+	const { room, pwd } = props
+	const fetcher = url =>
+		fetch(`${url}?${makeQueryString({ room, pwd })}`)
+			.then(r => r.json())
+			.then(r => r.data.teams)
+
+	const { data: teams } = useSWR<Team[]>("/api/teams", fetcher)
 	const [error, setError] = useState("")
 	const context = useContext(UserContext)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const [name, setName] = useState("")
-	const [team, setTeam] = useState(teams.length && teams[0].id)
+	const [team, setTeam] = useState("")
 	const handleSubmit = async e => {
 		e.preventDefault()
 		const response = await fetch(`/api/users/signup?${makeQueryString({
@@ -51,6 +63,7 @@ export default (props: {
 		})
 		Router.push(`/rooms/${room}`)
 	}
+
 	const classes = useStyle()
 	return (
 		<>
@@ -58,34 +71,40 @@ export default (props: {
 				<TextField
 					fullWidth
 					value={name}
+					label="選手名"
 					required
 					onChange={e => { setName(e.target.value) }}
 				/>
-				<Select
-					fullWidth
-					value={team}
-					onChange={e => { setTeam(e.target.value as string) }}
-					required
-				>
-					{teams.filter(t => t.id !== "admin").map((t, i) => {
-						const cssProperty = {
-							color: `rgb(${t.color.join(",")})`
-						}
-						return (
-							<MenuItem
-								key={i}
-								className={classes.lowAttentionButton}
-								aria-label={t.name}
-								value={t.id}
-							>
-								<ListItemIcon>
-									<People style={cssProperty} />
-								</ListItemIcon>
-								{t.name}
-							</MenuItem>
-						)
-					})}
-				</Select>
+				<FormControl fullWidth>
+					<InputLabel id="id-team-select">チーム</InputLabel>
+					<Select
+						fullWidth
+						labelId="id-team-select"
+						id="team-select"
+						value={team}
+						onChange={e => { setTeam(e.target.value as string) }}
+						required
+					>
+						{teams?.filter(t => t.id !== "admin").map((t, i) => {
+							const cssProperty = {
+								color: `rgb(${t.color.join(",")})`
+							}
+							return (
+								<MenuItem
+									key={i}
+									className={classes.lowAttentionButton}
+									aria-label={t.name}
+									value={t.id}
+								>
+									<ListItemIcon>
+										<People style={cssProperty} />
+									</ListItemIcon>
+									{t.name}
+								</MenuItem>
+							)
+						})}
+					</Select>
+				</FormControl>
 				<Button
 					fullWidth
 					type="submit"
