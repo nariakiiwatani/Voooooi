@@ -23,7 +23,7 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher, {
 		revalidateOnFocus: false
 	})
-	const user = useDocument(`rooms/${name}/users/${context.user.get()}`)
+	const token = useDocument(`rooms/${name}/tokens/${context.token.get()}`)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const validTokenExists = useMemo(() => (
 		tokens && tokens[name] && Object.keys(tokens[name]).length
@@ -31,8 +31,8 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 
 	const [signedIn, setSignedIn] = useState(false)
 	useEffect(() => {
-		setSignedIn(user.data?.exists)
-	}, [user.data])
+		setSignedIn(token.data?.exists)
+	}, [token.data])
 
 
 	return (
@@ -60,6 +60,11 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 							(<>
 								<h4>選手名とチームを入力してください</h4>
 								<SignUp room={name} pwd={pwd} />
+								{validTokenExists ? (<>
+									<div>または入室済みの選手で入室</div>
+									<SignInByToken room={name} />
+								</>) : <></>}
+								<Link href="/"><a>トップページへ</a></Link>
 							</>)
 			}
 		</MyLayout >

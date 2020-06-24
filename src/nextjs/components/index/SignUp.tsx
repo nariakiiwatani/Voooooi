@@ -30,14 +30,17 @@ export default (props: {
 	pwd: string,
 }) => {
 	const { room, pwd } = props
+	const context = useContext(UserContext)
+	const query = context.token.get() !== "" ? { token: context.token.get() } : { pwd }
 	const fetcher = url =>
-		fetch(`${url}?${makeQueryString({ room, pwd })}`)
+		fetch(`${url}?${makeQueryString({ name: room, ...query })}`)
 			.then(r => r.json())
 			.then(r => r.data.teams)
 
-	const { data: teams } = useSWR<Team[]>("/api/teams", fetcher)
+	const { data: teams } = useSWR<Team[]>("/api/teams", fetcher, {
+		revalidateOnFocus: false
+	})
 	const [error, setError] = useState("")
-	const context = useContext(UserContext)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const [name, setName] = useState("")
 	const [team, setTeam] = useState("")

@@ -11,17 +11,23 @@ type Room = {
 	userPassword: string
 }
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const { room, pwd } = req.query
+	const { name, pwd, token } = req.query
 	try {
-		const roomRef = firestore.doc(`rooms/${room}`)
-		const roomData = (await roomRef.get())?.data() as Room
-		if (!roomData) {
+		const roomRef = firestore.doc(`rooms/${name}`)
+		const room = (await roomRef.get())?.data() as Room
+		if (!room) {
 			return error(res, 400, "room not exist")
 		}
-		if (roomData.userPassword !== pwd) {
+		if (token !== undefined) {
+			const tokenRef = firestore.doc(`rooms/${name}/tokens/${token}`);
+			if (!(await tokenRef.get()).exists) {
+				return error(res, 401, "wrong token")
+			}
+		}
+		else if (room.userPassword !== pwd) {
 			return error(res, 401, "wrong password")
 		}
-		const teamsRef = firestore.collection(`rooms/${room}/teams`).orderBy("createdAt", "asc")
+		const teamsRef = firestore.collection(`rooms/${name}/teams`).orderBy("createdAt", "asc")
 		const teams = [];
 		(await teamsRef.get()).forEach(doc => {
 			teams.push({ id: doc.id, ...doc.data() })
