@@ -49,25 +49,26 @@ export default props => {
 	const classes = useStyle()
 	return (
 		<form onSubmit={handleSubmit}>
-			<FormControl fullWidth>
-				<InputLabel id="id-token-select-room">部屋</InputLabel>
-				<Select
-					labelId="id-token-select-room"
-					id="token-select-room"
-					value={room}
-					onChange={e => { handleRoomSelect(e.target.value as string) }}
-				>
-					{Object.entries(tokens).filter(([k, v]) => Object.keys(v).length).map(([k, v]) => (
-						<MenuItem
-							key={k}
-							className={classes.lowAttentionButton}
-							value={k}
-						>
-							{k}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
+			{props.room ? <></> :
+				<FormControl fullWidth>
+					<InputLabel id="id-token-select-room">部屋</InputLabel>
+					<Select
+						labelId="id-token-select-room"
+						id="token-select-room"
+						value={room}
+						onChange={e => { handleRoomSelect(e.target.value as string) }}
+					>
+						{Object.entries(tokens).filter(([k, v]) => Object.keys(v).length).map(([k, v]) => (
+							<MenuItem
+								key={k}
+								className={classes.lowAttentionButton}
+								value={k}
+							>
+								{k}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>}
 			{tokens[room] ?
 				<FormControl fullWidth>
 					<InputLabel id="id-token-select-user">選手名</InputLabel>

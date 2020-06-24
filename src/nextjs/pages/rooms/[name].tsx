@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect, useMemo } from "react"
 import { UserContext } from '../../components/contexts/UserContext'
 import SignUp from '../../components/index/SignUp'
 import ChatRoom from '../../components/room/ChatRoom'
@@ -9,6 +9,8 @@ import useSWR from 'swr'
 import EnterPassword from '../../components/room/EnterPassword'
 import Router from 'next/router'
 import Link from "next/link"
+import { useLocalStorage } from 'react-use'
+import SignInByToken from '../../components/index/SignInByToken'
 
 const RoomPage = (props: { name: string, pwd?: string }) => {
 	const { name, pwd = getHashString("") } = props
@@ -20,6 +22,10 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 		.catch(e => ({ error: "error" }))
 	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher)
 	const user = useDocument(`rooms/${name}/users/${context.user.get()}`)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+	const validTokenExists = useMemo(() => (
+		tokens && tokens[name] && Object.keys(tokens[name]).length
+	), [tokens, name])
 
 	const [signedIn, setSignedIn] = useState(false)
 	useEffect(() => {
@@ -35,7 +41,7 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 						error || room.error ? (<>
 							<div>部屋が存在しないかパスワードが間違っています</div>
 							<EnterPassword
-								buttonText="パスワードを入力"
+								buttonText="パスワードで入室"
 								onSubmit={pw => {
 									Router.push({
 										pathname: `/rooms/${name}`,
@@ -43,6 +49,10 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 									})
 								}}
 							/>
+							{validTokenExists ? (<>
+								<div>または入室済みの選手で入室</div>
+								<SignInByToken room={name} />
+							</>) : <></>}
 							<Link href="/"><a>トップページへ</a></Link>
 						</>) :
 							(<>
