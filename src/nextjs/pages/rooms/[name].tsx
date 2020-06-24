@@ -4,11 +4,15 @@ import EnterUser from '../../components/index/EnterUser'
 import ChatRoom from '../../components/room/ChatRoom'
 import MyLayout from '../../components/Layout'
 import { useDocument } from '@nandorojo/swr-firestore'
-import { getHashString } from '../../libs/Utils'
+import { getHashString, makeQueryString } from '../../libs/Utils'
+import useSWR from 'swr'
 
 const RoomPage = (props: { name: string, pwd?: string }) => {
 	const { name, pwd = getHashString("") } = props
-	const room = useDocument(`rooms/${name}/`)
+	const roomFetcher = (url) => fetch(`${url}?${makeQueryString({ pwd })}`)
+		.then(r => r.json())
+		.then(r => r.data.room)
+	const { data: room, error } = useSWR(`/api/rooms/${name}`, roomFetcher)
 	const context = useContext(UserContext)
 	const user = useDocument(`rooms/${name}/users/${context.user.get()}`)
 
@@ -17,21 +21,16 @@ const RoomPage = (props: { name: string, pwd?: string }) => {
 		setSignedIn(user.data?.exists)
 	}, [user.data])
 
-	if (!room.data) {
-		return (<div>fetching room data...</div>)
-	}
-	if (!room.data.exists) {
-		return (<div>room not exist</div>)
-	}
 
 	return (
 		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${name}`}>
-			{signedIn
-				? <ChatRoom room={room.data} />
-				: (<>
-					<h4>選手名とチームを入力してください</h4>
-					<EnterUser room={name} pwd={pwd} />
-				</>)
+			{signedIn ? <ChatRoom room={room} /> :
+				error ? "error while fetching room data" :
+					room === undefined ? "fetching room data..." :
+						(<>
+							<h4>選手名とチームを入力してください</h4>
+							<EnterUser room={name} pwd={pwd} />
+						</>)
 			}
 		</MyLayout >
 	)

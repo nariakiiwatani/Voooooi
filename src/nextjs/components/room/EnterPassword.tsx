@@ -2,7 +2,7 @@ import { useState } from "react"
 import { TextField, Button } from '@material-ui/core'
 
 const EnterPassword = props => {
-	const { label, buttonText, onSubmit } = props
+	const { buttonText, onSubmit } = props
 	const [formInput, setFormInput] = useState({
 		password: ""
 	})
@@ -33,7 +33,6 @@ const EnterPassword = props => {
 	)
 	return (
 		<>
-			<div>{label}</div>
 			<form onSubmit={handleSubmit}>
 				{createInput(["パスワード", "password", "password", password])}
 				<Button
