@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const EnterRoom = props => {
-
 	const [error, setError] = useState("")
 	const context = useContext(UserContext)
 	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
@@ -55,12 +54,13 @@ const EnterRoom = props => {
 			/>
 		</div>
 	)
+
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setError("")
 		const response = await fetch(`/api/teams?${makeQueryString({
 			room: roomName,
-			pwd: password === "" ? "" : getHashString(password)
+			pwd: getHashString(password)
 		})}`)
 		if (!response.ok) {
 			setError(response.statusText)
@@ -79,7 +79,7 @@ const EnterRoom = props => {
 		{
 			teams: (<>
 				<h4>チームを選択して入室</h4>
-				<EnterUser teams={teams} onSelect={handleSignup} />
+				<EnterUser room={roomName} pwd={getHashString(password)} teams={teams} />
 			</>),
 			tokens: (<>
 				<h4>過去に入室済みの選手として入室</h4>
@@ -89,32 +89,6 @@ const EnterRoom = props => {
 		}[props.type] || <></>
 	)
 
-
-	const handleSignup = async ({ name, team }) => {
-		setError("")
-		const response = await fetch(`/api/users/signup?${makeQueryString({
-			room: roomName,
-			pwd: password === "" ? "" : getHashString(password),
-			name,
-			team
-		})}`)
-		if (!response.ok) {
-			setError(response.statusText)
-			return
-		}
-		const result = (await response.json()).data
-		context.user.set(result.user.id)
-		context.team.set(result.user.team)
-		setTokens(prev => {
-			const thisRooms = { ...(prev[roomName] || {}) }
-			thisRooms[result.token] = result.user
-			return {
-				...prev,
-				[roomName]: thisRooms
-			}
-		})
-		Router.push(`/rooms/${roomName}`)
-	}
 	const handleTokenSelect = async ({ room, token }: { room: string, token: string }) => {
 		setError("")
 		const response = await fetch(`/api/users/signin?${makeQueryString({ room, token })}`)

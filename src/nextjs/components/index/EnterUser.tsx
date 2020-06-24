@@ -1,6 +1,10 @@
 import { Button, ListItemIcon, makeStyles, createStyles, Select, MenuItem, TextField } from '@material-ui/core'
 import { People } from '@material-ui/icons'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { makeQueryString } from '../../libs/Utils'
+import Router from 'next/router'
+import { UserContext } from '../contexts/UserContext'
+import { useLocalStorage } from 'react-use'
 
 const useStyle = makeStyles(theme => createStyles({
 	lowAttentionButton: {
@@ -15,15 +19,37 @@ const useStyle = makeStyles(theme => createStyles({
 	}
 }))
 export default (props: {
+	room: string,
+	pwd: string,
 	teams: { id: string, name: string, color: number[] }[],
-	onSelect: ({ name, team }: { name: string, team: string }) => void
 }) => {
-	const { teams, onSelect } = props
+	const { room, pwd, teams } = props
+	const [error, setError] = useState("")
+	const context = useContext(UserContext)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
 	const [name, setName] = useState("")
 	const [team, setTeam] = useState(teams.length && teams[0].id)
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
-		onSelect({ name, team })
+		const response = await fetch(`/api/users/signup?${makeQueryString({
+			room, pwd, name, team
+		})}`)
+		if (!response.ok) {
+			setError(response.statusText)
+			return
+		}
+		const result = (await response.json()).data
+		context.user.set(result.user.id)
+		context.team.set(result.user.team)
+		setTokens(prev => {
+			const thisRooms = { ...(prev[room] || {}) }
+			thisRooms[result.token] = result.user
+			return {
+				...prev,
+				[room]: thisRooms
+			}
+		})
+		Router.push(`/rooms/${room}`)
 	}
 	const classes = useStyle()
 	return (
@@ -68,6 +94,7 @@ export default (props: {
 				>
 					入室
 				</Button>
+				<div>{error}</div>
 			</form>
 		</>
 	)
