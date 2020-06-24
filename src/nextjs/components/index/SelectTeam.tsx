@@ -17,7 +17,8 @@ const useStyle = makeStyles(theme => createStyles({
 export default props => {
 	const { teams, onSelect } = props
 	const [selected, setSelected] = useState("")
-	const handleSubmit = () => {
+	const handleSubmit = e => {
+		e.preventDefault()
 		onSelect(selected)
 	}
 	const classes = useStyle()
@@ -36,7 +37,7 @@ export default props => {
 						return (
 							<MenuItem
 								key={i}
-								className={classes.buttonFollowsText}
+								className={classes.lowAttentionButton}
 								aria-label={t.name}
 								value={t.id}
 							>

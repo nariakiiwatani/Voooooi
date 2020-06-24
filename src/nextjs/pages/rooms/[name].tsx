@@ -8,26 +8,12 @@ import { getHashString } from '../../libs/Utils'
 import EnterPassword from '../../components/room/EnterPassword'
 
 const RoomPage = (props) => {
-	const { roomName, pwd } = props
-	const room = useDocument<{ userPassword: string }>(`rooms/${roomName}/`)
+	const { roomName } = props
+	const room = useDocument(`rooms/${roomName}/`)
 
 	const context = useContext(UserContext)
 	const isUserValid = () => context?.user?.get() && context.team?.get()
 
-	const handleSubmitPassword = password => {
-		const hashed = getHashString(password)
-		context.token.set(hashed)
-	}
-
-	const isPasswordValid = () => {
-		if (pwd !== undefined) {
-			context.token.set(pwd)
-		}
-		const token = context.token.get()
-		return room.data.userPassword ?
-			room.data.userPassword === token :
-			token === ""
-	}
 	if (!room.data) {
 		return (<div>fetching room data...</div>)
 	}
@@ -37,11 +23,9 @@ const RoomPage = (props) => {
 
 	return (
 		<MyLayout title={`Voooooi!（ゔぉーい！） - Room: ${roomName}`}>
-			{!isPasswordValid()
-				? <EnterPassword label="入室パスワード" buttonText="入室" onSubmit={handleSubmitPassword} />
-				: !isUserValid()
-					? <EnterUser room={room.data} />
-					: <ChatRoom room={room.data} />
+			{!isUserValid()
+				? <EnterUser room={room.data} />
+				: <ChatRoom room={room.data} />
 			}
 		</MyLayout >
 	)

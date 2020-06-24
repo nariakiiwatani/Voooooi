@@ -1,11 +1,13 @@
-import { useState, useContext } from "react"
-import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade } from "@material-ui/core"
+import { useState, useContext, useMemo } from "react"
+import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade, Select } from "@material-ui/core"
 import { getHashString, makeQueryString } from '../../libs/Utils'
 import { fuego } from '@nandorojo/swr-firestore';
 import Router from 'next/router'
 import { UserContext } from '../contexts/UserContext';
 import SelectTeam from './SelectTeam';
 import classes from '*.module.css';
+import { useLocalStorage } from 'react-use';
+import SelectFromTokens from './SelectFromTokens';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -28,6 +30,10 @@ const EnterRoom = props => {
 
 	const [error, setError] = useState("")
 	const context = useContext(UserContext)
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { token: string, user: any }[] }>("tokens", {})
+	const someTokenValid = useMemo(() => (
+		Object.values(tokens).some(v => v.length)
+	), [tokens])
 
 	const [formInput, setFormInput] = useState({
 		roomName: "",
@@ -64,14 +70,28 @@ const EnterRoom = props => {
 			return
 		}
 		const result = (await response.json()).data
-		setTeams(result.teams)
-		setOpenModal(true)
+		openTeamModal(result.teams)
 	}
 
-	const [teams, setTeams] = useState([])
 	const [openModal, setOpenModal] = useState(false)
-	const handleCloseTeamSelect = () => {
-		setOpenModal(false)
+	const [modalContent, setModalContent] = useState(<></>)
+	const openTeamModal = (teams) => {
+		setModalContent(
+			<>
+				<h4>チームを選択して入室</h4>
+				<SelectTeam teams={teams} onSelect={handleTeamSelect} />
+			</>
+		)
+		setOpenModal(true)
+	}
+	const openTokenModal = (tokens) => {
+		setModalContent(
+			<>
+				<h4>過去に入室済みの選手として入室</h4>
+				<SelectFromTokens tokens={tokens} onSubmit={handleTokenSelect} />
+			</>
+		)
+		setOpenModal(true)
 	}
 	const handleTeamSelect = async teamId => {
 		setError("")
@@ -86,10 +106,34 @@ const EnterRoom = props => {
 			return
 		}
 		const result = (await response.json()).data
+		console.log(result)
 		context.user.set(result.user.id)
 		context.team.set(result.user.team)
-		context.token.set(result.token)
+		setTokens(prev => {
+			const thisRooms = prev[roomName] !== undefined ?
+				[...prev[roomName]] : []
+			thisRooms.push({
+				token: result.token,
+				user: result.user
+			})
+			return {
+				...prev,
+				[roomName]: thisRooms
+			}
+		})
 		Router.push(`/rooms/${roomName}`)
+	}
+	const handleTokenSelect = async ({ room, token }: { room: string, token: string }) => {
+		setError("")
+		const response = await fetch(`/api/users/signin?${makeQueryString({ room, token })}`)
+		if (!response.ok) {
+			setError(response.statusText)
+			return
+		}
+		const result = (await response.json()).data
+		context.user.set(result.user.id)
+		context.team.set(result.user.team)
+		Router.push(`/rooms/${room}`)
 	}
 
 	const classes = useStyles();
@@ -108,16 +152,22 @@ const EnterRoom = props => {
 				>部屋に入る</Button>
 			</form>
 			<span className="error">{error}</span>
+			{someTokenValid ?
+				<Button
+					fullWidth
+					onClick={() => { openTokenModal(tokens) }}>
+					過去に入室済みの選手として入室
+				</Button> :
+				<></>}
 			<Modal
 				className={classes.modal}
 				open={openModal}
-				onClose={handleCloseTeamSelect}
+				onClose={() => { setOpenModal(false) }}
 				closeAfterTransition
 			>
 				<Fade in={openModal}>
 					<div className={classes.paper}>
-						<h4>チームを選択して入室</h4>
-						<SelectTeam teams={teams} onSelect={handleTeamSelect} />
+						{modalContent}
 					</div>
 				</Fade>
 			</Modal>
