@@ -1,5 +1,9 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Select, makeStyles, createStyles, MenuItem, FormControl, InputLabel, Button } from '@material-ui/core'
+import { makeQueryString } from '../../libs/Utils'
+import Router from 'next/router'
+import { UserContext } from '../contexts/UserContext'
+import { useLocalStorage } from 'react-use'
 
 const useStyle = makeStyles(theme => createStyles({
 	lowAttentionButton: {
@@ -8,19 +12,39 @@ const useStyle = makeStyles(theme => createStyles({
 }))
 
 export default props => {
-	const { tokens, onSubmit }: {
-		tokens: { [room: string]: { [token: string]: { name: string } } },
-		onSubmit: ({ room, token }: { room: string, token: string }) => void
-	} = props
-	const [room, setRoom] = useState(Object.keys(tokens)[0])
+	const [tokens, setTokens] = useLocalStorage<{ [room: string]: { [token: string]: any } }>("tokens", null)
+
+	const [room, setRoom] = useState(props.room || Object.keys(tokens)[0])
 	const [token, setToken] = useState(Object.keys(tokens[room])[0])
+	const context = useContext(UserContext)
+
+	const [error, setError] = useState("")
+
 	const handleRoomSelect = roomName => {
 		setRoom(roomName)
 		setToken(Object.keys(tokens[roomName])[0])
 	}
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
-		onSubmit({ room, token })
+		setError("")
+		const response = await fetch(`/api/users/signin?${makeQueryString({ room, token })}`)
+		if (!response.ok) {
+			setError(response.statusText)
+			return
+		}
+		const result = (await response.json()).data
+		context.token.set(result.token)
+		context.user.set(result.user.id)
+		context.team.set(result.user.team)
+		setTokens(prev => {
+			const thisRooms = { ...(prev[room] || {}) }
+			thisRooms[result.token] = result.user
+			return {
+				...prev,
+				[room]: thisRooms
+			}
+		})
+		Router.push(`/rooms/${room}`)
 	}
 	const classes = useStyle()
 	return (
@@ -74,6 +98,7 @@ export default props => {
 			>
 				入室
 				</Button>
+			<div>{error}</div>
 		</form>
 	)
 }

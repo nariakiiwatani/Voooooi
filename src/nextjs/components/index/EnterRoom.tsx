@@ -3,9 +3,9 @@ import { TextField, Button, makeStyles, Theme, createStyles, Modal, Fade } from 
 import { getHashString, makeQueryString } from '../../libs/Utils'
 import Router from 'next/router'
 import { UserContext } from '../contexts/UserContext';
-import EnterUser from './EnterUser';
+import SignUp from './SignUp';
 import { useLocalStorage } from 'react-use';
-import SelectFromTokens from './SelectFromTokens';
+import SignInByToken from './SignInByToken';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,36 +68,15 @@ const EnterRoom = props => {
 		{
 			teams: (<>
 				<h4>チームを選択して入室</h4>
-				<EnterUser room={roomName} pwd={getHashString(password)} />
+				<SignUp room={roomName} pwd={getHashString(password)} />
 			</>),
 			tokens: (<>
 				<h4>過去に入室済みの選手として入室</h4>
-				<SelectFromTokens tokens={tokens} onSubmit={handleTokenSelect} />
+				<SignInByToken />
 			</>)
 
 		}[props.type] || <></>
 	)
-
-	const handleTokenSelect = async ({ room, token }: { room: string, token: string }) => {
-		setError("")
-		const response = await fetch(`/api/users/signin?${makeQueryString({ room, token })}`)
-		if (!response.ok) {
-			setError(response.statusText)
-			return
-		}
-		const result = (await response.json()).data
-		context.user.set(result.user.id)
-		context.team.set(result.user.team)
-		setTokens(prev => {
-			const thisRooms = { ...(prev[roomName] || {}) }
-			thisRooms[result.token] = result.user
-			return {
-				...prev,
-				[roomName]: thisRooms
-			}
-		})
-		Router.push(`/rooms/${room}`)
-	}
 
 	const classes = useStyles();
 

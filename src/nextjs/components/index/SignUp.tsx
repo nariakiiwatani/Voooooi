@@ -51,6 +51,7 @@ export default (props: {
 			return
 		}
 		const result = (await response.json()).data
+		context.token.set(result.token)
 		context.user.set(result.user.id)
 		context.team.set(result.user.team)
 		setTokens(prev => {
